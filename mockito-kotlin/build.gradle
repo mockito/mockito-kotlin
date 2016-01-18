@@ -1,0 +1,26 @@
+apply plugin: 'kotlin'
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-4589"
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+}
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4589"
+  compile "org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-4589"
+  compile "org.mockito:mockito-core:2.0.39-beta"
+
+  /* Tests */
+  testCompile "junit:junit:4.12"
+  testCompile "com.nhaarman:expect.kt:0.3.0"
+}

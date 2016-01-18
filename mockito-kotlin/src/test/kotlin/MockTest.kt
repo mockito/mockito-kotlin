@@ -1,0 +1,80 @@
+import com.nhaarman.expect.expect
+import com.nhaarman.mockito_kotlin.mock
+import org.junit.Test
+import org.mockito.exceptions.base.MockitoException
+
+/*
+ * Copyright 2016 Niek Haarman
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+class MockTest {
+
+    private lateinit var propertyInterfaceVariable: MyInterface
+    private lateinit var propertyClassVariable: MyClass
+
+    @Test
+    fun localInterfaceValue() {
+        /* When */
+        val instance: MyInterface = mock()
+
+        /* Then */
+        expect(instance).toNotBeNull()
+    }
+
+    @Test
+    fun propertyInterfaceVariable() {
+        /* When */
+        propertyInterfaceVariable = mock()
+
+        /* Then */
+        expect(propertyInterfaceVariable).toNotBeNull()
+    }
+
+    @Test
+    fun localClassValue() {
+        /* When */
+        val instance: MyClass = mock()
+
+        /* Then */
+        expect(instance).toNotBeNull()
+    }
+
+    @Test
+    fun propertyClassVariable() {
+        /* When */
+        propertyClassVariable = mock()
+
+        /* Then */
+        expect(propertyClassVariable).toNotBeNull()
+    }
+
+    @Test
+    fun untypedVariable() {
+        /* When */
+        val instance = mock<MyClass>()
+
+        expect(instance).toNotBeNull()
+    }
+
+    @Test(expected = MockitoException::class)
+    fun closedClass() {
+        mock<ClosedClass>()
+    }
+
+    private interface MyInterface
+    private open class MyClass
+    private class ClosedClass
+}
+

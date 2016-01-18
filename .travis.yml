@@ -1,0 +1,16 @@
+sudo: false
+
+language: java
+
+jdk:
+- oraclejdk7
+
+env:
+  matrix:
+  - TERM=dumb
+
+install:
+ - true
+
+script:
+  - ./gradlew test
