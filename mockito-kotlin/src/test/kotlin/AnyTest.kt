@@ -27,7 +27,6 @@ import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.anyArray
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -377,6 +376,15 @@ class AnyTest {
         expect(result).toNotBeNull()
     }
 
+    @Test
+    fun anyEnum() {
+        /* When */
+        val result = any<MyEnum>()
+
+        /* Then */
+        expect(result).toBe(MyEnum.VALUE)
+    }
+
     open class Fake {
         open fun go(arg: Any?) {
         }
@@ -404,4 +412,6 @@ class AnyTest {
 
     class ParameterizedClass<T>(val t: T)
     class NullableParameterClass(val s: String?)
+
+    enum class MyEnum { VALUE, ANOTHER_VALUE }
 }
