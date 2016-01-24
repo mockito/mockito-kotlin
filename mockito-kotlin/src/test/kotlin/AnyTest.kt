@@ -369,6 +369,15 @@ class AnyTest {
         expect(result).toBe(MyEnum.VALUE)
     }
 
+    @Test
+    fun anyUnit() {
+        /* When */
+        val result = any<Unit>()
+
+        /* Then */
+        expect(result).toBe(Unit)
+    }
+
     class ClosedClass
     class ClosedParameterizedClass(val fake: Fake)
     class ClosedClosedParameterizedClass(val closed: ClosedParameterizedClass)

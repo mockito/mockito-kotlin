@@ -82,6 +82,10 @@ private fun <T : Any> createInstance(jClass: Class<T>): T {
         return jClass.toArrayInstance()
     }
 
+    jClass.kotlin.objectInstance?.let {
+        return it
+    }
+
     val constructor = jClass.constructors
             .sortedBy { it.parameterTypes.size }
             .first()
