@@ -74,6 +74,10 @@ private fun <T : Any> createInstance(jClass: Class<T>): T {
         return defaultPrimitive(jClass)
     }
 
+    if (jClass.isEnum) {
+        return  jClass.enumConstants.first()
+    }
+
     if (jClass.isArray) {
         return jClass.toArrayInstance()
     }
