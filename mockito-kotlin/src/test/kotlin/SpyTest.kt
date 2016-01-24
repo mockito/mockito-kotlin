@@ -25,7 +25,9 @@
 
 import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.spy
+import org.junit.After
 import org.junit.Test
+import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
 
 class SpyTest {
@@ -33,6 +35,12 @@ class SpyTest {
     private val interfaceInstance: MyInterface = MyClass()
     private val openClassInstance: MyClass = MyClass()
     private val closedClassInstance: ClosedClass = ClosedClass()
+
+    @After
+    fun a() {
+        Mockito.validateMockitoUsage()
+    }
+
 
     @Test
     fun spyInterfaceInstance() {

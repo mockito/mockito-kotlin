@@ -24,359 +24,342 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.anyArray
-import com.nhaarman.mockito_kotlin.mock
-import org.junit.After
-import org.junit.Before
+import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
-import org.mockito.Mockito
 
-class AnyTest {
-
-    private lateinit var doAnswer: Fake
-
-    @Before
-    fun setup() {
-        /* Create an 'any' Mockito state */
-        doAnswer = Mockito.doAnswer { }.`when`(mock())
-    }
-
-    @After
-    fun tearDown() {
-        /* Close `any` Mockito state */
-        doAnswer.go(0)
-    }
+class CreateInstanceTest {
 
     @Test
-    fun anyByte() {
+    fun byte() {
         /* When */
-        val result = any<Byte>()
+        val result = createInstance<Byte>()
 
         /* Then */
         expect(result).toBe(0)
     }
 
     @Test
-    fun anyShort() {
+    fun short() {
         /* When */
-        val result = any<Short>()
+        val result = createInstance<Short>()
 
         /* Then */
         expect(result).toBe(0)
     }
 
     @Test
-    fun anyInt() {
+    fun int() {
         /* When */
-        val result = any<Int>()
+        val result = createInstance<Int>()
 
         /* Then */
         expect(result).toBe(0)
     }
 
     @Test
-    fun anyLong() {
+    fun long() {
         /* When */
-        val result = any<Long>()
+        val result = createInstance<Long>()
 
         /* Then */
         expect(result).toBe(0)
     }
 
     @Test
-    fun anyDouble() {
+    fun double() {
         /* When */
-        val result = any<Double>()
+        val result = createInstance<Double>()
 
         /* Then */
         expect(result).toBeIn(-0.000001..0.000001)
     }
 
     @Test
-    fun anyFloat() {
+    fun float() {
         /* When */
-        val result = any<Float>()
+        val result = createInstance<Float>()
 
         /* Then */
         expect(result).toBeIn(-0.000001f..0.000001f)
     }
 
     @Test
-    fun anyString() {
+    fun string() {
         /* When */
-        val result = any<String>()
+        val result = createInstance<String>()
 
         /* Then */
         expect(result).toBeEqualTo("")
     }
 
     @Test
-    fun anyByteArray() {
+    fun byteArray() {
         /* When */
-        val result = any<ByteArray>()
+        val result = createInstance<ByteArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyShortArray() {
+    fun shortArray() {
         /* When */
-        val result = any<ShortArray>()
+        val result = createInstance<ShortArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyIntArray() {
+    fun intArray() {
         /* When */
-        val result = any<IntArray>()
+        val result = createInstance<IntArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyLongArray() {
+    fun longArray() {
         /* When */
-        val result = any<LongArray>()
+        val result = createInstance<LongArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyDoubleArray() {
+    fun doubleArray() {
         /* When */
-        val result = any<DoubleArray>()
+        val result = createInstance<DoubleArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyFloatArray() {
+    fun floatArray() {
         /* When */
-        val result = any<FloatArray>()
+        val result = createInstance<FloatArray>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test(expected = UnsupportedOperationException::class)
-    fun anyClassArray_usingAny() {
+    fun classArray_usingAny() {
         /* When */
-        any<Array<Fake>>()
+        createInstance<Array<Fake>>()
     }
 
     @Test
-    fun anyClassArray_usingAnyArray() {
+    fun closedClass() {
         /* When */
-        val result = anyArray<Array<Fake>>()
+        val result = createInstance<ClosedClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyClosedClass() {
+    fun closedClass_withOpenParameter() {
         /* When */
-        val result = any<ClosedClass>()
+        val result = createInstance<ClosedParameterizedClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyClosedClass_withOpenParameter() {
+    fun closedClass_withClosedParameter() {
         /* When */
-        val result = any<ClosedParameterizedClass>()
+        val result = createInstance<ClosedClosedParameterizedClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyClosedClass_withClosedParameter() {
+    fun singleParameterizedClass() {
         /* When */
-        val result = any<ClosedClosedParameterizedClass>()
+        val result = createInstance<SingleParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anySingleParameterizedClass() {
+    fun twoParameterizedClass() {
         /* When */
-        val result = any<SingleParameterClass>()
+        val result = createInstance<TwoParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyTwoParameterizedClass() {
+    fun threeParameterizedClass() {
         /* When */
-        val result = any<TwoParameterClass>()
+        val result = createInstance<ThreeParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyThreeParameterizedClass() {
+    fun fourParameterizedClass() {
         /* When */
-        val result = any<ThreeParameterClass>()
+        val result = createInstance<FourParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyFourParameterizedClass() {
+    fun fiveParameterizedClass() {
         /* When */
-        val result = any<FourParameterClass>()
+        val result = createInstance<FiveParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyFiveParameterizedClass() {
+    fun sixParameterizedClass() {
         /* When */
-        val result = any<FiveParameterClass>()
+        val result = createInstance<SixParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anySixParameterizedClass() {
+    fun sevenParameterizedClass() {
         /* When */
-        val result = any<SixParameterClass>()
+        val result = createInstance<SevenParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anySevenParameterizedClass() {
+    fun nestedSingleParameterizedClass() {
         /* When */
-        val result = any<SevenParameterClass>()
+        val result = createInstance<NestedSingleParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedSingleParameterizedClass() {
+    fun nestedTwoParameterizedClass() {
         /* When */
-        val result = any<NestedSingleParameterClass>()
+        val result = createInstance<NestedTwoParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedTwoParameterizedClass() {
+    fun nestedThreeParameterizedClass() {
         /* When */
-        val result = any<NestedTwoParameterClass>()
+        val result = createInstance<NestedThreeParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedThreeParameterizedClass() {
+    fun nestedFourParameterizedClass() {
         /* When */
-        val result = any<NestedThreeParameterClass>()
+        val result = createInstance<NestedFourParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedFourParameterizedClass() {
+    fun nestedFiveParameterizedClass() {
         /* When */
-        val result = any<NestedFourParameterClass>()
+        val result = createInstance<NestedFiveParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedFiveParameterizedClass() {
+    fun nestedSixParameterizedClass() {
         /* When */
-        val result = any<NestedFiveParameterClass>()
+        val result = createInstance<NestedSixParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedSixParameterizedClass() {
+    fun nestedSevenParameterizedClass() {
         /* When */
-        val result = any<NestedSixParameterClass>()
+        val result = createInstance<NestedSevenParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNestedSevenParameterizedClass() {
+    fun parameterizedClass() {
         /* When */
-        val result = any<NestedSevenParameterClass>()
+        val result = createInstance<ParameterizedClass<ClosedClass>>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyParameterizedClass() {
+    fun nullableParameterClass() {
         /* When */
-        val result = any<ParameterizedClass<ClosedClass>>()
+        val result = createInstance<NullableParameterClass>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyNullableParameterClass() {
+    fun stringList() {
         /* When */
-        val result = any<NullableParameterClass>()
+        val result = createInstance<List<String>>()
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun anyStringList() {
+    fun enum() {
         /* When */
-        val result = any<List<String>>()
-
-        /* Then */
-        expect(result).toNotBeNull()
-    }
-
-    @Test
-    fun anyEnum() {
-        /* When */
-        val result = any<MyEnum>()
+        val result = createInstance<MyEnum>()
 
         /* Then */
         expect(result).toBe(MyEnum.VALUE)
     }
 
     @Test
-    fun anyUnit() {
+    fun unit() {
         /* When */
-        val result = any<Unit>()
+        val result = createInstance<Unit>()
 
         /* Then */
         expect(result).toBe(Unit)
     }
+
+    @Test
+    fun privateClass() {
+        /* When */
+        val result = createInstance<PrivateClass>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
     class ClosedParameterizedClass(val fake: Fake)
