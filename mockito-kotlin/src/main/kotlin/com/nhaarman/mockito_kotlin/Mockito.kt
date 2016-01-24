@@ -27,6 +27,7 @@ package com.nhaarman.mockito_kotlin
 
 import org.mockito.Mockito
 import org.mockito.verification.VerificationMode
+import kotlin.reflect.KClass
 
 inline fun <reified T : Any> mock() = Mockito.mock(T::class.java)
 fun <T : Any> spy(value: T) = Mockito.spy(value)
@@ -40,6 +41,7 @@ fun <T> reset(mock: T) = Mockito.reset(mock)
 fun inOrder(vararg value: Any) = Mockito.inOrder(*value)
 fun never() = Mockito.never()
 
-fun <T> eq(value: T) = Mockito.eq(value)
+inline fun <reified T : Any> eq(value: T) = eq(value, T::class)
+fun <T : Any> eq(value: T, kClass: KClass<T>) = Mockito.eq(value) ?: createInstance(kClass)
 
 inline fun <reified T : Any> isNull(): T? = Mockito.isNull(T::class.java)
