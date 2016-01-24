@@ -1,10 +1,21 @@
 # Mockito-Kotlin
+[ ![Download](https://api.bintray.com/packages/nhaarman/maven/Mockito-Kotlin/images/download.svg) ](https://bintray.com/nhaarman/maven/Mockito-Kotlin/_latestVersion)
 
 A small library that provides helper functions to work with [Mockito](https://github.com/mockito/mockito) in Kotlin.
 
-## Download
+## Install
 
-Download a .jar file from the [releases page](https://github.com/nhaarman/mockito-kotlin/releases).
+Mockito-Kotlin is available on JCenter.
+For Gradle users, add the following to your `build.gradle`:
+
+```groovy
+repositories {
+    jcenter()
+}
+dependencies {
+    testCompile "com.nhaarman:mockito-kotlin:x.x.x"
+}
+```
 
 ## Examples
 
