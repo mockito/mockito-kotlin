@@ -49,7 +49,7 @@ bintray {
     name = "Mockito-Kotlin"
     desc = "Using Mockito with Kotlin"
 
-    licenses = ['Apache-2.0']
+    licenses = ['MIT']
     vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
 
     version {
