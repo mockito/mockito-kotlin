@@ -34,7 +34,7 @@ publishing {
 
       groupId 'com.nhaarman'
       artifactId 'mockito-kotlin'
-      version '1.0'
+      version rootProject.ext.versionName
     }
   }
 }
