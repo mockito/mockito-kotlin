@@ -1,0 +1,22 @@
+new ByteArrayOutputStream().withStream { os ->
+
+  exec {
+    commandLine 'git', 'describe'
+    standardOutput = os
+  }
+
+  String tag = os.toString().trim();
+  if (tag.length() == 0) {
+    tag = "0.0.0"
+  } else if (tag.indexOf('-') != -1 && tag.length() > tag.indexOf('-') + 1 && tag.charAt(tag.indexOf('-') + 1).isDigit()) {
+    tag = tag.substring(0, tag.indexOf('-'));
+  }
+
+  ext.versionName = tag;
+
+  if (isRelease == 'false') {
+    int lastNumber = Integer.parseInt(tag.substring(tag.size() - 1))
+    ext.versionName = tag.substring(0, tag.size() - 1) + (lastNumber + 1) + "-SNAPSHOT";
+  }
+}
+

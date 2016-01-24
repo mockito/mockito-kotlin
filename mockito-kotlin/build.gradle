@@ -24,3 +24,48 @@ dependencies {
   testCompile "junit:junit:4.12"
   testCompile "com.nhaarman:expect.kt:0.3.0"
 }
+
+publishing {
+  publications {
+    MyPublication(MavenPublication) {
+      from components.java
+      artifact javadocJar
+      artifact sourcesJar
+
+      groupId 'com.nhaarman'
+      artifactId 'mockito-kotlin'
+      version '1.0'
+    }
+  }
+}
+
+bintray {
+  user = hasProperty('bintray_user') ? bintray_user : System.getenv('BINTRAY_USER')
+  key = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
+  publications = ['MyPublication']
+
+  pkg {
+    repo = 'maven'
+    name = "Mockito-Kotlin"
+    desc = "Using Mockito with Kotlin"
+
+    licenses = ['Apache-2.0']
+    vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
+
+    version {
+      name = rootProject.ext.versionName
+      desc = 'Using Mockito with Kotlin'
+      vcsTag = rootProject.ext.versionName
+    }
+  }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
