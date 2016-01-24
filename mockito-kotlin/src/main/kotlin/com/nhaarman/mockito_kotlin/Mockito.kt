@@ -41,7 +41,13 @@ fun <T> reset(mock: T) = Mockito.reset(mock)
 fun inOrder(vararg value: Any) = Mockito.inOrder(*value)
 fun never() = Mockito.never()
 
-inline fun <reified T : Any> eq(value: T) = eq(value, T::class)
-fun <T : Any> eq(value: T, kClass: KClass<T>) = Mockito.eq(value) ?: createInstance(kClass)
-
+inline fun <reified T : Any> eq(value: T) = Mockito.eq(value) ?: createInstance<T>()
+inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
+inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
 inline fun <reified T : Any> isNull(): T? = Mockito.isNull(T::class.java)
+
+inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = argThat(T::class, predicate)
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> argThat(kClass: KClass<T>, predicate: T.() -> Boolean)
+        = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(kClass)
