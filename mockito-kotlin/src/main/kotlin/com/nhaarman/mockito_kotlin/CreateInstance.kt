@@ -54,7 +54,7 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
         kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
         kClass.isEnum() -> kClass.java.enumConstants.first()
         kClass.isArray() -> kClass.toArrayInstance()
-        else -> kClass.constructors.first().newInstance()
+        else -> kClass.constructors.sortedBy { it.parameters.size }.first().newInstance()
     }
 }
 
