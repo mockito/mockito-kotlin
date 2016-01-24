@@ -84,6 +84,15 @@ class CreateInstanceTest {
     }
 
     @Test
+    fun boolean() {
+        /* When */
+        val result = createInstance<Boolean>()
+
+        /* Then */
+        expect(result).toBe(true)
+    }
+
+    @Test
     fun string() {
         /* When */
         val result = createInstance<String>()

@@ -66,6 +66,7 @@ private fun KClass<*>.isEnum() = java.isEnum
 private fun KClass<*>.isArray() = java.isArray
 private fun KClass<*>.isPrimitive() =
         java.isPrimitive || !defaultType.isMarkedNullable && simpleName in arrayOf(
+                "Boolean",
                 "Byte",
                 "Short",
                 "Int",
@@ -78,6 +79,7 @@ private fun KClass<*>.isPrimitive() =
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_UNIT_OR_ANY")
 private fun <T : Any> KClass<T>.toDefaultPrimitiveValue(): T {
     return when (simpleName) {
+        "Boolean" -> true
         "Byte" -> 0.toByte()
         "Short" -> 0.toShort()
         "Int" -> 0
