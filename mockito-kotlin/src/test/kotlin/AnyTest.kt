@@ -385,11 +385,6 @@ class AnyTest {
         expect(result).toBe(MyEnum.VALUE)
     }
 
-    open class Fake {
-        open fun go(arg: Any?) {
-        }
-    }
-
     class ClosedClass
     class ClosedParameterizedClass(val fake: Fake)
     class ClosedClosedParameterizedClass(val closed: ClosedParameterizedClass)
