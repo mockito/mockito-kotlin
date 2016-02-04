@@ -76,7 +76,7 @@ private fun KClass<*>.isPrimitive() =
                 "String"
         )
 
-@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_UNIT_OR_ANY")
+@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
 private fun <T : Any> KClass<T>.toDefaultPrimitiveValue(): T {
     return when (simpleName) {
         "Boolean" -> true
@@ -91,7 +91,7 @@ private fun <T : Any> KClass<T>.toDefaultPrimitiveValue(): T {
     } as T
 }
 
-@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_UNIT_OR_ANY")
+@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
 private fun <T : Any> KClass<T>.toArrayInstance(): T {
     return when (simpleName) {
         "ByteArray" -> byteArrayOf()
@@ -106,7 +106,7 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
 
 private fun <T : Any> KFunction<T>.newInstance(): T {
     isAccessible = true
-    return callBy(parameters.toMap {
+    return callBy(parameters.associate {
         it to it.type.createNullableInstance<T>()
     })
 }
@@ -130,7 +130,7 @@ private fun <T : Any> KType.createNullableInstance(): T? {
  */
 @Suppress("UNCHECKED_CAST")
 private fun <T> Class<T>.uncheckedMock(): T {
-    val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<*>
+    val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
-    return MockUtil().createMock(creationSettings) as T
+    return MockUtil().createMock(creationSettings)
 }
