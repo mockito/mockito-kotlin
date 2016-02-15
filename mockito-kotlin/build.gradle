@@ -1,12 +1,14 @@
 apply plugin: 'kotlin'
 
 buildscript {
+  ext.kotlin_version = '1.0.0'
+
   repositories {
     mavenCentral()
   }
 
   dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-rc-1036"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
@@ -16,8 +18,8 @@ repositories {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.0-rc-1036"
-  compile "org.jetbrains.kotlin:kotlin-reflect:1.0.0-rc-1036"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
   compile "org.mockito:mockito-core:2.0.39-beta"
 
   /* Tests */
