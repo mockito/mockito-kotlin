@@ -26,6 +26,8 @@
 package com.nhaarman.mockito_kotlin
 
 import org.mockito.Mockito
+import org.mockito.stubbing.Answer
+import org.mockito.stubbing.Stubber
 import org.mockito.verification.VerificationMode
 import kotlin.reflect.KClass
 
