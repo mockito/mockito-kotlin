@@ -30,6 +30,7 @@ import org.mockito.verification.VerificationMode
 import kotlin.reflect.KClass
 
 inline fun <reified T : Any> mock() = Mockito.mock(T::class.java)
+inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>) = Mockito.mock(T::class.java, defaultAnswer)
 fun <T : Any> spy(value: T) = Mockito.spy(value)
 
 fun <T> whenever(methodCall: T) = Mockito.`when`(methodCall)
@@ -40,6 +41,17 @@ fun <T> reset(mock: T) = Mockito.reset(mock)
 
 fun inOrder(vararg value: Any) = Mockito.inOrder(*value)
 fun never() = Mockito.never()
+fun times(numInvocations: Int) = Mockito.times(numInvocations)
+fun atLeast(numInvocations: Int) = Mockito.atLeast(numInvocations)
+fun atLeastOnce() = Mockito.atLeastOnce()
+
+fun doReturn(value: Any) = Mockito.doReturn(value)
+fun doThrow(throwable: Throwable) = Mockito.doThrow(throwable)
+fun <T> doAnswer(answer: Answer<T>) = Mockito.doAnswer(answer)
+fun doCallRealMethod() = Mockito.doCallRealMethod()
+fun doNothing() = Mockito.doNothing()
+
+fun <T> Stubber.whenever(mock: T) = `when`(mock)
 
 inline fun <reified T : Any> eq(value: T) = Mockito.eq(value) ?: createInstance<T>()
 inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
