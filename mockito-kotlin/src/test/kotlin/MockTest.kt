@@ -25,8 +25,11 @@
 
 import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
+import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.exceptions.base.MockitoException
+import java.util.*
 
 class MockTest {
 
@@ -80,6 +83,13 @@ class MockTest {
     @Test(expected = MockitoException::class)
     fun closedClass() {
         mock<ClosedClass>()
+    }
+
+    @Test
+    fun deepStubs() {
+        val cal: Calendar = mock(RETURNS_DEEP_STUBS)
+        whenever(cal.time.time).thenReturn(123L)
+        expect(cal.time.time).toBe(123L)
     }
 
     private interface MyInterface
