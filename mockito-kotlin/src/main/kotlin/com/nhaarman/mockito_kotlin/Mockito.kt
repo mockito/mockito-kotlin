@@ -25,6 +25,7 @@
 
 package com.nhaarman.mockito_kotlin
 
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.Stubber
@@ -54,6 +55,9 @@ fun doCallRealMethod() = Mockito.doCallRealMethod()
 fun doNothing() = Mockito.doNothing()
 
 fun <T> Stubber.whenever(mock: T) = `when`(mock)
+
+inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
+inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
 inline fun <reified T : Any> eq(value: T) = Mockito.eq(value) ?: createInstance<T>()
 inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
