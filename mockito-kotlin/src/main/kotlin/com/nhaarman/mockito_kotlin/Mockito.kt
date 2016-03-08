@@ -58,6 +58,10 @@ fun <T> Stubber.whenever(mock: T) = `when`(mock)
 
 inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
+inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
+    var times = 0
+    return argThat { if (++times == 1) consumer.invoke(this); true }
+}
 
 inline fun <reified T : Any> eq(value: T) = Mockito.eq(value) ?: createInstance<T>()
 inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
