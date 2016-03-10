@@ -7,6 +7,7 @@ import org.junit.Test
 import java.util.*
 
 class ArgumentCaptorTest {
+
     @Test
     fun captor() {
         val date: Date = mock()

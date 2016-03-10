@@ -37,7 +37,7 @@ class EqTest {
     private val openClassInstance: MyClass = MyClass()
     private val closedClassInstance: ClosedClass = ClosedClass()
 
-    private lateinit var doAnswer: Fake
+    private lateinit var doAnswer: Open
 
     @Before
     fun setup() {

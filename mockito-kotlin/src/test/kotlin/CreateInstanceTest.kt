@@ -158,7 +158,7 @@ class CreateInstanceTest {
     @Test(expected = UnsupportedOperationException::class)
     fun classArray_usingAny() {
         /* When */
-        createInstance<Array<Fake>>()
+        createInstance<Array<Open>>()
     }
 
     @Test
@@ -371,7 +371,7 @@ class CreateInstanceTest {
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
-    class ClosedParameterizedClass(val fake: Fake)
+    class ClosedParameterizedClass(val open: Open)
     class ClosedClosedParameterizedClass(val closed: ClosedParameterizedClass)
 
     class SingleParameterClass(val first: Byte)

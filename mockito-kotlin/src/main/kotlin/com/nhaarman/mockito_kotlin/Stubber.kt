@@ -23,32 +23,8 @@
  * THE SOFTWARE.
  */
 
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import org.junit.Test
+package com.nhaarman.mockito_kotlin
 
-class MatcherTest {
+import org.mockito.stubbing.Stubber
 
-    @Test
-    fun argThat() {
-        /* Given */
-        val testClass: TestClass = mock()
-
-        /* When */
-        testClass.go(listOf("test"))
-
-        /* Then */
-        verify(testClass).go(
-                argThat {
-                    size == 1
-                    get(0) == "test"
-                }
-        )
-    }
-
-    interface TestClass {
-
-        fun go(v: List<String>)
-    }
-}
+fun <T> Stubber.whenever(mock: T) = `when`(mock)
