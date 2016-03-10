@@ -23,7 +23,32 @@
 * THE SOFTWARE.
 */
 
-open class Fake {
-    open fun go(arg: Any?) {
+open class Open {
+    open fun go(vararg arg: Any?) {
     }
+
+    open fun modifiesContents(a: IntArray) {
+        for (i in 0..a.size - 1) {
+            a[i] = a[i] + 1
+        }
+    }
+
+    open fun stringResult() = "Default"
+}
+
+class Closed
+
+interface Methods {
+
+    fun intArray(i: IntArray)
+    fun closed(c: Closed)
+    fun closedArray(a: Array<Closed>)
+    fun closedCollection(c: Collection<Closed>)
+    fun closedList(c: List<Closed>)
+    fun closedStringMap(m: Map<Closed, String>)
+    fun closedSet(s: Set<Closed>)
+    fun string(s: String)
+    fun closedVararg(vararg c: Closed)
+
+    fun stringResult(): String
 }

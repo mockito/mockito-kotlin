@@ -23,32 +23,13 @@
  * THE SOFTWARE.
  */
 
-import com.nhaarman.mockito_kotlin.argThat
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import org.junit.Test
+package com.nhaarman.mockito_kotlin
 
-class MatcherTest {
+import org.mockito.ArgumentCaptor
 
-    @Test
-    fun argThat() {
-        /* Given */
-        val testClass: TestClass = mock()
-
-        /* When */
-        testClass.go(listOf("test"))
-
-        /* Then */
-        verify(testClass).go(
-                argThat {
-                    size == 1
-                    get(0) == "test"
-                }
-        )
-    }
-
-    interface TestClass {
-
-        fun go(v: List<String>)
-    }
+inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
+inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
+inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
+    var times = 0
+    return argThat { if (++times == 1) consumer.invoke(this); true }
 }

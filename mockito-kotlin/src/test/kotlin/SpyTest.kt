@@ -24,11 +24,12 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.spy
+import com.nhaarman.mockito_kotlin.*
 import org.junit.After
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
+import java.util.*
 
 class SpyTest {
 
@@ -64,6 +65,36 @@ class SpyTest {
     fun spyClosedClassInstance() {
         /* When */
         spy(closedClassInstance)
+    }
+
+    @Test
+    fun doReturnWithSpy() {
+        val date = spy(Date())
+        doReturn(123L).whenever(date).time
+        expect(date.time).toBe(123L)
+    }
+
+    @Test
+    fun doNothingWithSpy() {
+        val date = spy(Date(0))
+        doNothing().whenever(date).time = 5L
+        date.time = 5L;
+        expect(date.time).toBe(0L)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun doThrowWithSpy() {
+        val date = spy(Date(0))
+        doThrow(IllegalArgumentException()).whenever(date).time
+        date.time
+    }
+
+    @Test
+    fun doCallRealMethodWithSpy() {
+        val date = spy(Date(0))
+        doReturn(123L).whenever(date).time
+        doCallRealMethod().whenever(date).time
+        expect(date.time).toBe(0L)
     }
 
     private interface MyInterface

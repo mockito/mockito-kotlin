@@ -100,7 +100,7 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
         "LongArray" -> longArrayOf()
         "DoubleArray" -> doubleArrayOf()
         "FloatArray" -> floatArrayOf()
-        else -> throw UnsupportedOperationException("Cannot create a generic array for $simpleName. Use createArrayInstance() instead.")
+        else -> throw UnsupportedOperationException("Cannot create a generic array for $simpleName. Use createArrayInstance() or anyArray() instead.")
     } as T
 }
 
