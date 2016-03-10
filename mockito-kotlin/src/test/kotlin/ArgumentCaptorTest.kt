@@ -9,7 +9,7 @@ import java.util.*
 class ArgumentCaptorTest {
 
     @Test
-    fun captor() {
+    fun explicitCaptor() {
         val date: Date = mock()
         val time = argumentCaptor<Long>()
 
@@ -17,5 +17,15 @@ class ArgumentCaptorTest {
 
         verify(date).time = capture(time)
         expect(time.value).toBe(5L)
+    }
+
+    @Test
+    fun implicitCaptor() {
+        val date: Date = mock()
+        date.time = 5L
+
+        verify(date).time = capture {
+            expect(it).toBe(5L)
+        }
     }
 }
