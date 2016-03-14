@@ -26,8 +26,17 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
+import java.util.UUID
 
 class CreateInstanceTest {
+
+    @Test
+    fun uuid() {
+        val result = createInstance<UUID>()
+
+        expect(result.leastSignificantBits).toBe(0)
+        expect(result.mostSignificantBits).toBe(0)
+    }
 
     @Test
     fun byte() {

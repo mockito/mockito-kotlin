@@ -31,6 +31,7 @@ import org.mockito.internal.util.MockUtil
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.util.UUID
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
@@ -54,6 +55,7 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
         kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
         kClass.isEnum() -> kClass.java.enumConstants.first()
         kClass.isArray() -> kClass.toArrayInstance()
+        kClass == UUID::class -> UUID(0, 0) as T
         else -> kClass.constructors.sortedBy { it.parameters.size }.first().newInstance()
     }
 }
