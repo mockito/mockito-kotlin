@@ -54,8 +54,28 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
         kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
         kClass.isEnum() -> kClass.java.enumConstants.first()
         kClass.isArray() -> kClass.toArrayInstance()
-        else -> kClass.constructors.sortedBy { it.parameters.size }.first().newInstance()
+        else -> kClass.easiestConstructor().newInstance()
     }
+}
+
+/**
+ * Tries to find the easiest constructor which it can instantiate.
+ */
+private fun <T : Any> KClass<T>.easiestConstructor(): KFunction<T> {
+    return constructors.firstOrDefault(
+            {
+                it.parameters.filter {
+                    it.type.toString().toLowerCase().contains("array")
+                }.isEmpty()
+            },
+            {
+                constructors.sortedBy { it.parameters.size }.first()
+            }
+    )
+}
+
+private fun <T> Collection<T>.firstOrDefault(predicate: (T) -> Boolean, default: () -> T): T {
+    return firstOrNull(predicate) ?: default()
 }
 
 @Suppress("SENSELESS_COMPARISON")
