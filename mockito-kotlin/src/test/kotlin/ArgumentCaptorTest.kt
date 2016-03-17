@@ -28,4 +28,16 @@ class ArgumentCaptorTest {
             expect(it).toBe(5L)
         }
     }
+
+    @Test
+    fun explicitCaptorWithDefault() {
+        val lambda: Function1<Date, Unit> = mock()
+        val date: Date = mock()
+        val dateCaptor = argumentCaptor<Date>()
+
+        lambda.invoke(date)
+
+        verify(lambda).invoke(capture(dateCaptor, Date()))
+        expect(dateCaptor.value).toBe(date)
+    }
 }
