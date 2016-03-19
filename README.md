@@ -65,6 +65,20 @@ For generic arrays, use the `anyArray()` method:
 verify(myClass).setItems(anyArray())
 ```
 
+## Custom instance creators
+
+There are some cases where Mockito-Kotlin cannot create an instance of a class. 
+This can for instance be when a constructor has some specific preconditions
+for its parameters.
+You can _register_ `instance creators` to overcome this:
+
+```kotlin
+MockitoKotlin.registerInstanceCreator<MyClass> { MyClass(5) }
+```
+
+Whenever MockitoKotlin needs to create an instance of `MyClass`, this function is called,
+giving you ultimate control over how these instances are created.
+
 ### Argument Matchers
 
 Using higher-order functions, you can write very clear expectations about expected values.
