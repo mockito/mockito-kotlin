@@ -27,6 +27,7 @@ import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
 import java.util.*
+import kotlin.reflect.KClass
 
 class CreateInstanceTest {
 
@@ -364,6 +365,24 @@ class CreateInstanceTest {
     fun privateClass() {
         /* When */
         val result = createInstance<PrivateClass>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun classObject() {
+        /* When */
+        val result = createInstance<Class<String>>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun kClassObject() {
+        /* When */
+        val result = createInstance<KClass<String>>()
 
         /* Then */
         expect(result).toNotBeNull()

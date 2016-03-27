@@ -37,6 +37,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.defaultType
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmName
 
 /**
  * A collection of functions that tries to create an instance of
@@ -54,6 +55,7 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
         kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
         kClass.isEnum() -> kClass.java.enumConstants.first()
         kClass.isArray() -> kClass.toArrayInstance()
+        kClass.isClassObject() -> kClass.toClassObject()
         else -> kClass.easiestConstructor().newInstance()
     }
 }
@@ -84,6 +86,7 @@ private fun KClass<*>.hasObjectInstance() = objectInstance != null
 private fun KClass<*>.isMockable() = !Modifier.isFinal(java.modifiers)
 private fun KClass<*>.isEnum() = java.isEnum
 private fun KClass<*>.isArray() = java.isArray
+private fun KClass<*>.isClassObject() = jvmName.equals("java.lang.Class")
 private fun KClass<*>.isPrimitive() =
         java.isPrimitive || !defaultType.isMarkedNullable && simpleName in arrayOf(
                 "Boolean",
@@ -122,6 +125,11 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
         "FloatArray" -> floatArrayOf()
         else -> throw UnsupportedOperationException("Cannot create a generic array for $simpleName. Use createArrayInstance() or anyArray() instead.")
     } as T
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> KClass<T>.toClassObject(): T {
+    return Class.forName("java.lang.Object") as T
 }
 
 private fun <T : Any> KFunction<T>.newInstance(): T {
