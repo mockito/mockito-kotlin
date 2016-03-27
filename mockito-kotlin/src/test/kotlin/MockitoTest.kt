@@ -3,6 +3,7 @@ import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
+import java.io.IOException
 
 /*
  * The MIT License
@@ -104,6 +105,14 @@ class MockitoTest {
         mock<Methods>().apply {
             closedVararg(Closed(), Closed())
             verify(this).closedVararg(anyVararg())
+        }
+    }
+
+    @Test
+    fun anyThrowableWithSingleThrowableConstructor() {
+        mock<Methods>().apply {
+            throwableClass(ThrowableClass(IOException()))
+            verify(this).throwableClass(any())
         }
     }
 

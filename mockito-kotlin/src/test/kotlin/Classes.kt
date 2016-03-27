@@ -49,6 +49,9 @@ interface Methods {
     fun closedSet(s: Set<Closed>)
     fun string(s: String)
     fun closedVararg(vararg c: Closed)
+    fun throwableClass(t: ThrowableClass)
 
     fun stringResult(): String
 }
+
+class ThrowableClass(cause: Throwable) : Throwable(cause)
