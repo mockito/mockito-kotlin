@@ -27,6 +27,7 @@ package com.nhaarman.mockito_kotlin
 
 import org.mockito.Answers
 import org.mockito.internal.creation.MockSettingsImpl
+import org.mockito.internal.creation.bytebuddy.MockMethodInterceptor
 import org.mockito.internal.util.MockUtil
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
@@ -37,6 +38,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.defaultType
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmName
 
 /**
  * A collection of functions that tries to create an instance of
@@ -54,8 +56,29 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
         kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
         kClass.isEnum() -> kClass.java.enumConstants.first()
         kClass.isArray() -> kClass.toArrayInstance()
-        else -> kClass.constructors.sortedBy { it.parameters.size }.first().newInstance()
+        kClass.isClassObject() -> kClass.toClassObject()
+        else -> kClass.easiestConstructor().newInstance()
     }
+}
+
+/**
+ * Tries to find the easiest constructor which it can instantiate.
+ */
+private fun <T : Any> KClass<T>.easiestConstructor(): KFunction<T> {
+    return constructors.firstOrDefault(
+            {
+                it.parameters.filter {
+                    it.type.toString().toLowerCase().contains("array")
+                }.isEmpty()
+            },
+            {
+                constructors.sortedBy { it.parameters.size }.first()
+            }
+    )
+}
+
+private fun <T> Collection<T>.firstOrDefault(predicate: (T) -> Boolean, default: () -> T): T {
+    return firstOrNull(predicate) ?: default()
 }
 
 @Suppress("SENSELESS_COMPARISON")
@@ -64,6 +87,7 @@ private fun KClass<*>.hasObjectInstance() = objectInstance != null
 private fun KClass<*>.isMockable() = !Modifier.isFinal(java.modifiers)
 private fun KClass<*>.isEnum() = java.isEnum
 private fun KClass<*>.isArray() = java.isArray
+private fun KClass<*>.isClassObject() = jvmName.equals("java.lang.Class")
 private fun KClass<*>.isPrimitive() =
         java.isPrimitive || !defaultType.isMarkedNullable && simpleName in arrayOf(
                 "Boolean",
@@ -104,6 +128,11 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
     } as T
 }
 
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> KClass<T>.toClassObject(): T {
+    return Class.forName("java.lang.Object") as T
+}
+
 private fun <T : Any> KFunction<T>.newInstance(): T {
     isAccessible = true
     return callBy(parameters.associate {
@@ -132,5 +161,7 @@ private fun <T : Any> KType.createNullableInstance(): T? {
 private fun <T> Class<T>.uncheckedMock(): T {
     val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
-    return MockUtil().createMock(creationSettings)
+    return MockUtil().createMock(creationSettings).apply {
+        (this as MockMethodInterceptor.MockAccess).mockitoInterceptor = null
+    }
 }

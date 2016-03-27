@@ -26,6 +26,8 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
+import java.util.*
+import kotlin.reflect.KClass
 
 class CreateInstanceTest {
 
@@ -366,6 +368,39 @@ class CreateInstanceTest {
 
         /* Then */
         expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun classObject() {
+        /* When */
+        val result = createInstance<Class<String>>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun kClassObject() {
+        /* When */
+        val result = createInstance<KClass<String>>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun uuid() {
+        /**
+         * The UUID class has a single-argument constructor that expects an array with some specific contents.
+         * We avoid these types of constructors by calling another constructor, if available.
+         * In this case, UUID(Long, Long).
+         */
+
+        /* When */
+        val result = createInstance<UUID>()
+
+        /* Then */
+        expect(result).toBeEqualTo(UUID(0, 0))
     }
 
     private class PrivateClass private constructor(val data: String)

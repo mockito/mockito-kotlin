@@ -14,14 +14,3 @@ install:
 
 script:
   - ./gradlew test
-
-before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -f $HOME/.gradle/caches/2.10/plugin-resolution/cache.properties.lock
-  - rm -f $HOME/.gradle/caches/2.10/plugin-resolution/cache.properties
-cache:
-  directories:
-    - $HOME/.gradle/caches
-    - $HOME/.gradle/daemon
-    - $HOME/.gradle/native
-    - $HOME/.gradle/wrapper
