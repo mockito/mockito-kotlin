@@ -100,7 +100,7 @@ class CreateInstanceTest {
         val result = createInstance<String>()
 
         /* Then */
-        expect(result).toBeEqualTo("")
+        expect(result).toBe("")
     }
 
     @Test
@@ -400,7 +400,7 @@ class CreateInstanceTest {
         val result = createInstance<UUID>()
 
         /* Then */
-        expect(result).toBeEqualTo(UUID(0, 0))
+        expect(result).toBe(UUID(0, 0))
     }
 
     private class PrivateClass private constructor(val data: String)

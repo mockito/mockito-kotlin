@@ -1,7 +1,7 @@
 apply plugin: 'kotlin'
 
 buildscript {
-  ext.kotlin_version = '1.0.0'
+  ext.kotlin_version = '1.0.1-2'
 
   repositories {
     mavenCentral()
@@ -20,11 +20,11 @@ repositories {
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-  compile "org.mockito:mockito-core:2.0.39-beta"
+  compile "org.mockito:mockito-core:2.0.47-beta"
 
   /* Tests */
   testCompile "junit:junit:4.12"
-  testCompile "com.nhaarman:expect.kt:0.4.0"
+  testCompile "com.nhaarman:expect.kt:0.5.0"
 }
 
 publishing {
