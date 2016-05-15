@@ -162,6 +162,8 @@ private fun <T> Class<T>.uncheckedMock(): T {
     val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
     return MockUtil().createMock(creationSettings).apply {
-        (this as MockMethodInterceptor.MockAccess).mockitoInterceptor = null
+      when (this) {
+        is MockMethodInterceptor.MockAccess -> mockitoInterceptor = null
+      }
     }
 }
