@@ -24,6 +24,8 @@
  */
 
 import com.nhaarman.expect.expect
+import com.nhaarman.expect.expectErrorWithMessage
+import com.nhaarman.mockito_kotlin.MockitoKotlin
 import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
 import java.util.*
@@ -403,6 +405,25 @@ class CreateInstanceTest {
         expect(result).toBe(UUID(0, 0))
     }
 
+    @Test
+    fun registeredInstanceCreator() {
+        /* Given */
+        MockitoKotlin.registerInstanceCreator { ForbiddenConstructor(2) }
+
+        /* When */
+        val result = createInstance<ForbiddenConstructor>()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun failedConstructor_throwsDescriptiveError() {
+        expectErrorWithMessage("Could not create an instance of class") on {
+            createInstance<ForbiddenConstructor>()
+        }
+    }
+
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
@@ -427,6 +448,16 @@ class CreateInstanceTest {
 
     class ParameterizedClass<T>(val t: T)
     class NullableParameterClass(val s: String?)
+
+    class ForbiddenConstructor {
+
+        constructor() {
+            throw AssertionError("Forbidden.")
+        }
+
+        constructor(value: Int) {
+        }
+    }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }
 }
