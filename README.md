@@ -79,6 +79,9 @@ MockitoKotlin.registerInstanceCreator<MyClass> { MyClass(5) }
 Whenever MockitoKotlin needs to create an instance of `MyClass`, this function is called,
 giving you ultimate control over how these instances are created.
 
+These instance creators work on a per-file basis: for each of your test files
+you will need to register them again.
+
 ### Argument Matchers
 
 Using higher-order functions, you can write very clear expectations about expected values.

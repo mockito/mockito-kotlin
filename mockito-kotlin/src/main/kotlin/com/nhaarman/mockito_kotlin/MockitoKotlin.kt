@@ -35,7 +35,7 @@ class MockitoKotlin {
         /**
          * Maps KClasses to functions that can create an instance of that KClass.
          */
-        private val creators: MutableMap<KClass<*>, () -> Any> = HashMap()
+        private val creators: MutableMap<KClass<*>, MutableList<Pair<String, () -> Any>>> = HashMap()
 
         /**
          * Registers a function to be called when an instance of T is necessary.
@@ -45,7 +45,12 @@ class MockitoKotlin {
         /**
          * Registers a function to be called when an instance of T is necessary.
          */
-        fun <T : Any> registerInstanceCreator(kClass: KClass<T>, creator: () -> T) = creators.put(kClass, creator)
+        fun <T : Any> registerInstanceCreator(kClass: KClass<T>, creator: () -> T) {
+            val element = Error().stackTrace[1]
+
+            creators.getOrPut(kClass) { ArrayList<Pair<String, () -> Any>>() }
+                    .add(element.toFileIdentifier() to creator)
+        }
 
         /**
          * Unregisters an instance creator.
@@ -63,7 +68,16 @@ class MockitoKotlin {
         fun resetInstanceCreators() = creators.clear()
 
         internal fun <T : Any> instanceCreator(kClass: KClass<T>): (() -> Any)? {
+            val stacktrace = Error().stackTrace.filterNot {
+                it.className.contains("com.nhaarman.mockito_kotlin")
+            }[0]
+
             return creators[kClass]
+                    ?.filter { it.first == stacktrace.toFileIdentifier() }
+                    ?.firstOrNull()
+                    ?.second
         }
+
+        private fun StackTraceElement.toFileIdentifier() = "$fileName$className"
     }
 }
