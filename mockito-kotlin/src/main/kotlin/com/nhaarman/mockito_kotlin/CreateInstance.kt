@@ -29,6 +29,7 @@ import org.mockito.Answers
 import org.mockito.internal.creation.MockSettingsImpl
 import org.mockito.internal.creation.bytebuddy.MockMethodInterceptor
 import org.mockito.internal.util.MockUtil
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -49,16 +50,18 @@ inline fun <reified T> createArrayInstance() = arrayOf<T>()
 
 inline fun <reified T : Any> createInstance() = createInstance(T::class)
 
+@Suppress("UNCHECKED_CAST")
 fun <T : Any> createInstance(kClass: KClass<T>): T {
-    return when {
-        kClass.hasObjectInstance() -> kClass.objectInstance!!
-        kClass.isMockable() -> kClass.java.uncheckedMock()
-        kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
-        kClass.isEnum() -> kClass.java.enumConstants.first()
-        kClass.isArray() -> kClass.toArrayInstance()
+    return MockitoKotlin.instanceCreator(kClass)?.invoke() as T? ?:
+            when {
+                kClass.hasObjectInstance() -> kClass.objectInstance!!
+                kClass.isMockable() -> kClass.java.uncheckedMock()
+                kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
+                kClass.isEnum() -> kClass.java.enumConstants.first()
+                kClass.isArray() -> kClass.toArrayInstance()
         kClass.isClassObject() -> kClass.toClassObject()
-        else -> kClass.easiestConstructor().newInstance()
-    }
+                else -> kClass.easiestConstructor().newInstance()
+            }
 }
 
 /**
@@ -134,10 +137,23 @@ private fun <T : Any> KClass<T>.toClassObject(): T {
 }
 
 private fun <T : Any> KFunction<T>.newInstance(): T {
-    isAccessible = true
-    return callBy(parameters.associate {
-        it to it.type.createNullableInstance<T>()
-    })
+    try {
+        isAccessible = true
+        return callBy(parameters.associate {
+            it to it.type.createNullableInstance<T>()
+        })
+    } catch(e: InvocationTargetException) {
+        throw MockitoKotlinException(
+                """
+
+        Could not create an instance of class ${this.returnType}, because of an error with the following message:
+
+            "${e.cause?.message}"
+
+        Try registering an instance creator yourself, using MockitoKotlin.registerInstanceCreator<${this.returnType}> {...}.""",
+                e.cause
+        )
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
