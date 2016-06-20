@@ -57,7 +57,7 @@ class EqTest {
         val result = eq(interfaceInstance)
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is MyClass)
     }
 
     @Test
@@ -66,7 +66,7 @@ class EqTest {
         val result = eq(openClassInstance)
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is MyClass)
     }
 
     @Test
@@ -75,7 +75,7 @@ class EqTest {
         val result = eq(closedClassInstance)
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ClosedClass)
     }
 
     private interface MyInterface
