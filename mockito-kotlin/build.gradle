@@ -1,7 +1,7 @@
 apply plugin: 'kotlin'
 
 buildscript {
-  ext.kotlin_version = '1.0.2-1'
+  ext.kotlin_version = '1.0.3'
 
   repositories {
     mavenCentral()
