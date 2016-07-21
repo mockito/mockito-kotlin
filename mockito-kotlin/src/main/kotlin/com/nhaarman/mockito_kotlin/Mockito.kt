@@ -69,10 +69,10 @@ inline fun <reified T : Any> isA() = Mockito.isA(T::class.java)
 inline fun <reified T : Any> isNotNull() = Mockito.isNotNull(T::class.java)
 inline fun <reified T : Any> isNull(): T? = Mockito.isNull(T::class.java)
 
-inline fun <reified T : Any> mock() = Mockito.mock(T::class.java)
-inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>) = Mockito.mock(T::class.java, defaultAnswer)
-inline fun <reified T : Any> mock(s: MockSettings) = Mockito.mock(T::class.java, s)
-inline fun <reified T : Any> mock(s: String) = Mockito.mock(T::class.java, s)
+inline fun <reified T : Any> mock(): T = Mockito.mock(T::class.java)!!
+inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(T::class.java, defaultAnswer)!!
+inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
+inline fun <reified T : Any> mock(s: String): T = Mockito.mock(T::class.java, s)!!
 
 fun mockingDetails(toInspect: Any) = Mockito.mockingDetails(toInspect)
 fun never() = Mockito.never()
