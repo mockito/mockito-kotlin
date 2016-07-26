@@ -92,6 +92,18 @@ For example:
 verify(myClass).setItems(argThat{ size == 2 })
 ```
 
+### Argument Captors
+
+Argument Captors can be used to capture argument values for further assertions.
+For example:
+
+```kotlin
+verify(myClass).setItems(capture { items ->
+  assertEquals(2, items.size)
+  assertEquals("test", items[0])
+})
+```
+
 ### Convenience functions
 
 Most of Mockito's static functions are available as top-level functions.
