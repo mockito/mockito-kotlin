@@ -231,6 +231,25 @@ class MockitoTest {
     }
 
     @Test
+    fun testDoReturnNullValue() {
+        val mock = mock<Methods>()
+
+        doReturn(null).whenever(mock).stringResult()
+
+        expect(mock.stringResult()).toBeNull()
+    }
+
+    @Test
+    fun testDoReturnNullValues() {
+        val mock = mock<Methods>()
+
+        doReturn(null, null).whenever(mock).stringResult()
+
+        expect(mock.stringResult()).toBeNull()
+        expect(mock.stringResult()).toBeNull()
+    }
+
+    @Test
     fun testDoReturnValues() {
         val mock = mock<Methods>()
 

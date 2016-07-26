@@ -62,8 +62,8 @@ fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber = Mockito.doAnswer {
 
 fun doCallRealMethod(): Stubber = Mockito.doCallRealMethod()!!
 fun doNothing(): Stubber = Mockito.doNothing()!!
-fun doReturn(value: Any): Stubber = Mockito.doReturn(value)!!
-fun doReturn(toBeReturned: Any, vararg toBeReturnedNext: Any): Stubber = Mockito.doReturn(toBeReturned, *toBeReturnedNext)!!
+fun doReturn(value: Any?): Stubber = Mockito.doReturn(value)!!
+fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber = Mockito.doReturn(toBeReturned, *toBeReturnedNext)!!
 fun doThrow(toBeThrown: KClass<out Throwable>): Stubber = Mockito.doThrow(toBeThrown.java)!!
 fun doThrow(vararg toBeThrown: Throwable): Stubber = Mockito.doThrow(*toBeThrown)!!
 
