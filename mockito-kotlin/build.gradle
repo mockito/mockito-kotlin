@@ -22,9 +22,15 @@ dependencies {
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
   compile "org.mockito:mockito-core:2.0.52-beta"
 
+
   /* Tests */
   testCompile "junit:junit:4.12"
   testCompile "com.nhaarman:expect.kt:0.5.1"
+  testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+
+  def powermockVersion = "1.6.5"
+  testCompile "org.powermock:powermock-module-junit4:${powermockVersion}"
+  testCompile "org.powermock:powermock-api-mockito2:${powermockVersion}"
 }
 
 publishing {
