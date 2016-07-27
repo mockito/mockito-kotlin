@@ -48,7 +48,7 @@ inline fun <reified T : Any> anySet(): Set<T> = Mockito.anySetOf(T::class.java)
 inline fun <reified K : Any, reified V : Any> anyMap(): Map<K, V> = Mockito.anyMapOf(K::class.java, V::class.java)
 inline fun <reified T : Any> anyVararg() = Mockito.anyVararg<T>() ?: createInstance<T>()
 
-inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
+inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance<T>()
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
 fun atLeastOnce(): VerificationMode = Mockito.atLeastOnce()!!

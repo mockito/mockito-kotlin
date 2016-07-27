@@ -24,8 +24,6 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.mockito_kotlin.MockitoKotlin
 import com.nhaarman.mockito_kotlin.createInstance
 import org.junit.Test
 import java.util.*
@@ -39,7 +37,7 @@ class CreateInstanceTest {
         val result = createInstance<Byte>()
 
         /* Then */
-        expect(result).toBe(0)
+        expect(result is Byte)
     }
 
     @Test
@@ -48,7 +46,7 @@ class CreateInstanceTest {
         val result = createInstance<Short>()
 
         /* Then */
-        expect(result).toBe(0)
+        expect(result is Short)
     }
 
     @Test
@@ -57,7 +55,7 @@ class CreateInstanceTest {
         val result = createInstance<Int>()
 
         /* Then */
-        expect(result).toBe(0)
+        expect(result is Int)
     }
 
     @Test
@@ -66,7 +64,7 @@ class CreateInstanceTest {
         val result = createInstance<Long>()
 
         /* Then */
-        expect(result).toBe(0)
+        expect(result is Long)
     }
 
     @Test
@@ -75,7 +73,7 @@ class CreateInstanceTest {
         val result = createInstance<Double>()
 
         /* Then */
-        expect(result).toBeIn(-0.000001..0.000001)
+        expect(result is Double)
     }
 
     @Test
@@ -84,7 +82,7 @@ class CreateInstanceTest {
         val result = createInstance<Float>()
 
         /* Then */
-        expect(result).toBeIn(-0.000001f..0.000001f)
+        expect(result is Float)
     }
 
     @Test
@@ -93,7 +91,7 @@ class CreateInstanceTest {
         val result = createInstance<Boolean>()
 
         /* Then */
-        expect(result).toBe(true)
+        expect(result is Boolean)
     }
 
     @Test
@@ -102,7 +100,7 @@ class CreateInstanceTest {
         val result = createInstance<String>()
 
         /* Then */
-        expect(result).toBe("")
+        expect(result is String)
     }
 
     @Test
@@ -111,7 +109,7 @@ class CreateInstanceTest {
         val result = createInstance<ByteArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ByteArray)
     }
 
     @Test
@@ -120,7 +118,7 @@ class CreateInstanceTest {
         val result = createInstance<ShortArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ShortArray)
     }
 
     @Test
@@ -129,7 +127,7 @@ class CreateInstanceTest {
         val result = createInstance<IntArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is IntArray)
     }
 
     @Test
@@ -138,7 +136,7 @@ class CreateInstanceTest {
         val result = createInstance<LongArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is LongArray)
     }
 
     @Test
@@ -147,7 +145,7 @@ class CreateInstanceTest {
         val result = createInstance<DoubleArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is DoubleArray)
     }
 
     @Test
@@ -156,13 +154,16 @@ class CreateInstanceTest {
         val result = createInstance<FloatArray>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is FloatArray)
     }
 
-    @Test(expected = UnsupportedOperationException::class)
+    @Test
     fun classArray_usingAny() {
         /* When */
-        createInstance<Array<Open>>()
+        val result = createInstance<Array<Open>>()
+
+        /* Then */
+        expect(result is Array<Open>)
     }
 
     @Test
@@ -171,7 +172,7 @@ class CreateInstanceTest {
         val result = createInstance<ClosedClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ClosedClass)
     }
 
     @Test
@@ -180,7 +181,7 @@ class CreateInstanceTest {
         val result = createInstance<ClosedParameterizedClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ClosedParameterizedClass)
     }
 
     @Test
@@ -189,7 +190,7 @@ class CreateInstanceTest {
         val result = createInstance<ClosedClosedParameterizedClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ClosedClosedParameterizedClass)
     }
 
     @Test
@@ -198,7 +199,7 @@ class CreateInstanceTest {
         val result = createInstance<SingleParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is SingleParameterClass)
     }
 
     @Test
@@ -207,7 +208,7 @@ class CreateInstanceTest {
         val result = createInstance<TwoParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is TwoParameterClass)
     }
 
     @Test
@@ -216,7 +217,7 @@ class CreateInstanceTest {
         val result = createInstance<ThreeParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ThreeParameterClass)
     }
 
     @Test
@@ -225,7 +226,7 @@ class CreateInstanceTest {
         val result = createInstance<FourParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is FourParameterClass)
     }
 
     @Test
@@ -234,7 +235,7 @@ class CreateInstanceTest {
         val result = createInstance<FiveParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is FiveParameterClass)
     }
 
     @Test
@@ -243,7 +244,7 @@ class CreateInstanceTest {
         val result = createInstance<SixParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is SixParameterClass)
     }
 
     @Test
@@ -252,7 +253,7 @@ class CreateInstanceTest {
         val result = createInstance<SevenParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is SevenParameterClass)
     }
 
     @Test
@@ -261,7 +262,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedSingleParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedSingleParameterClass)
     }
 
     @Test
@@ -270,7 +271,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedTwoParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedTwoParameterClass)
     }
 
     @Test
@@ -279,7 +280,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedThreeParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedThreeParameterClass)
     }
 
     @Test
@@ -288,7 +289,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedFourParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedFourParameterClass)
     }
 
     @Test
@@ -297,7 +298,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedFiveParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedFiveParameterClass)
     }
 
     @Test
@@ -306,7 +307,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedSixParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedSixParameterClass)
     }
 
     @Test
@@ -315,7 +316,7 @@ class CreateInstanceTest {
         val result = createInstance<NestedSevenParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NestedSevenParameterClass)
     }
 
     @Test
@@ -324,7 +325,7 @@ class CreateInstanceTest {
         val result = createInstance<ParameterizedClass<ClosedClass>>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is ParameterizedClass<ClosedClass>)
     }
 
     @Test
@@ -333,7 +334,7 @@ class CreateInstanceTest {
         val result = createInstance<NullableParameterClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is NullableParameterClass)
     }
 
     @Test
@@ -342,7 +343,7 @@ class CreateInstanceTest {
         val result = createInstance<List<String>>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is List<String>)
     }
 
     @Test
@@ -351,7 +352,7 @@ class CreateInstanceTest {
         val result = createInstance<MyEnum>()
 
         /* Then */
-        expect(result).toBe(MyEnum.VALUE)
+        expect(result is MyEnum)
     }
 
     @Test
@@ -360,7 +361,7 @@ class CreateInstanceTest {
         val result = createInstance<Unit>()
 
         /* Then */
-        expect(result).toBe(Unit)
+        expect(result is Unit)
     }
 
     @Test
@@ -369,7 +370,7 @@ class CreateInstanceTest {
         val result = createInstance<PrivateClass>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is PrivateClass)
     }
 
     @Test
@@ -378,7 +379,7 @@ class CreateInstanceTest {
         val result = createInstance<Class<String>>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is Class<String>)
     }
 
     @Test
@@ -387,41 +388,25 @@ class CreateInstanceTest {
         val result = createInstance<KClass<String>>()
 
         /* Then */
-        expect(result).toNotBeNull()
+        expect(result is KClass<String>)
     }
 
     @Test
     fun uuid() {
-        /**
-         * The UUID class has a single-argument constructor that expects an array with some specific contents.
-         * We avoid these types of constructors by calling another constructor, if available.
-         * In this case, UUID(Long, Long).
-         */
-
         /* When */
         val result = createInstance<UUID>()
 
         /* Then */
-        expect(result).toBe(UUID(0, 0))
+        expect(result is UUID)
     }
 
     @Test
-    fun registeredInstanceCreator() {
-        /* Given */
-        MockitoKotlin.registerInstanceCreator { ForbiddenConstructor(2) }
-
+    fun forbiddenConstructor() {
         /* When */
         val result = createInstance<ForbiddenConstructor>()
 
         /* Then */
-        expect(result).toNotBeNull()
-    }
-
-    @Test
-    fun failedConstructor_throwsDescriptiveError() {
-        expectErrorWithMessage("Could not create an instance of class") on {
-            createInstance<ForbiddenConstructor>()
-        }
+        expect(result is ForbiddenConstructor)
     }
 
     private class PrivateClass private constructor(val data: String)
