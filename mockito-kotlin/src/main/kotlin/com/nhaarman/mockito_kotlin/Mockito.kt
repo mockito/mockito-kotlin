@@ -31,7 +31,6 @@ import org.mockito.MockingDetails
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import org.mockito.stubbing.DeprecatedOngoingStubbing
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import org.mockito.verification.VerificationMode
@@ -93,7 +92,6 @@ fun <T> same(value: T): T? = Mockito.same(value)
 inline fun <reified T : Any> spy(): T = Mockito.spy(T::class.java)!!
 fun <T> spy(value: T): T = Mockito.spy(value)!!
 
-fun <T> stub(methodCall: T): DeprecatedOngoingStubbing<T> = Mockito.stub(methodCall)!!
 fun timeout(millis: Long): VerificationWithTimeout = Mockito.timeout(millis)!!
 fun times(numInvocations: Int): VerificationMode = Mockito.times(numInvocations)!!
 fun validateMockitoUsage() = Mockito.validateMockitoUsage()
