@@ -79,6 +79,17 @@ inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(
 inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
 inline fun <reified T : Any> mock(s: String): T = Mockito.mock(T::class.java, s)!!
 
+inline fun <reified T : Any> mock(stubbing: KStubbing<T>.() -> Unit): T
+        = Mockito.mock(T::class.java)!!.apply { stubbing(KStubbing(this)) }
+
+class KStubbing<out T>(private val mock: T) {
+    fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
+    fun <R> on(methodCall: T.() -> R) = Mockito.`when`(mock.methodCall())
+}
+
+fun <T> OngoingStubbing<T>.doReturn(t: T) = thenReturn(t)
+fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T) = thenReturn(t, *ts)
+
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
 inline fun <reified T : Any> notNull(): T? = Mockito.notNull(T::class.java)
