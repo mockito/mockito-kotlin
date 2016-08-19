@@ -282,4 +282,60 @@ class MockitoTest {
             mock.go()
         }
     }
+
+    @Test
+    fun testMockStubbing_lambda() {
+        /* Given */
+        val mock = mock<Open>() {
+            on { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun testMockStubbing_normalOverridesLambda() {
+        /* Given */
+        val mock = mock<Open>() {
+            on { stringResult() }.doReturn("A")
+        }
+        whenever(mock.stringResult()).thenReturn("B")
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("B")
+    }
+
+    @Test
+    fun testMockStubbing_methodCall() {
+        /* Given */
+        val mock = mock<Open>()
+        mock<Open> {
+            on(mock.stringResult()).doReturn("A")
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun doReturn_withSingleItemList() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() } doReturn listOf("a", "b")
+        }
+
+        /* Then */
+        expect(mock.stringResult()).toBe("a")
+        expect(mock.stringResult()).toBe("b")
+    }
 }
