@@ -287,7 +287,7 @@ class MockitoTest {
     fun testMockStubbing_lambda() {
         /* Given */
         val mock = mock<Open>() {
-            on { stringResult() }.doReturn("A")
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -325,5 +325,17 @@ class MockitoTest {
 
         /* Then */
         expect(result).toBe("A")
+    }
+
+    @Test
+    fun doReturn_withSingleItemList() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() } doReturn listOf("a", "b")
+        }
+
+        /* Then */
+        expect(mock.stringResult()).toBe("a")
+        expect(mock.stringResult()).toBe("b")
     }
 }

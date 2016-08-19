@@ -87,8 +87,9 @@ class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: T.() -> R) = Mockito.`when`(mock.methodCall())
 }
 
-fun <T> OngoingStubbing<T>.doReturn(t: T) = thenReturn(t)
-fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T) = thenReturn(t, *ts)
+infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> = thenReturn(t)
+fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> = thenReturn(t, *ts)
+inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> = thenReturn(ts[0], *ts.drop(1).toTypedArray())
 
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
