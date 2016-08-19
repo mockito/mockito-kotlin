@@ -31,7 +31,6 @@ import org.mockito.MockingDetails
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import org.mockito.stubbing.DeprecatedOngoingStubbing
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import org.mockito.verification.VerificationMode
@@ -80,6 +79,18 @@ inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(
 inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
 inline fun <reified T : Any> mock(s: String): T = Mockito.mock(T::class.java, s)!!
 
+inline fun <reified T : Any> mock(stubbing: KStubbing<T>.() -> Unit): T
+        = Mockito.mock(T::class.java)!!.apply { stubbing(KStubbing(this)) }
+
+class KStubbing<out T>(private val mock: T) {
+    fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
+    fun <R> on(methodCall: T.() -> R) = Mockito.`when`(mock.methodCall())
+}
+
+infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> = thenReturn(t)
+fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> = thenReturn(t, *ts)
+inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> = thenReturn(ts[0], *ts.drop(1).toTypedArray())
+
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
 inline fun <reified T : Any> notNull(): T? = Mockito.notNull(T::class.java)
@@ -93,7 +104,6 @@ fun <T> same(value: T): T? = Mockito.same(value)
 inline fun <reified T : Any> spy(): T = Mockito.spy(T::class.java)!!
 fun <T> spy(value: T): T = Mockito.spy(value)!!
 
-fun <T> stub(methodCall: T): DeprecatedOngoingStubbing<T> = Mockito.stub(methodCall)!!
 fun timeout(millis: Long): VerificationWithTimeout = Mockito.timeout(millis)!!
 fun times(numInvocations: Int): VerificationMode = Mockito.times(numInvocations)!!
 fun validateMockitoUsage() = Mockito.validateMockitoUsage()

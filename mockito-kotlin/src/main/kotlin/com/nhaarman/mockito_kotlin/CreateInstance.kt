@@ -177,7 +177,7 @@ private fun <T : Any> KType.createNullableInstance(): T? {
 private fun <T> Class<T>.uncheckedMock(): T {
     val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
-    return MockUtil().createMock(creationSettings).apply {
+    return MockUtil.createMock(creationSettings).apply {
         (this as MockMethodInterceptor.MockAccess).mockitoInterceptor = null
     }
 }
