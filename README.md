@@ -17,96 +17,25 @@ dependencies {
 }
 ```
 
-## Examples
+## Example
 
-### Creating mock instances
-
-Due to Kotlin's [reified type parameters](https://kotlinlang.org/docs/reference/inline-functions.html#reified-type-parameters), if the type can be inferred, you don't have to specify it explicitly:
-
-**Java**:
-```java
-MyClass c = mock(Myclass.class);
-c.doSomething(mock(MyOtherClass.class));
-```
-
-**Kotlin**:
-```kotlin
-val c : MyClass = mock()
-c.doSomething(mock())
-```
-
-If the type can't be inferred, you can pass it like so:
+A test using Mockito-Kotlin typically looks like the following:
 
 ```kotlin
-val d = mock<MyClass>()
+@Test
+fun a(){ 
+  /* Given */
+  val mock = mock<MyClass> {
+    on { getText() } doReturn "text"
+  }
+  val classUnderTest = ClassUnderTest(mock)
+  
+  /* When */
+  classUnderText.doAction()
+  
+  /* Then */
+  verify(mock).doSomething(any())
+}
 ```
 
-
-### Expecting any value
-
-Mockito's `any(Class<T>)` often returns `null` for non-primitive classes.
-In Kotlin, this can be a problem due to its [null-safety](https://kotlinlang.org/docs/reference/null-safety.html) feature.
-This library creates non-null instances when necessary.
-Again, if the type can be inferred, you don't have to specify it explicitely:
-
-**Java**:
-```java
-verify(myClass).doSomething(any(String.class));
-```
-
-**Kotlin**:
-```kotlin
-verify(myClass).doSomething(any()); // Non-nullable parameter type is inferred
-```
-
-For generic arrays, use the `anyArray()` method:
-
-```kotlin
-verify(myClass).setItems(anyArray())
-```
-
-## Custom instance creators
-
-There are some cases where Mockito-Kotlin cannot create an instance of a class. 
-This can for instance be when a constructor has some specific preconditions
-for its parameters.
-You can _register_ `instance creators` to overcome this:
-
-```kotlin
-MockitoKotlin.registerInstanceCreator<MyClass> { MyClass(5) }
-```
-
-Whenever MockitoKotlin needs to create an instance of `MyClass`, this function is called,
-giving you ultimate control over how these instances are created.
-
-These instance creators work on a per-file basis: for each of your test files
-you will need to register them again.
-
-### Argument Matchers
-
-Using higher-order functions, you can write very clear expectations about expected values.
-For example:
-
-**Kotlin**:
-```kotlin
-verify(myClass).setItems(argThat{ size == 2 })
-```
-
-### Argument Captors
-
-Argument Captors can be used to capture argument values for further assertions.
-For example:
-
-```kotlin
-verify(myClass).setItems(capture { items ->
-  assertEquals(2, items.size)
-  assertEquals("test", items[0])
-})
-```
-
-### Convenience functions
-
-Most of Mockito's static functions are available as top-level functions.
-That means, IDE's like IntelliJ can easily import and autocomplete them, saving you the hassle of manually importing them.
-
-
+For more info and samples, see the [Wiki](https://github.com/nhaarman/mockito-kotlin/wiki).
