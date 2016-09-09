@@ -31,7 +31,7 @@ fun a(){
   val classUnderTest = ClassUnderTest(mock)
   
   /* When */
-  classUnderText.doAction()
+  classUnderTest.doAction()
   
   /* Then */
   verify(mock).doSomething(any())
