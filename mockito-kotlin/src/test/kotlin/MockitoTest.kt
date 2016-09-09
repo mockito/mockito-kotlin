@@ -133,6 +133,15 @@ class MockitoTest {
             })
         }
     }
+    @Test
+    fun listArgForWhich() {
+        mock<Methods>().apply {
+            closedList(listOf(Closed(), Closed()))
+            verify(this).closedList(argForWhich {
+                size == 2
+            })
+        }
+    }
 
     @Test
     fun atLeastXInvocations() {
