@@ -40,7 +40,7 @@ import kotlin.reflect.KClass
 fun after(millis: Long) = Mockito.after(millis)
 
 inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
-inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
+inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
 inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance<T>()
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
 
