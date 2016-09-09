@@ -54,6 +54,6 @@ class MockitoKotlinTest {
         val result = createInstance<Closed>()
 
         /* Then */
-        expect(result).toNotBeReferentially(closed)
+        expect(result).toNotBeTheSameAs(closed)
     }
 }
