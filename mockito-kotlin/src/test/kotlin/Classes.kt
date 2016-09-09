@@ -43,6 +43,7 @@ interface Methods {
     fun intArray(i: IntArray)
     fun closed(c: Closed)
     fun closedArray(a: Array<Closed>)
+    fun closedNullableArray(a: Array<Closed?>)
     fun closedCollection(c: Collection<Closed>)
     fun closedList(c: List<Closed>)
     fun closedStringMap(m: Map<Closed, String>)

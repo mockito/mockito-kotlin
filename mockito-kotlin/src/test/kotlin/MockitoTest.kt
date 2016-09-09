@@ -65,6 +65,14 @@ class MockitoTest {
     }
 
     @Test
+    fun anyNullableClassArray() {
+        mock<Methods>().apply {
+            closedNullableArray(arrayOf(Closed(), null))
+            verify(this).closedNullableArray(anyArray())
+        }
+    }
+
+    @Test
     fun anyCollectionOfClosed() {
         mock<Methods>().apply {
             closedCollection(listOf())
