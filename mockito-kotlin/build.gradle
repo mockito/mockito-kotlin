@@ -24,7 +24,7 @@ dependencies {
 
   /* Tests */
   testCompile "junit:junit:4.12"
-  testCompile "com.nhaarman:expect.kt:0.5.1"
+  testCompile "com.nhaarman:expect.kt:0.6.0"
 }
 
 publishing {
