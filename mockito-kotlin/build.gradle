@@ -20,11 +20,11 @@ repositories {
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-  compile "org.mockito:mockito-core:2.0.99-beta"
+  compile "org.mockito:mockito-core:2.1.0-beta.125"
 
   /* Tests */
   testCompile "junit:junit:4.12"
-  testCompile "com.nhaarman:expect.kt:0.5.1"
+  testCompile "com.nhaarman:expect.kt:0.6.0"
 }
 
 publishing {

@@ -40,13 +40,8 @@ import kotlin.reflect.KClass
 fun after(millis: Long) = Mockito.after(millis)
 
 inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
-inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
-inline fun <reified T : Any> anyCollection(): Collection<T> = Mockito.anyCollectionOf(T::class.java)
-inline fun <reified T : Any> anyList(): List<T> = Mockito.anyListOf(T::class.java)
-inline fun <reified T : Any> anySet(): Set<T> = Mockito.anySetOf(T::class.java)
-inline fun <reified K : Any, reified V : Any> anyMap(): Map<K, V> = Mockito.anyMapOf(K::class.java, V::class.java)
-inline fun <reified T : Any> anyVararg() = Mockito.anyVararg<T>() ?: createInstance<T>()
-
+inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
+inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance<T>()
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
@@ -71,8 +66,8 @@ fun ignoreStubs(vararg mocks: Any): Array<out Any> = Mockito.ignoreStubs(*mocks)
 fun inOrder(vararg mocks: Any): InOrder = Mockito.inOrder(*mocks)!!
 
 inline fun <reified T : Any> isA(): T? = Mockito.isA(T::class.java)
-inline fun <reified T : Any> isNotNull(): T? = Mockito.isNotNull(T::class.java)
-inline fun <reified T : Any> isNull(): T? = Mockito.isNull(T::class.java)
+fun <T : Any> isNotNull(): T? = Mockito.isNotNull()
+fun <T : Any> isNull(): T? = Mockito.isNull()
 
 inline fun <reified T : Any> mock(): T = Mockito.mock(T::class.java)!!
 inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(T::class.java, defaultAnswer)!!
@@ -93,7 +88,7 @@ inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingSt
 
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
-inline fun <reified T : Any> notNull(): T? = Mockito.notNull(T::class.java)
+fun <T : Any> notNull(): T? = Mockito.notNull()
 fun only(): VerificationMode = Mockito.only()!!
 fun <T> refEq(value: T, vararg excludeFields: String): T? = Mockito.refEq(value, *excludeFields)
 
@@ -115,3 +110,15 @@ fun verifyZeroInteractions(vararg mocks: Any) = Mockito.verifyZeroInteractions(*
 
 fun <T> whenever(methodCall: T): OngoingStubbing<T> = Mockito.`when`(methodCall)!!
 fun withSettings(): MockSettings = Mockito.withSettings()!!
+
+@Deprecated("Use any() instead.", ReplaceWith("any()"))
+inline fun <reified T : Any> anyCollection(): Collection<T> = any()
+
+@Deprecated("Use any() instead.", ReplaceWith("any()"))
+inline fun <reified T : Any> anyList(): List<T> = any()
+
+@Deprecated("Use any() instead.", ReplaceWith("any()"))
+inline fun <reified T : Any> anySet(): Set<T> = any()
+
+@Deprecated("Use any() instead.", ReplaceWith("any()"))
+inline fun <reified K : Any, reified V : Any> anyMap(): Map<K, V> = any()

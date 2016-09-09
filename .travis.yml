@@ -14,3 +14,6 @@ install:
 
 script:
   - ./gradlew test
+
+notifications:
+  email: false

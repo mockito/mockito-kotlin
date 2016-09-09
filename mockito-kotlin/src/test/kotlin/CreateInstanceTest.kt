@@ -424,6 +424,15 @@ class CreateInstanceTest {
         }
     }
 
+    @Test
+    fun defaultEmptyConstructor_takesSimplestConstructor() {
+        /* When */
+        val result = createInstance(WithDefaultEmptyConstructor::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
@@ -457,6 +466,10 @@ class CreateInstanceTest {
 
         constructor(value: Int) {
         }
+    }
+
+    class WithDefaultEmptyConstructor() {
+        constructor(c: ForbiddenConstructor) : this()
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }
