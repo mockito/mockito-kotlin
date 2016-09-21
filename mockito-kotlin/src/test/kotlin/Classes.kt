@@ -51,6 +51,7 @@ interface Methods {
     fun string(s: String)
     fun closedVararg(vararg c: Closed)
     fun throwableClass(t: ThrowableClass)
+    fun nullableString(s: String?)
 
     fun stringResult(): String
 }

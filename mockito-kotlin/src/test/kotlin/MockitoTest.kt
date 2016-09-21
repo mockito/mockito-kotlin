@@ -117,6 +117,22 @@ class MockitoTest {
     }
 
     @Test
+    fun anyNull_neverVerifiesAny() {
+        mock<Methods>().apply {
+            nullableString(null)
+            verify(this, never()).nullableString(any())
+        }
+    }
+
+    @Test
+    fun anyNull_verifiesAnyOrNull() {
+        mock<Methods>().apply {
+            nullableString(null)
+            verify(this).nullableString(anyOrNull())
+        }
+    }
+
+    @Test
     fun anyThrowableWithSingleThrowableConstructor() {
         mock<Methods>().apply {
             throwableClass(ThrowableClass(IOException()))
@@ -133,6 +149,7 @@ class MockitoTest {
             })
         }
     }
+
     @Test
     fun listArgForWhich() {
         mock<Methods>().apply {
