@@ -39,10 +39,16 @@ import kotlin.reflect.KClass
 
 fun after(millis: Long) = Mockito.after(millis)
 
+/** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
-inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
+/** Matches anything, including nulls. */
+inline fun <reified T : Any> anyOrNull(): T = Mockito.any<T>() ?: createInstance<T>()
+/** Matches any vararg object, including nulls. */
 inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance<T>()
+/** Matches any array of type T. */
+inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
+inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
 fun atLeastOnce(): VerificationMode = Mockito.atLeastOnce()!!
