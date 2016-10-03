@@ -27,7 +27,7 @@ package com.nhaarman.mockito_kotlin
 
 import org.mockito.Answers
 import org.mockito.internal.creation.MockSettingsImpl
-import org.mockito.internal.creation.bytebuddy.MockMethodInterceptor
+import org.mockito.internal.creation.bytebuddy.MockAccess
 import org.mockito.internal.util.MockUtil
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
@@ -172,6 +172,6 @@ private fun <T> Class<T>.uncheckedMock(): T {
     val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
     return MockUtil.createMock(creationSettings).apply {
-        (this as MockMethodInterceptor.MockAccess).mockitoInterceptor = null
+        (this as MockAccess).mockitoInterceptor = null
     }
 }

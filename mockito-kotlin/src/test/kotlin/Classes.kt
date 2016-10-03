@@ -54,6 +54,7 @@ interface Methods {
     fun nullableString(s: String?)
 
     fun stringResult(): String
+    fun builderMethod() : Methods
 }
 
 class ThrowableClass(cause: Throwable) : Throwable(cause)

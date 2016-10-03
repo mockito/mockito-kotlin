@@ -41,12 +41,16 @@ fun after(millis: Long) = Mockito.after(millis)
 
 /** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
+
 /** Matches anything, including nulls. */
 inline fun <reified T : Any> anyOrNull(): T = Mockito.any<T>() ?: createInstance<T>()
+
 /** Matches any vararg object, including nulls. */
 inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance<T>()
+
 /** Matches any array of type T. */
 inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
+
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
 
@@ -80,8 +84,11 @@ inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(
 inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
 inline fun <reified T : Any> mock(s: String): T = Mockito.mock(T::class.java, s)!!
 
-inline fun <reified T : Any> mock(stubbing: KStubbing<T>.() -> Unit): T
-        = Mockito.mock(T::class.java)!!.apply { stubbing(KStubbing(this)) }
+inline fun <reified T : Any> mock(stubbing: KStubbing<T>.(T) -> Unit): T {
+    return mock<T>().apply {
+        KStubbing(this).stubbing(this)
+    }
+}
 
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
