@@ -362,6 +362,20 @@ class MockitoTest {
     }
 
     @Test
+    fun testMockStubbing_builder() {
+        /* Given */
+        val mock = mock<Methods> { mock ->
+            on { builderMethod() } doReturn mock
+        }
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBeTheSameAs(mock)
+    }
+
+    @Test
     fun doReturn_withSingleItemList() {
         /* Given */
         val mock = mock<Open> {
