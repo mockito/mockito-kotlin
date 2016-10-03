@@ -78,6 +78,8 @@ class MockitoKotlin {
                     ?.second
         }
 
-        private fun StackTraceElement.toFileIdentifier() = "$fileName$className"
+        private fun StackTraceElement.toFileIdentifier() = "$fileName$className".let {
+            if (it.contains("$")) it.substring(0..it.indexOf("$") - 1) else it
+        }
     }
 }
