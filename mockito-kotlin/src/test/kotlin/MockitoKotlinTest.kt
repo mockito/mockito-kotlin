@@ -24,11 +24,16 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.MockitoKotlin
-import com.nhaarman.mockito_kotlin.createInstance
+import com.nhaarman.mockito_kotlin.*
+import org.junit.After
 import org.junit.Test
 
 class MockitoKotlinTest {
+
+    @After
+    fun teardown() {
+        MockitoKotlin.resetInstanceCreators()
+    }
 
     @Test
     fun register() {
@@ -55,5 +60,19 @@ class MockitoKotlinTest {
 
         /* Then */
         expect(result).toNotBeTheSameAs(closed)
+    }
+
+    @Test
+    fun usingInstanceCreatorInsideLambda() {
+        MockitoKotlin.registerInstanceCreator { CreateInstanceTest.ForbiddenConstructor(2) }
+
+        mock<TestClass> {
+            on { doSomething(any()) } doReturn ""
+        }
+    }
+
+    interface TestClass {
+
+        fun doSomething(c: CreateInstanceTest.ForbiddenConstructor): String
     }
 }
