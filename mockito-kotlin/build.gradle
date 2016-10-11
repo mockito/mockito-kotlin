@@ -71,3 +71,29 @@ task sourcesJar(type: Jar) {
   from sourceSets.main.allSource
   classifier = 'sources'
 }
+
+// In order to keep the new Mockito configuration from messing with some
+// valuable functional tests, we want to put the Inline-Mock-Maker plugin-based
+// tests in their own source set.
+sourceSets {
+  testInlineMockito {
+    kotlin//.srcDir 'src/testInlineMockito/kotlin'
+    resources//.srcDir 'src/testInlineMockito/resources'
+
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+  }
+}
+
+configurations {
+  testInlineMockitoCompile.extendsFrom testCompile
+  testInlineMockitoRuntime.extendsFrom testRuntime
+}
+
+// define custom test task for running integration tests
+task testInlineMockito(type: Test) {
+  testClassesDir = sourceSets.testInlineMockito.output.classesDir
+  classpath = sourceSets.testInlineMockito.runtimeClasspath
+}
+
+check.dependsOn testInlineMockito

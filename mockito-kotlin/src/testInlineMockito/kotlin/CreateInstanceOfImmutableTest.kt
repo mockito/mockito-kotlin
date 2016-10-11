@@ -71,6 +71,7 @@ class CreateInstanceOfImmutableTest
      */
     class ClassToBeMocked
     {
+        @Suppress("UNUSED_PARAMETER")
         fun doSomethingElse(value: BigInteger): BigInteger
         {
             throw IllegalStateException("This should not be called!")
