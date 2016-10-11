@@ -96,4 +96,4 @@ task testInlineMockito(type: Test) {
   classpath = sourceSets.testInlineMockito.runtimeClasspath
 }
 
-check.dependsOn testInlineMockito
+test.dependsOn testInlineMockito
