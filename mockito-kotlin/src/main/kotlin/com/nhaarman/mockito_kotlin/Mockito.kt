@@ -53,6 +53,7 @@ inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class
 
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
+inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat<T> { it -> predicate(it); true } ?: createInstance(T::class)
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
 fun atLeastOnce(): VerificationMode = Mockito.atLeastOnce()!!

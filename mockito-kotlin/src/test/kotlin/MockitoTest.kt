@@ -163,6 +163,16 @@ class MockitoTest {
     }
 
     @Test
+    fun listArgCheck() {
+        mock<Methods>().apply {
+            closedList(listOf(Closed(), Closed()))
+            verify(this).closedList(check {
+                expect(it.size).toBe(2)
+            })
+        }
+    }
+
+    @Test
     fun atLeastXInvocations() {
         mock<Methods>().apply {
             string("")
