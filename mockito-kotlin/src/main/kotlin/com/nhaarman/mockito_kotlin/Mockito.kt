@@ -53,6 +53,7 @@ inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class
 
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
+inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat<T> { it -> predicate(it); true } ?: createInstance(T::class)
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
 fun atLeastOnce(): VerificationMode = Mockito.atLeastOnce()!!
@@ -98,6 +99,11 @@ class KStubbing<out T>(private val mock: T) {
 infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> = thenReturn(t)
 fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> = thenReturn(t, *ts)
 inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> = thenReturn(ts[0], *ts.drop(1).toTypedArray())
+
+infix fun <T> OngoingStubbing<T>.doThrow(t: Throwable): OngoingStubbing<T> = thenThrow(t)
+fun <T> OngoingStubbing<T>.doThrow(t: Throwable, vararg ts: Throwable): OngoingStubbing<T> = thenThrow(t, *ts)
+infix fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>): OngoingStubbing<T> = thenThrow(t.java)
+fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>, vararg ts: KClass<out Throwable>): OngoingStubbing<T> = thenThrow(t.java, *ts.map { it.java }.toTypedArray())
 
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!

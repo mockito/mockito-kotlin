@@ -159,10 +159,13 @@ class CreateInstanceTest {
         expect(result).toNotBeNull()
     }
 
-    @Test(expected = UnsupportedOperationException::class)
+    @Test
     fun classArray_usingAny() {
         /* When */
-        createInstance<Array<Open>>()
+        val result = createInstance<Array<Open>>()
+
+        /* Then */
+        expect(result).toBeInstanceOf<Array<Open>>()
     }
 
     @Test

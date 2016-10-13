@@ -1,5 +1,6 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import com.nhaarman.expect.fail
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
@@ -132,6 +133,7 @@ class MockitoTest {
         }
     }
 
+    /** https://github.com/nhaarman/mockito-kotlin/issues/27 */
     @Test
     fun anyThrowableWithSingleThrowableConstructor() {
         mock<Methods>().apply {
@@ -156,6 +158,16 @@ class MockitoTest {
             closedList(listOf(Closed(), Closed()))
             verify(this).closedList(argForWhich {
                 size == 2
+            })
+        }
+    }
+
+    @Test
+    fun listArgCheck() {
+        mock<Methods>().apply {
+            closedList(listOf(Closed(), Closed()))
+            verify(this).closedList(check {
+                expect(it.size).toBe(2)
             })
         }
     }
@@ -373,6 +385,80 @@ class MockitoTest {
 
         /* Then */
         expect(result).toBeTheSameAs(mock)
+    }
+
+    @Test
+    fun testMockStubbing_doThrow() {
+        /* Given */
+        val mock = mock<Methods> { mock ->
+            on { builderMethod() } doThrow IllegalArgumentException()
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: IllegalArgumentException) {
+        }
+    }
+
+    @Test
+    fun testMockStubbing_doThrowClass() {
+        /* Given */
+        val mock = mock<Methods> { mock ->
+            on { builderMethod() } doThrow IllegalArgumentException::class
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: IllegalArgumentException) {
+        }
+    }
+
+    @Test
+    fun testMockStubbing_doThrowVarargs() {
+        /* Given */
+        val mock = mock<Methods> { mock ->
+            on { builderMethod() }.doThrow(IllegalArgumentException(), UnsupportedOperationException())
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: IllegalArgumentException) {
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: UnsupportedOperationException) {
+        }
+    }
+
+    @Test
+    fun testMockStubbing_doThrowClassVarargs() {
+        /* Given */
+        val mock = mock<Methods> { mock ->
+            on { builderMethod() }.doThrow(IllegalArgumentException::class, UnsupportedOperationException::class)
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: IllegalArgumentException) {
+        }
+
+        try {
+            /* When */
+            mock.builderMethod()
+            fail("No exception thrown")
+        } catch(e: UnsupportedOperationException) {
+        }
     }
 
     @Test
