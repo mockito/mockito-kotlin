@@ -41,6 +41,7 @@ import kotlin.reflect.defaultType
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmName
+import java.lang.reflect.Array as JavaArray
 
 /**
  * A collection of functions that tries to create an instance of
@@ -51,6 +52,7 @@ import kotlin.reflect.jvm.jvmName
  * Checks whether the resource file to enable mocking of final classes is present.
  */
 private var mockMakerInlineEnabled: Boolean? = null
+
 private fun mockMakerInlineEnabled(jClass: Class<out Any>): Boolean {
     return mockMakerInlineEnabled ?:
             jClass.getResource("mockito-extensions/org.mockito.plugins.MockMaker")?.let {
@@ -137,7 +139,10 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
         "LongArray" -> longArrayOf()
         "DoubleArray" -> doubleArrayOf()
         "FloatArray" -> floatArrayOf()
-        else -> throw UnsupportedOperationException("Cannot create a generic array for $simpleName. Use createArrayInstance() or anyArray() instead.")
+        else -> {
+            val name = java.name.drop(2).dropLast(1)
+            return JavaArray.newInstance(Class.forName(name), 0) as T
+        }
     } as T
 }
 
