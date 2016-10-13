@@ -29,6 +29,7 @@ import org.mockito.Answers
 import org.mockito.internal.creation.MockSettingsImpl
 import org.mockito.internal.creation.bytebuddy.MockAccess
 import org.mockito.internal.util.MockUtil
+import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
@@ -45,6 +46,18 @@ import kotlin.reflect.jvm.jvmName
  * A collection of functions that tries to create an instance of
  * classes to avoid NPE's when using Mockito with Kotlin.
  */
+
+/**
+ * Checks whether the resource file to enable mocking of final classes is present.
+ */
+private var mockMakerInlineEnabled: Boolean? = null
+private fun mockMakerInlineEnabled(jClass: Class<out Any>): Boolean {
+    return mockMakerInlineEnabled ?:
+            jClass.getResource("mockito-extensions/org.mockito.plugins.MockMaker")?.let {
+                mockMakerInlineEnabled = File(it.file).readLines().filter { it == "mock-maker-inline" }.isNotEmpty()
+                mockMakerInlineEnabled
+            } ?: false
+}
 
 inline fun <reified T> createArrayInstance() = arrayOf<T>()
 
@@ -81,7 +94,10 @@ private fun <T> List<KFunction<T>>.withoutArrayParameters() = filter {
 @Suppress("SENSELESS_COMPARISON")
 private fun KClass<*>.hasObjectInstance() = objectInstance != null
 
-private fun KClass<*>.isMockable() = !Modifier.isFinal(java.modifiers)
+private fun KClass<*>.isMockable(): Boolean {
+    return !Modifier.isFinal(java.modifiers) || mockMakerInlineEnabled(java)
+}
+
 private fun KClass<*>.isEnum() = java.isEnum
 private fun KClass<*>.isArray() = java.isArray
 private fun KClass<*>.isClassObject() = jvmName.equals("java.lang.Class")
@@ -168,10 +184,10 @@ private fun <T : Any> KType.createNullableInstance(): T? {
  * Creates a mock instance of given class, without modifying or checking any internal Mockito state.
  */
 @Suppress("UNCHECKED_CAST")
-private fun <T> Class<T>.uncheckedMock(): T {
+fun <T> Class<T>.uncheckedMock(): T {
     val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
     return MockUtil.createMock(creationSettings).apply {
-        (this as MockAccess).mockitoInterceptor = null
+        (this as? MockAccess)?.mockitoInterceptor = null
     }
 }

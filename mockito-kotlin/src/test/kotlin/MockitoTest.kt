@@ -132,6 +132,7 @@ class MockitoTest {
         }
     }
 
+    /** https://github.com/nhaarman/mockito-kotlin/issues/27 */
     @Test
     fun anyThrowableWithSingleThrowableConstructor() {
         mock<Methods>().apply {
