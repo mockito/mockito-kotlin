@@ -26,9 +26,32 @@
 package com.nhaarman.mockito_kotlin
 
 import org.mockito.ArgumentCaptor
+import kotlin.reflect.KClass
 
-inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
+inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
+
+@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"))
+inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
+
+class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<T>) {
+
+    val value: T
+        get() = captor.value
+
+    val allValues: List<T>
+        get() = captor.allValues
+
+    fun capture(): T = captor.capture() ?: createInstance(tClass)
+}
+
+/**
+ * This method is deprecated because its behavior differs from the Java behavior.
+ * Instead, use [argumentCaptor] in the traditional way, or use one of
+ * [argThat], [argForWhich] or [check].
+ */
+@Deprecated("Use argumentCaptor() or argThat() instead.")
 inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
     var times = 0
     return argThat { if (++times == 1) consumer.invoke(this); true }
