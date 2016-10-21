@@ -9,7 +9,7 @@ def sonatypePassword = hasProperty('sonatype_password') ? sonatype_password : Sy
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
-    from 'build/docs/javadoc'
+    from 'build/javadoc'
 }
 
 task sourcesJar(type: Jar) {
