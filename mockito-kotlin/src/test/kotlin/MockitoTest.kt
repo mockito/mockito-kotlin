@@ -74,42 +74,6 @@ class MockitoTest {
     }
 
     @Test
-    fun anyCollectionOfClosed() {
-        mock<Methods>().apply {
-            closedCollection(listOf())
-            verify(this).closedCollection(any())
-            verify(this).closedCollection(anyCollection())
-        }
-    }
-
-    @Test
-    fun anyListOfClosed() {
-        mock<Methods>().apply {
-            closedList(listOf())
-            verify(this).closedList(any())
-            verify(this).closedList(anyList())
-        }
-    }
-
-    @Test
-    fun anyClosedStringMap() {
-        mock<Methods>().apply {
-            closedStringMap(mapOf())
-            verify(this).closedStringMap(any())
-            verify(this).closedStringMap(anyMap())
-        }
-    }
-
-    @Test
-    fun anyClosedSet() {
-        mock<Methods>().apply {
-            closedSet(setOf())
-            verify(this).closedSet(any())
-            verify(this).closedSet(anySet())
-        }
-    }
-
-    @Test
     fun anyStringVararg() {
         mock<Methods>().apply {
             closedVararg(Closed(), Closed())
