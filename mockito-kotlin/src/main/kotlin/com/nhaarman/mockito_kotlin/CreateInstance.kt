@@ -85,12 +85,24 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
 private fun <T : Any> KClass<T>.easiestConstructor(): KFunction<T> {
     return constructors
             .sortedBy { it.parameters.size }
+            // Filter out any constructor that uses this class as a parameter
+            // (e.g., a copy constructor) so we don't get into an infinite loop.
+            .withoutParametersOfType(this.defaultType)
             .withoutArrayParameters()
-            .firstOrNull() ?: constructors.sortedBy { it.parameters.size }.first()
+            .firstOrNull() ?: constructors.sortedBy { it.parameters.size }
+                                          .withoutParametersOfType(this.defaultType)
+                                          .first()
 }
 
 private fun <T> List<KFunction<T>>.withoutArrayParameters() = filter {
     it.parameters.filter { parameter -> parameter.type.toString().toLowerCase().contains("array") }.isEmpty()
+}
+
+/**
+ * Filters out functions with the given type.
+ */
+private fun <T: Any> List<KFunction<T>>.withoutParametersOfType(type: KType) = filter {
+    it.parameters.filter { it.type == type }.isEmpty()
 }
 
 @Suppress("SENSELESS_COMPARISON")
