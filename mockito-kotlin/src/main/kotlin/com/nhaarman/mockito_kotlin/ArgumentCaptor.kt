@@ -32,7 +32,7 @@ inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> = KArgumentCap
 
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
-@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"))
+@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"), DeprecationLevel.ERROR)
 inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
 
 class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<T>) {
@@ -51,7 +51,7 @@ class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, privat
  * Instead, use [argumentCaptor] in the traditional way, or use one of
  * [argThat], [argForWhich] or [check].
  */
-@Deprecated("Use argumentCaptor() or argThat() instead.")
+@Deprecated("Use argumentCaptor() or argThat() instead.", ReplaceWith("check(consumer)"), DeprecationLevel.ERROR)
 inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
     var times = 0
     return argThat { if (++times == 1) consumer.invoke(this); true }
