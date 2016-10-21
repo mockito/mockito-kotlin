@@ -1,15 +1,18 @@
 apply plugin: 'kotlin'
 apply from: './publishing.gradle'
+apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
     ext.kotlin_version = '1.0.4'
 
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.9"
     }
 }
 
@@ -48,3 +51,15 @@ dependencies {
     testCompile "junit:junit:4.12"
     testCompile "com.nhaarman:expect.kt:0.6.0"
 }
+
+dokka {
+    outputFormat = 'html'
+    outputDirectory = "$buildDir/javadoc"
+
+    linkMapping {
+        dir = "src/main/kotlin"
+        url = "https://github.com/nhaarman/mockito-kotlin/tree/master/mockito-kotlin/src/main/kotlin"
+        suffix = "#L"
+    }
+}
+javadoc.dependsOn dokka
