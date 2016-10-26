@@ -436,6 +436,46 @@ class CreateInstanceTest {
         expect(result).toNotBeNull()
     }
 
+    /**
+     * Bug:  When the copy constructor is selected, we end up with an infinite
+     *       loop.  Instead, we want to select a constructor that doesn't
+     *       take in a parameter with the same type as the one we are building.
+     *
+     * GIVEN a class with a copy constructor (in the case of the bug, the copy
+     *       constructor has to be selected, so it must have fewer parameters
+     *       than all other constructors)
+     * WHEN we make an instance of the given class
+     * THEN we expect that the new, non-null instance will be created without
+     *       an exception
+     */
+    @Test
+    fun copyConstructorDoesNotCauseException() {
+        /* When */
+        val result = createInstance(WithCopyConstructor::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun optionalParametersAreSkippedWhenSorting() {
+        /* When */
+        val result = createInstance(WithDefaultParameters::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun defaultValuesAreUsedWithOptionalParameters() {
+        /* When */
+        val result = createInstance(WithDefaultParameters::class)
+
+        /* Then */
+        expect(result.first).toBe(1)
+        expect(result.second).toBe(2)
+    }
+
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
@@ -473,6 +513,27 @@ class CreateInstanceTest {
 
     class WithDefaultEmptyConstructor() {
         constructor(c: ForbiddenConstructor) : this()
+    }
+
+    /**
+     * Bug: When the copy constructor is selected, then create instance gets
+     * into an infinite loop.  We should never use the copy constructor in
+     * createInstance.
+     */
+    data class WithCopyConstructor private constructor(val x: String,
+                                                       val y: String) {
+        constructor(other: WithCopyConstructor) : this(other.x, other.y)
+    }
+
+    /**
+     * A class that uses default parameters, but with a constructor without parameters that fails.
+     * This is to make sure default parameters are not counted when sorting by parameter size.
+     */
+    class WithDefaultParameters constructor(val first: Int = 1, val second: Int = 2) {
+
+        constructor(first: Int) : this() {
+            error("Should not be called")
+        }
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }

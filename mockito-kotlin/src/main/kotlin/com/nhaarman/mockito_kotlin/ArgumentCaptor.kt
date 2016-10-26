@@ -29,13 +29,14 @@ import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 
 inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
 
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
 @Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"), DeprecationLevel.ERROR)
 inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
 
-class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<T>) {
+class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<*>) {
 
     val value: T
         get() = captor.value
@@ -43,7 +44,8 @@ class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, privat
     val allValues: List<T>
         get() = captor.allValues
 
-    fun capture(): T = captor.capture() ?: createInstance(tClass)
+    @Suppress("UNCHECKED_CAST")
+    fun capture(): T = captor.capture() ?: createInstance(tClass) as T
 }
 
 /**
@@ -51,7 +53,7 @@ class KArgumentCaptor<out T : Any>(private val captor: ArgumentCaptor<T>, privat
  * Instead, use [argumentCaptor] in the traditional way, or use one of
  * [argThat], [argForWhich] or [check].
  */
-@Deprecated("Use argumentCaptor() or argThat() instead.", ReplaceWith("check(consumer)"), DeprecationLevel.ERROR)
+@Deprecated("Use argumentCaptor(), argThat() or check() instead.", ReplaceWith("check(consumer)"), DeprecationLevel.ERROR)
 inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
     var times = 0
     return argThat { if (++times == 1) consumer.invoke(this); true }
