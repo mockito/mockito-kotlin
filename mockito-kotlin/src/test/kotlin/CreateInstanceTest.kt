@@ -457,6 +457,25 @@ class CreateInstanceTest {
         expect(result).toNotBeNull()
     }
 
+    @Test
+    fun optionalParametersAreSkippedWhenSorting() {
+        /* When */
+        val result = createInstance(WithDefaultParameters::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun defaultValuesAreUsedWithOptionalParameters() {
+        /* When */
+        val result = createInstance(WithDefaultParameters::class)
+
+        /* Then */
+        expect(result.first).toBe(1)
+        expect(result.second).toBe(2)
+    }
+
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
@@ -503,7 +522,18 @@ class CreateInstanceTest {
      */
     data class WithCopyConstructor private constructor(val x: String,
                                                        val y: String) {
-        constructor(other: WithCopyConstructor): this(other.x, other.y)
+        constructor(other: WithCopyConstructor) : this(other.x, other.y)
+    }
+
+    /**
+     * A class that uses default parameters, but with a constructor without parameters that fails.
+     * This is to make sure default parameters are not counted when sorting by parameter size.
+     */
+    class WithDefaultParameters constructor(val first: Int = 1, val second: Int = 2) {
+
+        constructor(first: Int) : this() {
+            error("Should not be called")
+        }
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }

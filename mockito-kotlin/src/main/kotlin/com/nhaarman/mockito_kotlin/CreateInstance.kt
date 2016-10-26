@@ -34,10 +34,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KType
-import kotlin.reflect.defaultType
+import kotlin.reflect.*
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmName
@@ -84,12 +81,12 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
  */
 private fun <T : Any> KClass<T>.easiestConstructor(): KFunction<T> {
     return constructors
-            .sortedBy { it.parameters.size }
+            .sortedBy { it.parameters.withoutOptionalParameters().size }
             .withoutParametersOfType(this.defaultType)
             .withoutArrayParameters()
-            .firstOrNull() ?: constructors.sortedBy { it.parameters.size }
-                                          .withoutParametersOfType(this.defaultType)
-                                          .first()
+            .firstOrNull() ?: constructors.sortedBy { it.parameters.withoutOptionalParameters().size }
+            .withoutParametersOfType(this.defaultType)
+            .first()
 }
 
 private fun <T> List<KFunction<T>>.withoutArrayParameters() = filter {
@@ -101,9 +98,11 @@ private fun <T> List<KFunction<T>>.withoutArrayParameters() = filter {
  * This is especially useful to avoid infinite loops where constructors
  * accepting a parameter of their own type, e.g. 'copy constructors'.
  */
-private fun <T: Any> List<KFunction<T>>.withoutParametersOfType(type: KType) = filter {
+private fun <T : Any> List<KFunction<T>>.withoutParametersOfType(type: KType) = filter {
     it.parameters.filter { it.type == type }.isEmpty()
 }
+
+private fun List<KParameter>.withoutOptionalParameters() = filterNot { it.isOptional }
 
 @Suppress("SENSELESS_COMPARISON")
 private fun KClass<*>.hasObjectInstance() = objectInstance != null
@@ -166,7 +165,7 @@ private fun <T : Any> KClass<T>.toClassObject(): T {
 private fun <T : Any> KFunction<T>.newInstance(): T {
     try {
         isAccessible = true
-        return callBy(parameters.associate {
+        return callBy(parameters.withoutOptionalParameters().associate {
             it to it.type.createNullableInstance<T>()
         })
     } catch(e: InvocationTargetException) {
