@@ -93,7 +93,24 @@ inline fun <reified T : Any> mock(stubbing: KStubbing<T>.(T) -> Unit): T {
 
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
-    fun <R> on(methodCall: T.() -> R) = Mockito.`when`(mock.methodCall())
+
+    fun <R : Any> on(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
+        val r = try {
+            mock.methodCall()
+        } catch(e: NullPointerException) {
+            // An NPE may be thrown by the Kotlin type system when the MockMethodInterceptor returns a
+            // null value for a non-nullable generic type.
+            // We catch this NPE to return a valid instance.
+            // The Mockito state has already been modified at this point to reflect
+            // the wanted changes.
+            createInstance(c)
+        }
+        return Mockito.`when`(r)
+    }
+
+    inline fun <reified R : Any> on(noinline methodCall: T.() -> R): OngoingStubbing<R> {
+        return on(methodCall, R::class)
+    }
 }
 
 infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> = thenReturn(t)
