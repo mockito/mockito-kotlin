@@ -64,15 +64,31 @@ inline fun <reified T : Any> createInstance() = createInstance(T::class)
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> createInstance(kClass: KClass<T>): T {
+    var cause: Throwable? = null
     return MockitoKotlin.instanceCreator(kClass)?.invoke() as T? ?:
-            when {
-                kClass.hasObjectInstance() -> kClass.objectInstance!!
-                kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
-                kClass.isMockable() -> kClass.java.uncheckedMock()
-                kClass.isEnum() -> kClass.java.enumConstants.first()
-                kClass.isArray() -> kClass.toArrayInstance()
-                kClass.isClassObject() -> kClass.toClassObject()
-                else -> kClass.easiestConstructor().newInstance()
+            try {
+                when {
+                    kClass.hasObjectInstance() -> kClass.objectInstance!!
+                    kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
+                    kClass.isEnum() -> kClass.java.enumConstants.first()
+                    kClass.isArray() -> kClass.toArrayInstance()
+                    kClass.isClassObject() -> kClass.toClassObject()
+                    kClass.isMockable() -> try {
+                        kClass.java.uncheckedMock()
+                    } catch(e: Throwable) {
+                        cause = e
+                        kClass.easiestConstructor().newInstance()
+                    }
+                    else -> kClass.easiestConstructor().newInstance()
+                }
+            } catch(e: Exception) {
+                if (e is MockitoKotlinException) throw e
+
+                cause?.let {
+                    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+                    (e as java.lang.Throwable).initCause(it)
+                }
+                throw MockitoKotlinException("Could not create an instance for $kClass.", e)
             }
 }
 
