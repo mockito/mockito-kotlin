@@ -436,4 +436,15 @@ class MockitoTest {
         expect(mock.stringResult()).toBe("a")
         expect(mock.stringResult()).toBe("b")
     }
+
+    @Test
+    fun doReturn_withGenericIntReturnType() {
+        /* Given */
+        val mock = mock<GenericMethods<Int>> {
+            on { genericMethod() } doReturn 2
+        }
+
+        /* Then */
+        expect(mock.genericMethod()).toBe(2)
+    }
 }

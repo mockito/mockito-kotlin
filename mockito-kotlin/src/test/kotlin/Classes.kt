@@ -54,7 +54,11 @@ interface Methods {
     fun nullableString(s: String?)
 
     fun stringResult(): String
-    fun builderMethod() : Methods
+    fun builderMethod(): Methods
+}
+
+interface GenericMethods<T> {
+    fun genericMethod(): T
 }
 
 class ThrowableClass(cause: Throwable) : Throwable(cause)
