@@ -476,6 +476,24 @@ class CreateInstanceTest {
         expect(result.second).toBe(2)
     }
 
+    @Test
+    fun sealedClass() {
+        /* When */
+        val result = createInstance(MySealedClass::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun sealedClassMember() {
+        /* When */
+        val result = createInstance(MySealedClass.MySealedClassMember::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
     private class PrivateClass private constructor(val data: String)
 
     class ClosedClass
@@ -537,4 +555,8 @@ class CreateInstanceTest {
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }
+
+    sealed class MySealedClass {
+        class MySealedClassMember : MySealedClass()
+    }
 }
