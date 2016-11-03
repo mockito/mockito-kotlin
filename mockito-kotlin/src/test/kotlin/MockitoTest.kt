@@ -352,6 +352,20 @@ class MockitoTest {
     }
 
     @Test
+    fun testMockStubbing_nullable() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { nullableStringResult() } doReturn "Test"
+        }
+
+        /* When */
+        val result = mock.nullableStringResult()
+
+        /* Then */
+        expect(result).toBe("Test")
+    }
+
+    @Test
     fun testMockStubbing_doThrow() {
         /* Given */
         val mock = mock<Methods> { mock ->
@@ -438,10 +452,22 @@ class MockitoTest {
     }
 
     @Test
-    fun doReturn_withGenericIntReturnType() {
+    fun doReturn_withGenericIntReturnType_on() {
+        /* Expect */
+        expectErrorWithMessage("onGeneric") on {
+
+            /* When */
+            mock<GenericMethods<Int>> {
+                on { genericMethod() } doReturn 2
+            }
+        }
+    }
+
+    @Test
+    fun doReturn_withGenericIntReturnType_onGeneric() {
         /* Given */
         val mock = mock<GenericMethods<Int>> {
-            on { genericMethod() } doReturn 2
+            onGeneric { genericMethod() } doReturn 2
         }
 
         /* Then */
