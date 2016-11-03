@@ -28,7 +28,7 @@ import org.junit.Test
 import java.io.IOException
 import java.math.BigInteger
 
-class CreateInstanceOfImmutableTest {
+class CreateInstanceInlineTest {
 
     class ClassToBeMocked {
 
@@ -95,6 +95,24 @@ class CreateInstanceOfImmutableTest {
             throwableClass(ThrowableClass(IOException()))
             verify(this).throwableClass(any())
         }
+    }
+
+    @Test
+    fun createPrimitiveInstance() {
+        /* When */
+        val i = createInstance<Int>()
+
+        /* Then */
+        expect(i).toBe(0)
+    }
+    
+    @Test
+    fun createStringInstance() {
+        /* When */
+        val s = createInstance<String>()
+
+        /* Then */
+        expect(s).toBe("")
     }
 
     interface Methods {

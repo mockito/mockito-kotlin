@@ -67,8 +67,8 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
     return MockitoKotlin.instanceCreator(kClass)?.invoke() as T? ?:
             when {
                 kClass.hasObjectInstance() -> kClass.objectInstance!!
-                kClass.isMockable() -> kClass.java.uncheckedMock()
                 kClass.isPrimitive() -> kClass.toDefaultPrimitiveValue()
+                kClass.isMockable() -> kClass.java.uncheckedMock()
                 kClass.isEnum() -> kClass.java.enumConstants.first()
                 kClass.isArray() -> kClass.toArrayInstance()
                 kClass.isClassObject() -> kClass.toClassObject()
