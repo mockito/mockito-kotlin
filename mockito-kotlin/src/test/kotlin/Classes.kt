@@ -54,6 +54,7 @@ interface Methods {
     fun nullableString(s: String?)
 
     fun stringResult(): String
+    fun nullableStringResult(): String?
     fun builderMethod(): Methods
 }
 

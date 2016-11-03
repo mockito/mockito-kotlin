@@ -23,6 +23,7 @@
  */
 
 import com.nhaarman.expect.expect
+import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 import java.io.IOException
@@ -105,7 +106,7 @@ class CreateInstanceInlineTest {
         /* Then */
         expect(i).toBe(0)
     }
-    
+
     @Test
     fun createStringInstance() {
         /* When */
@@ -115,10 +116,33 @@ class CreateInstanceInlineTest {
         expect(s).toBe("")
     }
 
+    @Test
+    fun sealedClass_fails() {
+        /* Expect */
+        expectErrorWithMessage("Could not create") on {
+
+            /* When */
+            createInstance(MySealedClass::class)
+        }
+    }
+
+    @Test
+    fun sealedClassMember() {
+        /* When */
+        val result = createInstance(MySealedClass.MySealedClassMember::class)
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
     interface Methods {
 
         fun throwableClass(t: ThrowableClass)
     }
 
     class ThrowableClass(cause: Throwable) : Throwable(cause)
+
+    sealed class MySealedClass {
+        class MySealedClassMember : MySealedClass()
+    }
 }

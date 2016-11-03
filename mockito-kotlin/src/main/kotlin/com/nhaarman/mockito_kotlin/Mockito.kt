@@ -94,7 +94,7 @@ inline fun <reified T : Any> mock(stubbing: KStubbing<T>.(T) -> Unit): T {
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
 
-    fun <R : Any> on(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
+    fun <R : Any> onGeneric(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
         val r = try {
             mock.methodCall()
         } catch(e: NullPointerException) {
@@ -108,8 +108,16 @@ class KStubbing<out T>(private val mock: T) {
         return Mockito.`when`(r)
     }
 
-    inline fun <reified R : Any> on(noinline methodCall: T.() -> R): OngoingStubbing<R> {
-        return on(methodCall, R::class)
+    inline fun <reified R : Any> onGeneric(noinline methodCall: T.() -> R): OngoingStubbing<R> {
+        return onGeneric(methodCall, R::class)
+    }
+
+    fun <R> on(methodCall: T.() -> R): OngoingStubbing<R> {
+        return try {
+            Mockito.`when`(mock.methodCall())
+        } catch(e: NullPointerException) {
+            throw MockitoKotlinException("NullPointerException thrown when stubbing. If you are trying to stub a generic method, try `onGeneric` instead.", e)
+        }
     }
 }
 
