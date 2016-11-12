@@ -25,20 +25,32 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.createinstance.InstanceCreator
+import com.nhaarman.mockito_kotlin.createinstance.mockMakerInlineEnabled
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import java.math.BigInteger
 
-class CreateInstanceInlineTest {
+class UsingMockMakerInlineTest {
 
     class ClassToBeMocked {
 
-        fun doSomething(c: ClassToBeMocked) {
+        fun doSomething(@Suppress("UNUSED_PARAMETER") c: ClassToBeMocked) {
         }
 
         fun doSomethingElse(value: BigInteger): BigInteger {
             return value.plus(BigInteger.ONE)
         }
+    }
+
+    private inline fun <reified T : Any> createInstance() = InstanceCreator().createInstance(T::class)
+
+    @Before
+    fun setup() {
+        mockMakerInlineEnabled = null
+        assumeTrue(mockMakerInlineEnabled())
     }
 
     @Test
@@ -122,14 +134,14 @@ class CreateInstanceInlineTest {
         expectErrorWithMessage("Could not create") on {
 
             /* When */
-            createInstance(MySealedClass::class)
+            createInstance<MySealedClass>()
         }
     }
 
     @Test
     fun sealedClassMember() {
         /* When */
-        val result = createInstance(MySealedClass.MySealedClassMember::class)
+        val result = createInstance<MySealedClass.MySealedClassMember>()
 
         /* Then */
         expect(result).toNotBeNull()

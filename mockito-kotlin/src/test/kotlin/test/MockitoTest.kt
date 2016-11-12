@@ -1,3 +1,4 @@
+package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
@@ -31,7 +32,7 @@ import java.io.IOException
  * THE SOFTWARE.
  */
 
-class MockitoTest {
+class MockitoTest : TestBase() {
 
     @Test
     fun anyString() {

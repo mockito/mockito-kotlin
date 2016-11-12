@@ -25,6 +25,7 @@
 
 package com.nhaarman.mockito_kotlin
 
+import com.nhaarman.mockito_kotlin.createinstance.createInstance
 import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 
@@ -33,13 +34,39 @@ inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> = KAr
 
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
-@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
-
 class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<*>) {
 
+    @Deprecated("Use lastValue", ReplaceWith("lastValue"))
     val value: T
         get() = captor.value
+
+    /**
+     * The first captured value of the argument.
+     * @throws IndexOutOfBoundsException if the value is not available.
+     */
+    val firstValue: T
+        get() = captor.firstValue
+
+    /**
+     * The second captured value of the argument.
+     * @throws IndexOutOfBoundsException if the value is not available.
+     */
+    val secondValue: T
+        get() = captor.secondValue
+
+    /**
+     * The third captured value of the argument.
+     * @throws IndexOutOfBoundsException if the value is not available.
+     */
+    val thirdValue: T
+        get() = captor.thirdValue
+
+    /**
+     * The last captured value of the argument.
+     * @throws IndexOutOfBoundsException if the value is not available.
+     */
+    val lastValue: T
+        get() = captor.lastValue
 
     val allValues: List<T>
         get() = captor.allValues
@@ -47,6 +74,18 @@ class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, priva
     @Suppress("UNCHECKED_CAST")
     fun capture(): T = captor.capture() ?: createInstance(tClass) as T
 }
+
+val <T> ArgumentCaptor<T>.firstValue: T
+    get() = allValues[0]
+
+val <T> ArgumentCaptor<T>.secondValue: T
+    get() = allValues[1]
+
+val <T> ArgumentCaptor<T>.thirdValue: T
+    get() = allValues[2]
+
+val <T> ArgumentCaptor<T>.lastValue: T
+    get() = allValues.last()
 
 /**
  * This method is deprecated because its behavior differs from the Java behavior.
@@ -58,3 +97,7 @@ inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
     var times = 0
     return argThat { if (++times == 1) consumer.invoke(this); true }
 }
+
+@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"), DeprecationLevel.ERROR)
+inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
+

@@ -1,3 +1,5 @@
+package test.createinstance
+
 /*
  * The MIT License
  *
@@ -26,12 +28,28 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.MockitoKotlin
-import com.nhaarman.mockito_kotlin.createInstance
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.createinstance.InstanceCreator
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import org.junit.After
 import org.junit.Test
+import test.Closed
+import test.Open
+import test.TestBase
 import java.util.*
 import kotlin.reflect.KClass
 
-class CreateInstanceTest {
+class InstanceCreatorTest : TestBase() {
+
+    private val instanceCreator = InstanceCreator()
+
+    private inline fun <reified T : Any> createInstance() = instanceCreator.createInstance(T::class)
+
+    @After
+    fun teardown() {
+        MockitoKotlin.resetInstanceCreators()
+    }
 
     @Test
     fun byte() {
@@ -430,7 +448,7 @@ class CreateInstanceTest {
     @Test
     fun defaultEmptyConstructor_takesSimplestConstructor() {
         /* When */
-        val result = createInstance(WithDefaultEmptyConstructor::class)
+        val result = createInstance<WithDefaultEmptyConstructor>()
 
         /* Then */
         expect(result).toNotBeNull()
@@ -451,7 +469,7 @@ class CreateInstanceTest {
     @Test
     fun copyConstructorDoesNotCauseException() {
         /* When */
-        val result = createInstance(WithCopyConstructor::class)
+        val result = createInstance<WithCopyConstructor>()
 
         /* Then */
         expect(result).toNotBeNull()
@@ -460,7 +478,7 @@ class CreateInstanceTest {
     @Test
     fun optionalParametersAreSkippedWhenSorting() {
         /* When */
-        val result = createInstance(WithDefaultParameters::class)
+        val result = createInstance<WithDefaultParameters>()
 
         /* Then */
         expect(result).toNotBeNull()
@@ -469,7 +487,7 @@ class CreateInstanceTest {
     @Test
     fun defaultValuesAreUsedWithOptionalParameters() {
         /* When */
-        val result = createInstance(WithDefaultParameters::class)
+        val result = createInstance<WithDefaultParameters>()
 
         /* Then */
         expect(result.first).toBe(1)
@@ -479,7 +497,7 @@ class CreateInstanceTest {
     @Test
     fun sealedClass() {
         /* When */
-        val result = createInstance(MySealedClass::class)
+        val result = createInstance<MySealedClass>()
 
         /* Then */
         expect(result).toNotBeNull()
@@ -488,10 +506,51 @@ class CreateInstanceTest {
     @Test
     fun sealedClassMember() {
         /* When */
-        val result = createInstance(MySealedClass.MySealedClassMember::class)
+        val result = createInstance<MySealedClass.MySealedClassMember>()
 
         /* Then */
         expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun register() {
+        /* Given */
+        val closed = Closed()
+        MockitoKotlin.registerInstanceCreator { closed }
+
+        /* When */
+        val result = createInstance<Closed>()
+
+        /* Then */
+        expect(result).toBe(closed)
+    }
+
+    @Test
+    fun unregister() {
+        /* Given */
+        val closed = Closed()
+        MockitoKotlin.registerInstanceCreator { closed }
+        MockitoKotlin.unregisterInstanceCreator<Closed>()
+
+        /* When */
+        val result = createInstance<Closed>()
+
+        /* Then */
+        expect(result).toNotBeTheSameAs(closed)
+    }
+
+    @Test
+    fun usingInstanceCreatorInsideLambda() {
+        MockitoKotlin.registerInstanceCreator { InstanceCreatorTest.ForbiddenConstructor(2) }
+
+        mock<TestClass> {
+            on { doSomething(any()) } doReturn ""
+        }
+    }
+
+    interface TestClass {
+
+        fun doSomething(c: InstanceCreatorTest.ForbiddenConstructor): String
     }
 
     private class PrivateClass private constructor(val data: String)
@@ -525,12 +584,12 @@ class CreateInstanceTest {
             throw AssertionError("Forbidden.")
         }
 
-        constructor(value: Int) {
+        constructor(@Suppress("UNUSED_PARAMETER") value: Int) {
         }
     }
 
     class WithDefaultEmptyConstructor() {
-        constructor(c: ForbiddenConstructor) : this()
+        constructor(@Suppress("UNUSED_PARAMETER") c: ForbiddenConstructor) : this()
     }
 
     /**
@@ -549,14 +608,14 @@ class CreateInstanceTest {
      */
     class WithDefaultParameters constructor(val first: Int = 1, val second: Int = 2) {
 
-        constructor(first: Int) : this() {
+        constructor(@Suppress("UNUSED_PARAMETER") first: Int) : this() {
             error("Should not be called")
         }
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }
+}
 
-    sealed class MySealedClass {
-        class MySealedClassMember : MySealedClass()
-    }
+sealed class MySealedClass {
+    class MySealedClassMember : MySealedClass()
 }

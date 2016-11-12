@@ -1,4 +1,4 @@
-/*
+package test/*
  * The MIT License
  *
  * Copyright (c) 2016 Niek Haarman
@@ -24,55 +24,78 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
 
-class MockitoKotlinTest {
+class EqTest : TestBase() {
+
+    private val interfaceInstance: MyInterface = MyClass()
+    private val openClassInstance: MyClass = MyClass()
+    private val closedClassInstance: ClosedClass = ClosedClass()
+
+    private lateinit var doAnswer: Open
+
+    @Before
+    override fun setup() {
+        super.setup()
+
+        /* Create a proper Mockito state */
+        doAnswer = Mockito.doAnswer { }.`when`(mock())
+    }
 
     @After
-    fun teardown() {
-        MockitoKotlin.resetInstanceCreators()
+    override fun tearDown() {
+        super.tearDown()
+
+        /* Close `any` Mockito state */
+        doAnswer.go(0)
     }
 
     @Test
-    fun register() {
-        /* Given */
-        val closed = Closed()
-        MockitoKotlin.registerInstanceCreator { closed }
-
+    fun eqInterfaceInstance() {
         /* When */
-        val result = createInstance<Closed>()
+        val result = eq(interfaceInstance)
 
         /* Then */
-        expect(result).toBe(closed)
+        expect(result).toNotBeNull()
     }
 
     @Test
-    fun unregister() {
-        /* Given */
-        val closed = Closed()
-        MockitoKotlin.registerInstanceCreator { closed }
-        MockitoKotlin.unregisterInstanceCreator<Closed>()
-
+    fun eqOpenClassInstance() {
         /* When */
-        val result = createInstance<Closed>()
+        val result = eq(openClassInstance)
 
         /* Then */
-        expect(result).toNotBeTheSameAs(closed)
+        expect(result).toNotBeNull()
     }
 
     @Test
-    fun usingInstanceCreatorInsideLambda() {
-        MockitoKotlin.registerInstanceCreator { CreateInstanceTest.ForbiddenConstructor(2) }
+    fun eqClosedClassInstance() {
+        /* When */
+        val result = eq(closedClassInstance)
 
-        mock<TestClass> {
-            on { doSomething(any()) } doReturn ""
-        }
+        /* Then */
+        expect(result).toNotBeNull()
     }
 
-    interface TestClass {
+    @Test
+    fun nullArgument() {
+        /* Given */
+        val s: String? = null
 
-        fun doSomething(c: CreateInstanceTest.ForbiddenConstructor): String
+        /* When */
+        val result = eq(s)
+
+        /* Then */
+        expect(result).toBeNull()
     }
+
+    private interface MyInterface
+    private open class MyClass : MyInterface
+    class ClosedClass
 }
+
