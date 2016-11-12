@@ -525,12 +525,12 @@ class CreateInstanceTest {
             throw AssertionError("Forbidden.")
         }
 
-        constructor(value: Int) {
+        constructor(@Suppress("UNUSED_PARAMETER") value: Int) {
         }
     }
 
     class WithDefaultEmptyConstructor() {
-        constructor(c: ForbiddenConstructor) : this()
+        constructor(@Suppress("UNUSED_PARAMETER") c: ForbiddenConstructor) : this()
     }
 
     /**
@@ -549,7 +549,7 @@ class CreateInstanceTest {
      */
     class WithDefaultParameters constructor(val first: Int = 1, val second: Int = 2) {
 
-        constructor(first: Int) : this() {
+        constructor(@Suppress("UNUSED_PARAMETER") first: Int) : this() {
             error("Should not be called")
         }
     }

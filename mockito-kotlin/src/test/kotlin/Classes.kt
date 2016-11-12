@@ -49,6 +49,7 @@ interface Methods {
     fun closedStringMap(m: Map<Closed, String>)
     fun closedSet(s: Set<Closed>)
     fun string(s: String)
+    fun int(i: Int)
     fun closedVararg(vararg c: Closed)
     fun throwableClass(t: ThrowableClass)
     fun nullableString(s: String?)
