@@ -2,13 +2,17 @@ sudo: false
 
 language: java
 
-jdk:
-- oraclejdk7
-
 matrix:
   include:
   - jdk: oraclejdk7
-    env: TERM=dumb MOCK_MAKER=mock-maker-inline
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.0.5
+  - jdk: oraclejdk7
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.1-M02
+  - jdk: oraclejdk8
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.0.5
+  - jdk: oraclejdk8
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.1-M02
+
 
 env:
   matrix:
