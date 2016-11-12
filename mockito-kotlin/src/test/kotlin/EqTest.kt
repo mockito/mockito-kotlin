@@ -78,6 +78,18 @@ class EqTest {
         expect(result).toNotBeNull()
     }
 
+    @Test
+    fun nullArgument() {
+        /* Given */
+        val s: String? = null
+
+        /* When */
+        val result = eq(s)
+
+        /* Then */
+        expect(result).toBeNull()
+    }
+
     private interface MyInterface
     private open class MyClass : MyInterface
     class ClosedClass
