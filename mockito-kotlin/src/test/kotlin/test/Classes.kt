@@ -1,4 +1,4 @@
-/*
+package test/*
 * The MIT License
 *
 * Copyright (c) 2016 Niek Haarman

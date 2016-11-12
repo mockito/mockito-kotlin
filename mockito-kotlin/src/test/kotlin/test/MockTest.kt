@@ -1,4 +1,4 @@
-/*
+package test/*
  * The MIT License
  *
  * Copyright (c) 2016 Niek Haarman
@@ -30,7 +30,7 @@ import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.util.*
 
-class MockTest : BaseTest() {
+class MockTest : TestBase() {
 
     private lateinit var propertyInterfaceVariable: MyInterface
     private lateinit var propertyClassVariable: MyClass

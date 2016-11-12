@@ -25,6 +25,8 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.createinstance.InstanceCreator
+import com.nhaarman.mockito_kotlin.createinstance.mockMakerInlineEnabled
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
@@ -43,10 +45,12 @@ class UsingMockMakerInlineTest {
         }
     }
 
+    private inline fun <reified T : Any> createInstance() = InstanceCreator().createInstance(T::class)
+
     @Before
     fun setup() {
         mockMakerInlineEnabled = null
-        assumeTrue(mockMakerInlineEnabled(javaClass))
+        assumeTrue(mockMakerInlineEnabled())
     }
 
     @Test
@@ -130,14 +134,14 @@ class UsingMockMakerInlineTest {
         expectErrorWithMessage("Could not create") on {
 
             /* When */
-            createInstance(MySealedClass::class)
+            createInstance<MySealedClass>()
         }
     }
 
     @Test
     fun sealedClassMember() {
         /* When */
-        val result = createInstance(MySealedClass.MySealedClassMember::class)
+        val result = createInstance<MySealedClass.MySealedClassMember>()
 
         /* Then */
         expect(result).toNotBeNull()
