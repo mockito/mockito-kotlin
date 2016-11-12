@@ -31,7 +31,7 @@ import org.junit.Test
 import java.util.*
 import kotlin.reflect.KClass
 
-class CreateInstanceTest {
+class CreateInstanceTest : BaseTest() {
 
     @Test
     fun byte() {
@@ -555,8 +555,8 @@ class CreateInstanceTest {
     }
 
     enum class MyEnum { VALUE, ANOTHER_VALUE }
+}
 
-    sealed class MySealedClass {
-        class MySealedClassMember : MySealedClass()
-    }
+sealed class MySealedClass {
+    class MySealedClassMember : MySealedClass()
 }

@@ -28,7 +28,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.junit.After
 import org.junit.Test
 
-class MockitoKotlinTest {
+class MockitoKotlinTest : BaseTest() {
 
     @After
     fun teardown() {

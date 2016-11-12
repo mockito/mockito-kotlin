@@ -5,6 +5,11 @@ language: java
 jdk:
 - oraclejdk7
 
+matrix:
+  include:
+  - jdk: oraclejdk7
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline
+
 env:
   matrix:
   - TERM=dumb

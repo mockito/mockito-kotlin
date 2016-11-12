@@ -31,7 +31,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
-class EqTest {
+class EqTest : BaseTest() {
 
     private val interfaceInstance: MyInterface = MyClass()
     private val openClassInstance: MyClass = MyClass()
@@ -40,13 +40,17 @@ class EqTest {
     private lateinit var doAnswer: Open
 
     @Before
-    fun setup() {
+    override fun setup() {
+        super.setup()
+
         /* Create a proper Mockito state */
         doAnswer = Mockito.doAnswer { }.`when`(mock())
     }
 
     @After
-    fun tearDown() {
+    override fun tearDown() {
+        super.tearDown()
+
         /* Close `any` Mockito state */
         doAnswer.go(0)
     }

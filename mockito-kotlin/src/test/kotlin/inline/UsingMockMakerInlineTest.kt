@@ -25,11 +25,13 @@
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 import java.math.BigInteger
 
-class CreateInstanceInlineTest {
+class UsingMockMakerInlineTest {
 
     class ClassToBeMocked {
 
@@ -39,6 +41,12 @@ class CreateInstanceInlineTest {
         fun doSomethingElse(value: BigInteger): BigInteger {
             return value.plus(BigInteger.ONE)
         }
+    }
+
+    @Before
+    fun setup() {
+        mockMakerInlineEnabled = null
+        assumeTrue(mockMakerInlineEnabled(javaClass))
     }
 
     @Test

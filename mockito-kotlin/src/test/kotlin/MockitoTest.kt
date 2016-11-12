@@ -1,7 +1,9 @@
+
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
 import com.nhaarman.mockito_kotlin.*
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
 import java.io.IOException
@@ -31,7 +33,7 @@ import java.io.IOException
  * THE SOFTWARE.
  */
 
-class MockitoTest {
+class MockitoTest : BaseTest() {
 
     @Test
     fun anyString() {
@@ -100,6 +102,8 @@ class MockitoTest {
     /** https://github.com/nhaarman/mockito-kotlin/issues/27 */
     @Test
     fun anyThrowableWithSingleThrowableConstructor() {
+        assumeTrue(mockMakerInlineEnabled(javaClass))
+
         mock<Methods>().apply {
             throwableClass(ThrowableClass(IOException()))
             verify(this).throwableClass(any())
