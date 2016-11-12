@@ -48,9 +48,9 @@ import java.lang.reflect.Array as JavaArray
 /**
  * Checks whether the resource file to enable mocking of final classes is present.
  */
-private var mockMakerInlineEnabled: Boolean? = null
+internal var mockMakerInlineEnabled: Boolean? = null
 
-private fun mockMakerInlineEnabled(jClass: Class<out Any>): Boolean {
+internal fun mockMakerInlineEnabled(jClass: Class<out Any>): Boolean {
     return mockMakerInlineEnabled ?:
             jClass.getResource("mockito-extensions/org.mockito.plugins.MockMaker")?.let {
                 mockMakerInlineEnabled = File(it.file).readLines().filter { it == "mock-maker-inline" }.isNotEmpty()

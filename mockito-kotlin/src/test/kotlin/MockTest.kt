@@ -28,10 +28,9 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
-import org.mockito.exceptions.base.MockitoException
 import java.util.*
 
-class MockTest {
+class MockTest : BaseTest() {
 
     private lateinit var propertyInterfaceVariable: MyInterface
     private lateinit var propertyClassVariable: MyClass
@@ -80,11 +79,6 @@ class MockTest {
         expect(instance).toNotBeNull()
     }
 
-    @Test(expected = MockitoException::class)
-    fun closedClass() {
-        mock<ClosedClass>()
-    }
-
     @Test
     fun deepStubs() {
         val cal: Calendar = mock(RETURNS_DEEP_STUBS)
@@ -94,6 +88,5 @@ class MockTest {
 
     private interface MyInterface
     private open class MyClass
-    private class ClosedClass
 }
 

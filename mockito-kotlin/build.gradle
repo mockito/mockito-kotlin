@@ -21,27 +21,6 @@ repositories {
     jcenter()
 }
 
-sourceSets {
-    testInlineMockito {
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-    }
-}
-
-configurations {
-    testInlineMockitoCompile.extendsFrom testCompile
-    testInlineMockitoRuntime.extendsFrom testRuntime
-}
-
-// define custom test task for running integration tests
-task testInlineMockito(type: Test) {
-    testClassesDir = sourceSets.testInlineMockito.output.classesDir
-    classpath = sourceSets.testInlineMockito.runtimeClasspath
-}
-
-test.dependsOn testInlineMockito
-
-
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -63,3 +42,26 @@ dokka {
     }
 }
 javadoc.dependsOn dokka
+
+//Switch inline
+task createTestResources << {
+    def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
+    if (System.env.MOCK_MAKER != null) {
+        logger.warn("! Using MockMaker ${System.env.MOCK_MAKER}")
+        mockMakerFile.parentFile.mkdirs()
+        mockMakerFile.createNewFile()
+        mockMakerFile.write(System.env.MOCK_MAKER)
+    } else {
+        logger.warn("! Using default MockMaker")
+    }
+}
+
+task removeTestResources << {
+    def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
+    if (mockMakerFile.exists()) {
+        mockMakerFile.delete()
+    }
+}
+
+test.dependsOn createTestResources
+test.finalizedBy removeTestResources

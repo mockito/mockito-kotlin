@@ -3,7 +3,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 import java.util.*
 
-class ArgumentCaptorTest {
+class ArgumentCaptorTest : BaseTest() {
 
     @Test
     fun argumentCaptor_withSingleValue() {

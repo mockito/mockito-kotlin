@@ -31,17 +31,17 @@ import org.mockito.Mockito
 import org.mockito.exceptions.base.MockitoException
 import java.util.*
 
-class SpyTest {
+class SpyTest : BaseTest() {
 
     private val interfaceInstance: MyInterface = MyClass()
     private val openClassInstance: MyClass = MyClass()
     private val closedClassInstance: ClosedClass = ClosedClass()
 
     @After
-    fun a() {
+    override fun tearDown() {
+        super.tearDown()
         Mockito.validateMockitoUsage()
     }
-
 
     @Test
     fun spyInterfaceInstance() {
@@ -59,12 +59,6 @@ class SpyTest {
 
         /* Then */
         expect(result).toNotBeNull()
-    }
-
-    @Test(expected = MockitoException::class)
-    fun spyClosedClassInstance() {
-        /* When */
-        spy(closedClassInstance)
     }
 
     @Test
