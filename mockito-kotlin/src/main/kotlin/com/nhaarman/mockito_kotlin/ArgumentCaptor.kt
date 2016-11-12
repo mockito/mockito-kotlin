@@ -25,6 +25,7 @@
 
 package com.nhaarman.mockito_kotlin
 
+import com.nhaarman.mockito_kotlin.createinstance.createInstance
 import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 

@@ -1,9 +1,11 @@
+package test
+
 import com.nhaarman.expect.expect
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Test
 import java.util.*
 
-class ArgumentCaptorTest : BaseTest() {
+class ArgumentCaptorTest : TestBase() {
 
     @Test
     fun argumentCaptor_withSingleValue() {

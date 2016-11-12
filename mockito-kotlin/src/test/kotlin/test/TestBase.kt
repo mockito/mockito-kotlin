@@ -1,8 +1,10 @@
-import com.nhaarman.mockito_kotlin.mockMakerInlineEnabled
+package test
+
+import com.nhaarman.mockito_kotlin.createinstance.mockMakerInlineEnabled
 import org.junit.After
 import org.junit.Before
 
-abstract class BaseTest {
+abstract class TestBase {
 
     @Before
     open fun setup() {

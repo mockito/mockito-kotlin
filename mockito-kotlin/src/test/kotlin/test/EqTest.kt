@@ -1,4 +1,4 @@
-/*
+package test/*
  * The MIT License
  *
  * Copyright (c) 2016 Niek Haarman
@@ -24,75 +24,78 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.exceptions.base.MockitoException
-import java.util.*
 
-class SpyTest : BaseTest() {
+class EqTest : TestBase() {
 
     private val interfaceInstance: MyInterface = MyClass()
     private val openClassInstance: MyClass = MyClass()
     private val closedClassInstance: ClosedClass = ClosedClass()
 
+    private lateinit var doAnswer: Open
+
+    @Before
+    override fun setup() {
+        super.setup()
+
+        /* Create a proper Mockito state */
+        doAnswer = Mockito.doAnswer { }.`when`(mock())
+    }
+
     @After
     override fun tearDown() {
         super.tearDown()
-        Mockito.validateMockitoUsage()
+
+        /* Close `any` Mockito state */
+        doAnswer.go(0)
     }
 
     @Test
-    fun spyInterfaceInstance() {
+    fun eqInterfaceInstance() {
         /* When */
-        val result = spy(interfaceInstance)
+        val result = eq(interfaceInstance)
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun spyOpenClassInstance() {
+    fun eqOpenClassInstance() {
         /* When */
-        val result = spy(openClassInstance)
+        val result = eq(openClassInstance)
 
         /* Then */
         expect(result).toNotBeNull()
     }
 
     @Test
-    fun doReturnWithSpy() {
-        val date = spy(Date())
-        doReturn(123L).whenever(date).time
-        expect(date.time).toBe(123L)
+    fun eqClosedClassInstance() {
+        /* When */
+        val result = eq(closedClassInstance)
+
+        /* Then */
+        expect(result).toNotBeNull()
     }
 
     @Test
-    fun doNothingWithSpy() {
-        val date = spy(Date(0))
-        doNothing().whenever(date).time = 5L
-        date.time = 5L;
-        expect(date.time).toBe(0L)
-    }
+    fun nullArgument() {
+        /* Given */
+        val s: String? = null
 
-    @Test(expected = IllegalArgumentException::class)
-    fun doThrowWithSpy() {
-        val date = spy(Date(0))
-        doThrow(IllegalArgumentException()).whenever(date).time
-        date.time
-    }
+        /* When */
+        val result = eq(s)
 
-    @Test
-    fun doCallRealMethodWithSpy() {
-        val date = spy(Date(0))
-        doReturn(123L).whenever(date).time
-        doCallRealMethod().whenever(date).time
-        expect(date.time).toBe(0L)
+        /* Then */
+        expect(result).toBeNull()
     }
 
     private interface MyInterface
     private open class MyClass : MyInterface
-    private class ClosedClass
+    class ClosedClass
 }
 
