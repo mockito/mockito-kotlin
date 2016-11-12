@@ -33,7 +33,7 @@ class CreateInstanceInlineTest {
 
     class ClassToBeMocked {
 
-        fun doSomething(c: ClassToBeMocked) {
+        fun doSomething(@Suppress("UNUSED_PARAMETER") c: ClassToBeMocked) {
         }
 
         fun doSomethingElse(value: BigInteger): BigInteger {

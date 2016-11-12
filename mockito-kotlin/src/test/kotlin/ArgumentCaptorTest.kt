@@ -16,7 +16,7 @@ class ArgumentCaptorTest {
         /* Then */
         val captor = argumentCaptor<Long>()
         verify(date).time = captor.capture()
-        expect(captor.value).toBe(5L)
+        expect(captor.lastValue).toBe(5L)
     }
 
     @Test
@@ -30,7 +30,7 @@ class ArgumentCaptorTest {
         /* Then */
         val captor = argumentCaptor<String>()
         verify(m).nullableString(captor.capture())
-        expect(captor.value).toBeNull()
+        expect(captor.lastValue).toBeNull()
     }
 
     @Test
@@ -44,7 +44,7 @@ class ArgumentCaptorTest {
         /* Then */
         val captor = nullableArgumentCaptor<String>()
         verify(m).nullableString(captor.capture())
-        expect(captor.value).toBeNull()
+        expect(captor.lastValue).toBeNull()
     }
 
     @Test
@@ -75,5 +75,44 @@ class ArgumentCaptorTest {
         val captor = nullableArgumentCaptor<String>()
         verify(m, times(2)).nullableString(captor.capture())
         expect(captor.allValues).toBe(listOf("test", null))
+    }
+
+    @Test
+    fun argumentCaptor_callProperties() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.int(1)
+        m.int(2)
+        m.int(3)
+        m.int(4)
+        m.int(5)
+
+        /* Then */
+        argumentCaptor<Int>().apply {
+            verify(m, times(5)).int(capture())
+
+            expect(firstValue).toBe(1)
+            expect(secondValue).toBe(2)
+            expect(thirdValue).toBe(3)
+            expect(lastValue).toBe(5)
+        }
+    }
+
+    @Test(expected = IndexOutOfBoundsException::class)
+    fun argumentCaptor_callPropertyNotAvailable() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.int(1)
+
+        /* Then */
+        argumentCaptor<Int>().apply {
+            verify(m).int(capture())
+
+            expect(secondValue).toBe(2)
+        }
     }
 }
