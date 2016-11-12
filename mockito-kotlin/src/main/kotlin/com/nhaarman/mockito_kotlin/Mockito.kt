@@ -72,7 +72,7 @@ fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber = Mocki
 fun doThrow(toBeThrown: KClass<out Throwable>): Stubber = Mockito.doThrow(toBeThrown.java)!!
 fun doThrow(vararg toBeThrown: Throwable): Stubber = Mockito.doThrow(*toBeThrown)!!
 
-inline fun <reified T : Any> eq(value: T): T = Mockito.eq(value) ?: createInstance<T>()
+fun <T> eq(value: T): T = Mockito.eq(value) ?: value
 fun ignoreStubs(vararg mocks: Any): Array<out Any> = Mockito.ignoreStubs(*mocks)!!
 fun inOrder(vararg mocks: Any): InOrder = Mockito.inOrder(*mocks)!!
 
@@ -138,7 +138,7 @@ fun <T> refEq(value: T, vararg excludeFields: String): T? = Mockito.refEq(value,
 
 fun <T> reset(vararg mocks: T) = Mockito.reset(*mocks)
 
-fun <T> same(value: T): T? = Mockito.same(value)
+fun <T> same(value: T): T? = Mockito.same(value) ?: value
 
 inline fun <reified T : Any> spy(): T = Mockito.spy(T::class.java)!!
 fun <T> spy(value: T): T = Mockito.spy(value)!!
