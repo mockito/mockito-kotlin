@@ -76,6 +76,7 @@ fun doThrow(vararg toBeThrown: Throwable): Stubber = Mockito.doThrow(*toBeThrown
 fun <T> eq(value: T): T = Mockito.eq(value) ?: value
 fun ignoreStubs(vararg mocks: Any): Array<out Any> = Mockito.ignoreStubs(*mocks)!!
 fun inOrder(vararg mocks: Any): InOrder = Mockito.inOrder(*mocks)!!
+fun inOrder(vararg mocks: Any, evaluation: InOrder.() -> Unit) = Mockito.inOrder(*mocks).evaluation()
 
 inline fun <reified T : Any> isA(): T? = Mockito.isA(T::class.java)
 fun <T : Any> isNotNull(): T? = Mockito.isNotNull()

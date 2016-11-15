@@ -1,4 +1,5 @@
 package test
+
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
@@ -174,6 +175,23 @@ class MockitoTest : TestBase() {
             string("")
 
             inOrder(this).verify(this, calls(2)).string(any())
+        }
+    }
+
+    @Test
+    fun testInOrderWithLambda() {
+        /* Given */
+        val a = mock<() -> Unit>()
+        val b = mock<() -> Unit>()
+
+        /* When */
+        b()
+        a()
+
+        /* Then */
+        inOrder(a, b) {
+            verify(b).invoke()
+            verify(a).invoke()
         }
     }
 
