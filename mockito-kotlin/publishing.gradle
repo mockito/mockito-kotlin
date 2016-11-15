@@ -40,8 +40,6 @@ uploadArchives {
                 )
             }
 
-            if (publishToLocal) repository(url: mavenLocal().url)
-
             pom.project {
                 name 'Mockito-Kotlin'
                 packaging 'jar'
