@@ -492,4 +492,19 @@ class MockitoTest : TestBase() {
         /* Then */
         expect(mock.genericMethod()).toBe(2)
     }
+
+    @Test
+    fun isA_withNonNullableString() {
+        mock<Methods>().apply {
+            string("")
+            verify(this).string(isA<String>())
+        }
+    }
+    @Test
+    fun isA_withNullableString() {
+        mock<Methods>().apply {
+            nullableString("")
+            verify(this).nullableString(isA<String>())
+        }
+    }
 }

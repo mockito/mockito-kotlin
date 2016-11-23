@@ -78,7 +78,7 @@ fun ignoreStubs(vararg mocks: Any): Array<out Any> = Mockito.ignoreStubs(*mocks)
 fun inOrder(vararg mocks: Any): InOrder = Mockito.inOrder(*mocks)!!
 fun inOrder(vararg mocks: Any, evaluation: InOrder.() -> Unit) = Mockito.inOrder(*mocks).evaluation()
 
-inline fun <reified T : Any> isA(): T? = Mockito.isA(T::class.java)
+inline fun <reified T : Any> isA(): T = Mockito.isA(T::class.java) ?: createInstance<T>()
 fun <T : Any> isNotNull(): T? = Mockito.isNotNull()
 fun <T : Any> isNull(): T? = Mockito.isNull()
 
