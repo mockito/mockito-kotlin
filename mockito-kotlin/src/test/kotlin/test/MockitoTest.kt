@@ -492,4 +492,12 @@ class MockitoTest : TestBase() {
         /* Then */
         expect(mock.genericMethod()).toBe(2)
     }
+
+    @Test
+    fun testIsA() {
+        mock<Methods>().apply {
+            string("")
+            verify(this).string(isA<String>())
+        }
+    }
 }
