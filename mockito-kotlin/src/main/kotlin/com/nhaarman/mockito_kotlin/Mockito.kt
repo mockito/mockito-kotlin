@@ -156,15 +156,3 @@ fun verifyZeroInteractions(vararg mocks: Any) = Mockito.verifyZeroInteractions(*
 
 fun <T> whenever(methodCall: T): OngoingStubbing<T> = Mockito.`when`(methodCall)!!
 fun withSettings(): MockSettings = Mockito.withSettings()!!
-
-@Deprecated("Use any() instead.", ReplaceWith("any()"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> anyCollection(): Collection<T> = any()
-
-@Deprecated("Use any() instead.", ReplaceWith("any()"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> anyList(): List<T> = any()
-
-@Deprecated("Use any() instead.", ReplaceWith("any()"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> anySet(): Set<T> = any()
-
-@Deprecated("Use any() instead.", ReplaceWith("any()"), DeprecationLevel.ERROR)
-inline fun <reified K : Any, reified V : Any> anyMap(): Map<K, V> = any()

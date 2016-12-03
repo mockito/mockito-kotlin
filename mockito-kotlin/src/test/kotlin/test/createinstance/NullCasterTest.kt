@@ -28,6 +28,6 @@ class NullCasterTest : TestBase() {
         acceptNonNullableString(s)
     }
 
-    private fun acceptNonNullableString(s: String) {
+    private fun acceptNonNullableString(@Suppress("UNUSED_PARAMETER") s: String) {
     }
 }

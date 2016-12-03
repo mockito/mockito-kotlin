@@ -36,10 +36,6 @@ inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capt
 
 class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<*>) {
 
-    @Deprecated("Use lastValue", ReplaceWith("lastValue"))
-    val value: T
-        get() = captor.value
-
     /**
      * The first captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
@@ -86,18 +82,3 @@ val <T> ArgumentCaptor<T>.thirdValue: T
 
 val <T> ArgumentCaptor<T>.lastValue: T
     get() = allValues.last()
-
-/**
- * This method is deprecated because its behavior differs from the Java behavior.
- * Instead, use [argumentCaptor] in the traditional way, or use one of
- * [argThat], [argForWhich] or [check].
- */
-@Deprecated("Use argumentCaptor(), argThat() or check() instead.", ReplaceWith("check(consumer)"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
-    var times = 0
-    return argThat { if (++times == 1) consumer.invoke(this); true }
-}
-
-@Deprecated("Use captor.capture() instead.", ReplaceWith("captor.capture()"), DeprecationLevel.ERROR)
-inline fun <reified T : Any> capture(captor: KArgumentCaptor<T>): T = captor.capture()
-

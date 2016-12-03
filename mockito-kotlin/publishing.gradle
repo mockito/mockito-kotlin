@@ -1,11 +1,9 @@
-apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.nhaarman'
 version = rootProject.ext.versionName
-def sonatypeUsername = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
-def sonatypePassword = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
-
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
@@ -28,19 +26,10 @@ signing {
     sign configurations.archives
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-                authentication(
-                        userName: sonatypeUsername,
-                        password: sonatypePassword
-                )
-            }
-
-            pom.project {
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
                 name 'Mockito-Kotlin'
                 packaging 'jar'
                 description 'Using Mockito with Kotlin.'
@@ -55,6 +44,7 @@ uploadArchives {
                 licenses {
                     license {
                         name 'MIT'
+                        url 'https://opensource.org/licenses/MIT'
                         distribution 'repo'
                     }
                 }
@@ -65,6 +55,37 @@ uploadArchives {
                         name 'Niek Haarman'
                     }
                 }
+            }
+        }
+    }
+}
+
+bintray {
+    user = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+    key = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
+
+    configurations = ['archives']
+
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'Mockito-Kotlin'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/nhaarman/mockito-kotlin.git'
+
+        version {
+            name = versionName
+
+            gpg {
+                sign = true
+            }
+
+            mavenCentralSync {
+                sync = true
+                user = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
+                password = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
+                close = '1'
             }
         }
     }

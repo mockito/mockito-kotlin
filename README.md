@@ -5,16 +5,11 @@ A small library that provides helper functions to work with [Mockito](https://gi
 
 ## Install
 
-Mockito-Kotlin is available on Maven Central.
+Mockito-Kotlin is available on Maven Central and JCenter.
 For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` with the latest version:
 
 ```groovy
-repositories {
-    mavenCentral()
-}
-dependencies {
-    testCompile "com.nhaarman:mockito-kotlin:x.x.x"
-}
+testCompile "com.nhaarman:mockito-kotlin:x.x.x"
 ```
 
 ## Example
@@ -23,7 +18,7 @@ A test using Mockito-Kotlin typically looks like the following:
 
 ```kotlin
 @Test
-fun a(){ 
+fun doAction_doesSomething(){ 
   /* Given */
   val mock = mock<MyClass> {
     on { getText() } doReturn "text"
