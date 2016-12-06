@@ -1,7 +1,7 @@
 new ByteArrayOutputStream().withStream { os ->
 
   exec {
-    commandLine 'git', 'describe'
+    commandLine 'git', 'describe', '--abbrev=0', '--tags'
     standardOutput = os
   }
 
