@@ -95,6 +95,7 @@ inline fun <reified T : Any> mock(stubbing: KStubbing<T>.(T) -> Unit): T {
 
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
+    fun <R> calling(methodCall: R) = Mockito.`when`(methodCall)
 
     fun <R : Any> onGeneric(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
         val r = try {
@@ -121,16 +122,20 @@ class KStubbing<out T>(private val mock: T) {
             throw MockitoKotlinException("NullPointerException thrown when stubbing. If you are trying to stub a generic method, try `onGeneric` instead.", e)
         }
     }
+    
+    fun <R> calling(methodCall: T.() -> R) = on(methodCall)
 }
 
 infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> = thenReturn(t)
 fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> = thenReturn(t, *ts)
 inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> = thenReturn(ts[0], *ts.drop(1).toTypedArray())
+infix fun <T> OngoingStubbing<T>.returns(t: T): OngoingStubbing<T> = thenReturn(t)
 
 infix fun <T> OngoingStubbing<T>.doThrow(t: Throwable): OngoingStubbing<T> = thenThrow(t)
 fun <T> OngoingStubbing<T>.doThrow(t: Throwable, vararg ts: Throwable): OngoingStubbing<T> = thenThrow(t, *ts)
 infix fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>): OngoingStubbing<T> = thenThrow(t.java)
 fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>, vararg ts: KClass<out Throwable>): OngoingStubbing<T> = thenThrow(t.java, *ts.map { it.java }.toTypedArray())
+infix fun <T> OngoingStubbing<T>.throws(t: Throwable): OngoingStubbing<T> = thenThrow(t)
 
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
