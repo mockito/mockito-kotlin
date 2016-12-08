@@ -139,6 +139,17 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun checkWithNullArgument_throwsError() {
+        mock<Methods>().apply {
+            nullableString(null)
+
+            expectErrorWithMessage("null").on {
+                verify(this).nullableString(check {})
+            }
+        }
+    }
+
+    @Test
     fun atLeastXInvocations() {
         mock<Methods>().apply {
             string("")
@@ -459,6 +470,30 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun stubbingTwiceWithArgumentMatchers() {
+        /* When */
+        val mock = mock<Methods> {
+            on { stringResult(argThat { this == "A" }) } doReturn "A"
+            on { stringResult(argThat { this == "B" }) } doReturn "B"
+        }
+
+        /* Then */
+        expect(mock.stringResult("A")).toBe("A")
+        expect(mock.stringResult("B")).toBe("B")
+    }
+
+    @Test
+    fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
+        /* Expect */
+        expectErrorWithMessage("null").on {
+            mock<Methods> {
+                on { stringResult(check { }) } doReturn "A"
+                on { stringResult(check { }) } doReturn "B"
+            }
+        }
+    }
+
+    @Test
     fun doReturn_withSingleItemList() {
         /* Given */
         val mock = mock<Open> {
@@ -500,6 +535,7 @@ class MockitoTest : TestBase() {
             verify(this).string(isA<String>())
         }
     }
+
     @Test
     fun isA_withNullableString() {
         mock<Methods>().apply {
