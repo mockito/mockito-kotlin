@@ -52,9 +52,39 @@ inline fun <reified T : Any> anyVararg(): T = Mockito.any<T>() ?: createInstance
 /** Matches any array of type T. */
 inline fun <reified T : Any?> anyArray(): Array<T> = Mockito.any(Array<T>::class.java) ?: arrayOf()
 
-inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(T::class)
+/**
+ * Creates a custom argument matcher.
+ * `null` values will never evaluate to `true`.
+ *
+ * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
+ */
+inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mockito.argThat<T?> { arg -> arg?.predicate() ?: false } ?: createInstance(T::class)
+
+/**
+ * Creates a custom argument matcher.
+ * `null` values will never evaluate to `true`.
+ *
+ * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
+ */
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
-inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat<T> { it -> predicate(it); true } ?: createInstance(T::class)
+
+/**
+ * For usage with verification only.
+ *
+ * For example:
+ *  verify(myObject).doSomething(check { assertThat(it, is("Test")) })
+ *
+ * @param predicate A function that performs actions to verify an argument [T].
+ */
+inline fun <reified T : Any> check(noinline predicate: (T) -> Unit) = Mockito.argThat<T?> { arg ->
+    if (arg == null) error("""The argument passed to the predicate was null.
+
+If you are trying to verify an argument to be null, use `isNull()`.
+If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
+""".trimIndent())
+    predicate(arg)
+    true
+} ?: createInstance(T::class)
 
 fun atLeast(numInvocations: Int): VerificationMode = Mockito.atLeast(numInvocations)!!
 fun atLeastOnce(): VerificationMode = Mockito.atLeastOnce()!!

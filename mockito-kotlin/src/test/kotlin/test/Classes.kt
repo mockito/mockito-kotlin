@@ -1,4 +1,6 @@
-package test/*
+package test
+
+/*
 * The MIT License
 *
 * Copyright (c) 2016 Niek Haarman
@@ -55,6 +57,7 @@ interface Methods {
     fun nullableString(s: String?)
 
     fun stringResult(): String
+    fun stringResult(s: String): String
     fun nullableStringResult(): String?
     fun builderMethod(): Methods
 }
