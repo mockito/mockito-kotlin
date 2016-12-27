@@ -69,6 +69,14 @@ inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = Mock
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = argThat(predicate)
 
 /**
+ * Creates a custom argument matcher.
+ * `null` values will never evaluate to `true`.
+ *
+ * @param predicate A function that returns `true` when given [T] matches the predicate.
+ */
+inline fun <reified T: Any> argWhere(noinline predicate: (T) -> Boolean) = argThat(predicate)
+
+/**
  * For usage with verification only.
  *
  * For example:
