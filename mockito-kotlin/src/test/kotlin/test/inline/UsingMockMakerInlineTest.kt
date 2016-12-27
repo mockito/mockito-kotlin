@@ -23,7 +23,6 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockito_kotlin.*
 import com.nhaarman.mockito_kotlin.createinstance.InstanceCreator
 import com.nhaarman.mockito_kotlin.createinstance.mockMakerInlineEnabled
@@ -129,13 +128,12 @@ class UsingMockMakerInlineTest {
     }
 
     @Test
-    fun sealedClass_fails() {
-        /* Expect */
-        expectErrorWithMessage("Could not create") on {
+    fun sealedMemberClass() {
+        /* When */
+        val result = createInstance<MySealedClass>()
 
-            /* When */
-            createInstance<MySealedClass>()
-        }
+        /* Then */
+        expect(result).toNotBeNull()
     }
 
     @Test
