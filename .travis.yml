@@ -5,13 +5,13 @@ language: java
 matrix:
   include:
   - jdk: oraclejdk7
-    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.0.5-3
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.0.6
   - jdk: oraclejdk7
-    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.1-M03
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.1-M04
   - jdk: oraclejdk8
-    env: TERM=dumb KOTLIN_VERSION=1.0.5-3
+    env: TERM=dumb KOTLIN_VERSION=1.0.6
   - jdk: oraclejdk8
-    env: TERM=dumb KOTLIN_VERSION=1.1-M03
+    env: TERM=dumb KOTLIN_VERSION=1.1-M04
 
 
 env:
