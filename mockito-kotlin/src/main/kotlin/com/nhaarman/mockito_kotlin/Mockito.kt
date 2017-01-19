@@ -26,16 +26,16 @@
 package com.nhaarman.mockito_kotlin
 
 import com.nhaarman.mockito_kotlin.createinstance.createInstance
-import org.mockito.InOrder
-import org.mockito.MockSettings
-import org.mockito.MockingDetails
-import org.mockito.Mockito
+import org.mockito.*
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.listeners.InvocationListener
+import org.mockito.mock.SerializableMode
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import org.mockito.verification.VerificationMode
 import org.mockito.verification.VerificationWithTimeout
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
 fun after(millis: Long) = Mockito.after(millis)
@@ -74,7 +74,7 @@ inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean) = 
  *
  * @param predicate A function that returns `true` when given [T] matches the predicate.
  */
-inline fun <reified T: Any> argWhere(noinline predicate: (T) -> Boolean) = argThat(predicate)
+inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean) = argThat(predicate)
 
 /**
  * For usage with verification only.
@@ -120,16 +120,70 @@ inline fun <reified T : Any> isA(): T = Mockito.isA(T::class.java) ?: createInst
 fun <T : Any> isNotNull(): T? = Mockito.isNotNull()
 fun <T : Any> isNull(): T? = Mockito.isNull()
 
-inline fun <reified T : Any> mock(): T = Mockito.mock(T::class.java)!!
-inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>): T = Mockito.mock(T::class.java, defaultAnswer)!!
-inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
-inline fun <reified T : Any> mock(s: String): T = Mockito.mock(T::class.java, s)!!
+inline fun <reified T : Any> mock(
+      extraInterfaces: Array<KClass<out Any>>? = null,
+      name: String? = null,
+      spiedInstance: Any? = null,
+      defaultAnswer: Answer<Any>? = null,
+      serializable: Boolean = false,
+      serializableMode: SerializableMode? = null,
+      verboseLogging: Boolean = false,
+      invocationListeners: Array<InvocationListener>? = null,
+      stubOnly: Boolean = false,
+      @Incubating useConstructor: Boolean = false,
+      @Incubating outerInstance: Any? = null
+): T = Mockito.mock(T::class.java, withSettings(
+      extraInterfaces = extraInterfaces,
+      name = name,
+      spiedInstance = spiedInstance,
+      defaultAnswer = defaultAnswer,
+      serializable = serializable,
+      serializableMode = serializableMode,
+      verboseLogging = verboseLogging,
+      invocationListeners = invocationListeners,
+      stubOnly = stubOnly,
+      useConstructor = useConstructor,
+      outerInstance = outerInstance
+))!!
 
-inline fun <reified T : Any> mock(stubbing: KStubbing<T>.(T) -> Unit): T {
-    return mock<T>().apply {
-        KStubbing(this).stubbing(this)
-    }
-}
+inline fun <reified T : Any> mock(
+      extraInterfaces: Array<KClass<out Any>>? = null,
+      name: String? = null,
+      spiedInstance: Any? = null,
+      defaultAnswer: Answer<Any>? = null,
+      serializable: Boolean = false,
+      serializableMode: SerializableMode? = null,
+      verboseLogging: Boolean = false,
+      invocationListeners: Array<InvocationListener>? = null,
+      stubOnly: Boolean = false,
+      @Incubating useConstructor: Boolean = false,
+      @Incubating outerInstance: Any? = null,
+      stubbing: KStubbing<T>.(T) -> Unit
+): T = Mockito.mock(T::class.java, withSettings(
+      extraInterfaces = extraInterfaces,
+      name = name,
+      spiedInstance = spiedInstance,
+      defaultAnswer = defaultAnswer,
+      serializable = serializable,
+      serializableMode = serializableMode,
+      verboseLogging = verboseLogging,
+      invocationListeners = invocationListeners,
+      stubOnly = stubOnly,
+      useConstructor = useConstructor,
+      outerInstance = outerInstance
+)).apply {
+    KStubbing(this).stubbing(this)
+}!!
+
+@Deprecated("Use mock() with optional arguments instead.", ReplaceWith("mock<T>(defaultAnswer = a)"), level = WARNING)
+inline fun <reified T : Any> mock(a: Answer<Any>): T = mock(defaultAnswer = a)
+
+@Deprecated("Use mock() with optional arguments instead.", ReplaceWith("mock<T>(name = s)"), level = WARNING)
+inline fun <reified T : Any> mock(s: String): T = mock(name = s)
+
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Use mock() with optional arguments instead.", level = WARNING)
+inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
 
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
@@ -193,4 +247,29 @@ fun <T> verifyNoMoreInteractions(vararg mocks: T) = Mockito.verifyNoMoreInteract
 fun verifyZeroInteractions(vararg mocks: Any) = Mockito.verifyZeroInteractions(*mocks)
 
 fun <T> whenever(methodCall: T): OngoingStubbing<T> = Mockito.`when`(methodCall)!!
-fun withSettings(): MockSettings = Mockito.withSettings()!!
+
+fun withSettings(
+      extraInterfaces: Array<KClass<out Any>>? = null,
+      name: String? = null,
+      spiedInstance: Any? = null,
+      defaultAnswer: Answer<Any>? = null,
+      serializable: Boolean = false,
+      serializableMode: SerializableMode? = null,
+      verboseLogging: Boolean = false,
+      invocationListeners: Array<InvocationListener>? = null,
+      stubOnly: Boolean = false,
+      @Incubating useConstructor: Boolean = false,
+      @Incubating outerInstance: Any? = null
+): MockSettings = Mockito.withSettings().apply {
+    extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
+    name?.let { name(it) }
+    spiedInstance?.let { spiedInstance(it) }
+    defaultAnswer?.let { defaultAnswer(it) }
+    if (serializable) serializable()
+    serializableMode?.let { serializable(it) }
+    if (verboseLogging) verboseLogging()
+    invocationListeners?.let { invocationListeners(*it) }
+    if (stubOnly) stubOnly()
+    if (useConstructor) useConstructor()
+    outerInstance?.let { outerInstance(it) }
+}
