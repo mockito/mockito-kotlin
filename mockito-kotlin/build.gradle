@@ -13,7 +13,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.11"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.13"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
         classpath "com.github.dcendents:android-maven-gradle-plugin:1.5"
     }
@@ -28,11 +28,11 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "org.mockito:mockito-core:2.4.5"
+    compile "org.mockito:mockito-core:2.6.5"
 
     /* Tests */
     testCompile "junit:junit:4.12"
-    testCompile "com.nhaarman:expect.kt:0.6.0"
+    testCompile "com.nhaarman:expect.kt:0.6.2"
 }
 
 dokka {
