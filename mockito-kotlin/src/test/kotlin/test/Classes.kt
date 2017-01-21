@@ -60,6 +60,17 @@ interface Methods {
     fun stringResult(s: String): String
     fun nullableStringResult(): String?
     fun builderMethod(): Methods
+
+    fun nonDefaultReturnType(): ExtraInterface
+}
+
+interface ExtraInterface
+
+abstract class ThrowingConstructor {
+
+    constructor() {
+        error("Error in constructor")
+    }
 }
 
 interface GenericMethods<T> {
