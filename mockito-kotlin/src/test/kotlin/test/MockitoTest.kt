@@ -489,6 +489,34 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun testMockStubbing_doAnswer() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { stringResult() } doAnswer { "result" }
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result")
+    }
+
+    @Test
+    fun testMockStubbing_doAnswer_withArgument() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
+        }
+
+        /* When */
+        val result = mock.stringResult("argument")
+
+        /* Then */
+        expect(result).toBe("argument-result")
+    }
+
+    @Test
     fun mock_withCustomName() {
         /* Given */
         val mock = mock<Methods>("myName")
