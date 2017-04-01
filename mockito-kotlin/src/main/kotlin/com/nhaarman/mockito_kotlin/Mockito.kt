@@ -175,6 +175,8 @@ inline fun <reified T : Any> mock(
     KStubbing(this).stubbing(this)
 }!!
 
+inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit) = this.apply { KStubbing(this).stubbing(this) }
+
 @Deprecated("Use mock() with optional arguments instead.", ReplaceWith("mock<T>(defaultAnswer = a)"), level = WARNING)
 inline fun <reified T : Any> mock(a: Answer<Any>): T = mock(defaultAnswer = a)
 
