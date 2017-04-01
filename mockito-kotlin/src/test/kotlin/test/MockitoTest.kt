@@ -517,6 +517,41 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun testMockStubbingAfterCreatingMock() {
+        val mock = mock<Methods>()
+
+        //create stub after creation of mock
+        mock.stub {
+            on { stringResult() } doReturn "result"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result")
+    }
+
+    @Test
+    fun testOverrideDefaultStub() {
+        /* Given mock with stub */
+        val mock = mock<Methods> {
+            on { stringResult() } doReturn "result1"
+        }
+
+        /* override stub */
+        mock.stub {
+            on { stringResult() } doReturn "result2"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result2")
+    }
+
+    @Test
     fun mock_withCustomName() {
         /* Given */
         val mock = mock<Methods>("myName")
