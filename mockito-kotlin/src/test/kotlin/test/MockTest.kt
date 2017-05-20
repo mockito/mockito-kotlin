@@ -24,8 +24,10 @@ package test/*
  */
 
 import com.nhaarman.expect.expect
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.util.*
@@ -86,7 +88,19 @@ class MockTest : TestBase() {
         expect(cal.time.time).toBe(123L)
     }
 
+    @Test
+    fun suspendingFunction() {
+        val instance = mock<MyCoroutine>()
+
+        runBlocking {
+            whenever(instance.mySuspendingFunction(any())).thenReturn("abc")
+            expect(instance.mySuspendingFunction("foo")).toBe("abc")
+        }
+    }
+
     private interface MyInterface
     private open class MyClass
+    private interface MyCoroutine {
+        suspend fun mySuspendingFunction(a: String): String
+    }
 }
-
