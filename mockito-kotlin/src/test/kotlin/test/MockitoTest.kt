@@ -983,4 +983,28 @@ class MockitoTest : TestBase() {
             verify(this).nullableString(isA<String>())
         }
     }
+
+    @Test
+    fun same_withNonNullArgument() {
+        mock<Methods>().apply {
+            string("")
+            verify(this).string(same(""))
+        }
+    }
+
+    @Test
+    fun same_withNullableNonNullArgument() {
+        mock<Methods>().apply {
+            nullableString("")
+            verify(this).nullableString(same(""))
+        }
+    }
+
+    @Test
+    fun same_withNullArgument() {
+        mock<Methods>().apply {
+            nullableString(null)
+            verify(this).nullableString(same(null))
+        }
+    }
 }
