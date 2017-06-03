@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply from: './publishing.gradle'
+apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
