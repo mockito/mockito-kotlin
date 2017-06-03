@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply from: './publishing.gradle'
+apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
@@ -8,12 +8,11 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.13"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.14"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
         classpath "com.github.dcendents:android-maven-gradle-plugin:1.5"
     }
@@ -22,13 +21,12 @@ buildscript {
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "org.mockito:mockito-core:2.7.21"
+    compile "org.mockito:mockito-core:2.8.9"
 
     /* Tests */
     testCompile "junit:junit:4.12"
