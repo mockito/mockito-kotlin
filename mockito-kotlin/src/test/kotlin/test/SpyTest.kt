@@ -72,7 +72,7 @@ class SpyTest : TestBase() {
     fun doNothingWithSpy() {
         val date = spy(Date(0))
         doNothing().whenever(date).time = 5L
-        date.time = 5L;
+        date.time = 5L
         expect(date.time).toBe(0L)
     }
 
@@ -89,6 +89,28 @@ class SpyTest : TestBase() {
         doReturn(123L).whenever(date).time
         doCallRealMethod().whenever(date).time
         expect(date.time).toBe(0L)
+    }
+
+    @Test
+    fun doReturnWithDefaultInstanceSpyStubbing() {
+        val timeVal = 12L
+        
+        val dateSpy = spy<Date> {
+            on { time } doReturn timeVal
+        }
+
+        expect(dateSpy.time).toBe(timeVal)
+    }
+
+    @Test
+    fun doReturnWithSpyStubbing() {
+        val timeVal = 15L
+        
+        val dateSpy = spy(Date(0)) {
+            on { time } doReturn timeVal
+        }
+
+        expect(dateSpy.time).toBe(timeVal)
     }
 
     private interface MyInterface
