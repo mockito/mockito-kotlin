@@ -243,7 +243,11 @@ fun <T> reset(vararg mocks: T) = Mockito.reset(*mocks)
 fun <T> same(value: T): T = Mockito.same(value) ?: value
 
 inline fun <reified T : Any> spy(): T = Mockito.spy(T::class.java)!!
+inline fun <reified T : Any> spy(stubbing: KStubbing<T>.(T) -> Unit ): T = Mockito.spy(T::class.java)
+        .apply { KStubbing(this).stubbing(this) }!!
 fun <T> spy(value: T): T = Mockito.spy(value)!!
+inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T = spy(value)
+        .apply { KStubbing(this).stubbing(this) }!!
 
 fun timeout(millis: Long): VerificationWithTimeout = Mockito.timeout(millis)!!
 fun times(numInvocations: Int): VerificationMode = Mockito.times(numInvocations)!!
