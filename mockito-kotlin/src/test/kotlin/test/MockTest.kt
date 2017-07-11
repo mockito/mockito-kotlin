@@ -81,7 +81,7 @@ class MockTest : TestBase() {
 
     @Test
     fun deepStubs() {
-        val cal: Calendar = mock(RETURNS_DEEP_STUBS)
+        val cal: Calendar = mock(defaultAnswer = RETURNS_DEEP_STUBS)
         whenever(cal.time.time).thenReturn(123L)
         expect(cal.time.time).toBe(123L)
     }
