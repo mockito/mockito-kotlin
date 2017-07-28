@@ -26,7 +26,11 @@
 package com.nhaarman.mockito_kotlin
 
 import com.nhaarman.mockito_kotlin.createinstance.createInstance
-import org.mockito.*
+import org.mockito.InOrder
+import org.mockito.Incubating
+import org.mockito.MockSettings
+import org.mockito.MockingDetails
+import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
@@ -193,7 +197,7 @@ class KStubbing<out T>(private val mock: T) {
     fun <R : Any> onGeneric(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
         val r = try {
             mock.methodCall()
-        } catch(e: NullPointerException) {
+        } catch (e: NullPointerException) {
             // An NPE may be thrown by the Kotlin type system when the MockMethodInterceptor returns a
             // null value for a non-nullable generic type.
             // We catch this NPE to return a valid instance.
@@ -211,7 +215,7 @@ class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: T.() -> R): OngoingStubbing<R> {
         return try {
             Mockito.`when`(mock.methodCall())
-        } catch(e: NullPointerException) {
+        } catch (e: NullPointerException) {
             throw MockitoKotlinException("NullPointerException thrown when stubbing. If you are trying to stub a generic method, try `onGeneric` instead.", e)
         }
     }
@@ -276,4 +280,18 @@ fun withSettings(
     if (stubOnly) stubOnly()
     if (useConstructor) useConstructor()
     outerInstance?.let { outerInstance(it) }
+}
+
+/**
+ * Verify multiple calls on mock
+ * Supports an easier to read style of
+ *
+ * ```
+ * verify(mock) {
+ *     2 * { call() }
+ * }
+ * ```
+ */
+inline fun <T> verify(mock: T, block: VerifyScope<T>.() -> Unit) {
+    VerifyScope(mock).block()
 }
