@@ -2,8 +2,7 @@ package com.nhaarman.mockito_kotlin.createinstance
 
 import com.nhaarman.mockito_kotlin.MockitoKotlin
 import com.nhaarman.mockito_kotlin.MockitoKotlinException
-import org.mockito.Answers
-import org.mockito.internal.creation.MockSettingsImpl
+import org.mockito.Mockito
 import org.mockito.internal.creation.bytebuddy.MockAccess
 import org.mockito.internal.util.MockUtil
 import java.lang.reflect.InvocationTargetException
@@ -11,9 +10,7 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.*
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaType
-import kotlin.reflect.jvm.jvmName
+import kotlin.reflect.jvm.*
 import java.lang.reflect.Array as JavaArray
 
 internal class InstanceCreator() : NonNullProvider {
@@ -174,9 +171,11 @@ internal class InstanceCreator() : NonNullProvider {
      */
     @Suppress("UNCHECKED_CAST")
     fun <T> Class<T>.uncheckedMock(): T {
-        val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
-        val creationSettings = impl.confirm(this)
-        return MockUtil.createMock(creationSettings).apply {
+        val settings = Mockito.withSettings()
+              .defaultAnswer(Mockito.RETURNS_DEFAULTS)
+              .build(this)
+
+        return MockUtil.createMock(settings).apply {
             (this as? MockAccess)?.mockitoInterceptor = null
         }
     }
