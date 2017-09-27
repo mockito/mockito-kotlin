@@ -12,12 +12,6 @@ For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` wi
 testCompile "com.nhaarman:mockito-kotlin:x.x.x"
 ```
 
-If you use Kotlin 1.1, you can instead depend on the `mockito-kotlin-kt1.1` artifact.
-
-```groovy
-testCompile "com.nhaarman:mockito-kotlin-kt1.1:x.x.x"
-```
-
 ## Example
 
 A test using Mockito-Kotlin typically looks like the following:
