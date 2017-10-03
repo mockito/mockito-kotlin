@@ -27,6 +27,17 @@ dependencies {
     compile project(':mockito-kotlin')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.18"
+
+    /* Tests */
+    testCompile "junit:junit:4.12"
+    testCompile "com.nhaarman:expect.kt:0.6.2"
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
 }
 
 dokka {
