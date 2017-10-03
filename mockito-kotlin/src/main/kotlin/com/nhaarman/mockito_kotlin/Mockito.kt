@@ -187,7 +187,7 @@ inline fun <reified T : Any> mock(s: String): T = mock(name = s)
 @Deprecated("Use mock() with optional arguments instead.", level = WARNING)
 inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.java, s)!!
 
-class KStubbing<out T>(private val mock: T) {
+class KStubbing<out T>(val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
 
     fun <R : Any> onGeneric(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
@@ -208,7 +208,7 @@ class KStubbing<out T>(private val mock: T) {
         return onGeneric(methodCall, R::class)
     }
 
-    fun <R> on(methodCall: T.() -> R): OngoingStubbing<R> {
+    inline fun <R> on(methodCall: T.() -> R): OngoingStubbing<R> {
         return try {
             Mockito.`when`(mock.methodCall())
         } catch(e: NullPointerException) {
