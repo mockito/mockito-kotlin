@@ -26,7 +26,11 @@
 package com.nhaarman.mockito_kotlin
 
 import com.nhaarman.mockito_kotlin.createinstance.createInstance
-import org.mockito.*
+import org.mockito.InOrder
+import org.mockito.Incubating
+import org.mockito.MockSettings
+import org.mockito.MockingDetails
+import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
@@ -276,4 +280,18 @@ fun withSettings(
     if (stubOnly) stubOnly()
     if (useConstructor) useConstructor()
     outerInstance?.let { outerInstance(it) }
+}
+
+/**
+ * verify multiple calls on mock
+ * Supports an easier to read style of
+ *
+ * ```
+ * verify(mock) {
+ *     2 * call()
+ * }
+ * ```
+ */
+inline fun <T> verify(mock: T, block: VerifyScope<T>.() -> Unit) {
+	VerifyScope(mock).block()
 }
