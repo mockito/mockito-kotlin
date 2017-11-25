@@ -13,8 +13,8 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.15"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:1.5"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:2.0"
     }
 }
 
@@ -26,7 +26,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "org.mockito:mockito-core:2.10.0"
+    compile "org.mockito:mockito-core:2.12.0"
 
     /* Tests */
     testCompile "junit:junit:4.12"
@@ -46,7 +46,7 @@ dokka {
 javadoc.dependsOn dokka
 
 //Switch inline
-task createTestResources << {
+task createTestResources {
     def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
     if (System.env.MOCK_MAKER != null) {
         logger.warn("! Using MockMaker ${System.env.MOCK_MAKER}")
@@ -58,7 +58,7 @@ task createTestResources << {
     }
 }
 
-task removeTestResources << {
+task removeTestResources {
     def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
     if (mockMakerFile.exists()) {
         mockMakerFile.delete()
