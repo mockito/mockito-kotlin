@@ -11,6 +11,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
+import kotlin.reflect.full.starProjectedType
 import java.lang.reflect.Array as JavaArray
 
 internal class InstanceCreator() : NonNullProvider {
@@ -52,10 +53,10 @@ internal class InstanceCreator() : NonNullProvider {
     private fun <T : Any> KClass<T>.easiestConstructor(): KFunction<T> {
         return constructors
                 .sortedBy { it.parameters.withoutOptionalParameters().size }
-                .withoutParametersOfType(this.defaultType)
+                .withoutParametersOfType(this.starProjectedType)
                 .withoutArrayParameters()
                 .firstOrNull() ?: constructors.sortedBy { it.parameters.withoutOptionalParameters().size }
-                .withoutParametersOfType(this.defaultType)
+                .withoutParametersOfType(this.starProjectedType)
                 .first()
     }
 
@@ -85,7 +86,7 @@ internal class InstanceCreator() : NonNullProvider {
     private fun KClass<*>.isArray() = java.isArray
     private fun KClass<*>.isClassObject() = jvmName.equals("java.lang.Class")
     private fun KClass<*>.isPrimitive() =
-            java.isPrimitive || !defaultType.isMarkedNullable && simpleName in arrayOf(
+            java.isPrimitive || !starProjectedType.isMarkedNullable && simpleName in arrayOf(
                     "Boolean",
                     "Byte",
                     "Short",
