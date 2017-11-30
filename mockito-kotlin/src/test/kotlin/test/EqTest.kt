@@ -24,8 +24,8 @@ package test/*
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

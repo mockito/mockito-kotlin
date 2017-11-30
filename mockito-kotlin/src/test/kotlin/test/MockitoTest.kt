@@ -3,7 +3,7 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.RETURNS_MOCKS

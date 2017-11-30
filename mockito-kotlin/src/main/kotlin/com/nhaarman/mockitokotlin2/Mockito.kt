@@ -23,9 +23,9 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockito_kotlin
+package com.nhaarman.mockitokotlin2
 
-import com.nhaarman.mockito_kotlin.createinstance.createInstance
+import com.nhaarman.mockitokotlin2.createinstance.createInstance
 import org.mockito.InOrder
 import org.mockito.Incubating
 import org.mockito.MockSettings

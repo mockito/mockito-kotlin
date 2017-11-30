@@ -23,6 +23,6 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockito_kotlin
+package com.nhaarman.mockitokotlin2
 
 class MockitoKotlinException(message: String?, cause: Throwable?) : RuntimeException(message, cause)

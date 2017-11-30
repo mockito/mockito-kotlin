@@ -1,4 +1,4 @@
-package com.nhaarman.mockito_kotlin
+package com.nhaarman.mockitokotlin2
 
 import org.mockito.BDDMockito
 

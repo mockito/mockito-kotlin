@@ -1,7 +1,7 @@
 package test.createinstance
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.createinstance.NullCaster
+import com.nhaarman.mockitokotlin2.createinstance.NullCaster
 import org.junit.Test
 import test.TestBase
 

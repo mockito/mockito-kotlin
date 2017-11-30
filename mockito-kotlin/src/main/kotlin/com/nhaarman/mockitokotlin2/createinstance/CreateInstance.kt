@@ -23,8 +23,14 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockito_kotlin
+package com.nhaarman.mockitokotlin2.createinstance
 
-import org.mockito.stubbing.Stubber
+import kotlin.reflect.KClass
+import java.lang.reflect.Array as JavaArray
 
-fun <T> Stubber.whenever(mock: T) = `when`(mock)
+
+inline fun <reified T : Any> createInstance(): T
+      = createInstance(T::class)
+
+fun <T : Any> createInstance(kClass: KClass<T>): T
+      = NonNullProvider.create().createInstance(kClass)

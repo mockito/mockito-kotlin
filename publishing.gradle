@@ -25,13 +25,13 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-group = 'com.nhaarman'
+group = 'com.nhaarman.mockito-kotlin2'
 version = rootProject.ext.versionName
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'com.nhaarman'
+            groupId 'com.nhaarman.mockitokotlin2'
             artifactId 'mockito-kotlin'
 
             from components.java

@@ -1,7 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 
 class BDDMockitoTest {
