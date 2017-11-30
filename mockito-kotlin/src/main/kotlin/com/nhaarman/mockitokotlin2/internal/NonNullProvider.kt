@@ -1,9 +1,9 @@
-package com.nhaarman.mockitokotlin2.createinstance
+package com.nhaarman.mockitokotlin2.internal
 
 import kotlin.reflect.KClass
 import java.lang.reflect.Array as JavaArray
 
-interface NonNullProvider {
+internal interface NonNullProvider {
 
     fun <T : Any> createInstance(kClass: KClass<T>): T
 

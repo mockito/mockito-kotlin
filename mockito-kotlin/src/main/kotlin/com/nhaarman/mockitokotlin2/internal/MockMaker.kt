@@ -1,4 +1,4 @@
-package com.nhaarman.mockitokotlin2.createinstance
+package com.nhaarman.mockitokotlin2.internal
 
 import org.mockito.internal.configuration.plugins.Plugins
 import org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker

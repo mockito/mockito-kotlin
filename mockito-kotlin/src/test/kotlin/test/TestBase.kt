@@ -1,6 +1,6 @@
 package test
 
-import com.nhaarman.mockitokotlin2.createinstance.mockMakerInlineEnabled
+import com.nhaarman.mockitokotlin2.internal.mockMakerInlineEnabled
 import org.junit.After
 import org.junit.Before
 

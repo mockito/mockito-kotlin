@@ -1,4 +1,4 @@
-package com.nhaarman.mockitokotlin2.createinstance
+package com.nhaarman.mockitokotlin2.internal
 
 import kotlin.reflect.KClass
 

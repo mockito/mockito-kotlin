@@ -23,8 +23,9 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2.createinstance
+package com.nhaarman.mockitokotlin2
 
+import com.nhaarman.mockitokotlin2.internal.NonNullProvider
 import kotlin.reflect.KClass
 import java.lang.reflect.Array as JavaArray
 

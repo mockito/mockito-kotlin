@@ -24,7 +24,7 @@
 
 import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.createinstance.mockMakerInlineEnabled
+import com.nhaarman.mockitokotlin2.internal.mockMakerInlineEnabled
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

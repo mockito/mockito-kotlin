@@ -25,7 +25,6 @@
 
 package com.nhaarman.mockitokotlin2
 
-import com.nhaarman.mockitokotlin2.createinstance.createInstance
 import org.mockito.InOrder
 import org.mockito.Incubating
 import org.mockito.MockSettings
