@@ -1,19 +1,17 @@
 apply plugin: 'maven-publish'
 apply plugin: "io.spring.bintray"
 
-bintray {
-    bintrayUser = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
-    bintrayKey = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
-    repo = 'maven'
-    org = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
-    packageName = 'Mockito-Kotlin'
-    publication = 'mavenJava'
+bintray.bintrayUser = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+bintray.bintrayKey = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
+bintray.repo = 'maven'
+bintray.org = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+bintray.packageName = 'Mockito-Kotlin'
+bintray.publication = 'mavenJava'
 
-    licenses = ['MIT']
-    ossrhUser = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
-    ossrhPassword = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
-    overrideOnUpload = false
-}
+bintray.licenses = ['MIT']
+bintray.ossrhUser = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
+bintray.ossrhPassword = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
+bintray.overrideOnUpload = false
 bintray.gpgPassphrase = hasProperty('signing_password') ? signing_password : System.getenv('SIGNING_PASSWORD')
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
