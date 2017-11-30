@@ -1,91 +1,43 @@
-apply plugin: 'signing'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
+apply plugin: "io.spring.bintray"
 
-group = 'com.nhaarman'
-version = rootProject.ext.versionName
+bintray {
+    bintrayUser = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+    bintrayKey = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
+    repo = 'maven'
+    org = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+    packageName = 'Mockito-Kotlin'
+    publication = 'mavenJava'
+
+    licenses = ['MIT']
+    ossrhUser = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
+    ossrhPassword = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
+    overrideOnUpload = false
+}
+bintray.gpgPassphrase = hasProperty('signing_password') ? signing_password : System.getenv('SIGNING_PASSWORD')
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from 'build/javadoc'
 }
 
-task sourcesJar(type: Jar) {
+task sourceJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'sources'
 }
 
-artifacts {
-    archives jar
+group = 'com.nhaarman'
+version = rootProject.ext.versionName
 
-    archives javadocJar
-    archives sourcesJar
-}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.nhaarman'
+            artifactId 'mockito-kotlin'
 
-signing {
-    sign configurations.archives
-}
+            from components.java
 
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                name 'Mockito-Kotlin'
-                packaging 'jar'
-                description 'Using Mockito with Kotlin.'
-                url 'https://github.com/nhaarman/mockito-kotlin'
-
-                scm {
-                    url 'scm:git@github.com:nhaarman/mockito-kotlin.git'
-                    connection 'scm:git@github.com:nhaarman/mockito-kotlin.git'
-                    developerConnection 'scm:git@github.com:nhaarman/mockito-kotlin.git'
-                }
-
-                licenses {
-                    license {
-                        name 'MIT'
-                        url 'https://opensource.org/licenses/MIT'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'nhaarman'
-                        name 'Niek Haarman'
-                    }
-                }
-            }
-        }
-    }
-}
-
-bintray {
-    user = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
-    key = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
-
-    configurations = ['archives']
-
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = 'Mockito-Kotlin'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/nhaarman/mockito-kotlin.git'
-
-        version {
-            name = versionName
-
-            gpg {
-                sign = true
-            }
-
-            mavenCentralSync {
-                sync = true
-                user = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
-                password = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
-                close = '1'
+            artifact sourceJar {
+                classifier "sources"
             }
         }
     }
