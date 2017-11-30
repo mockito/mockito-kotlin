@@ -37,6 +37,27 @@ publishing {
             artifact sourceJar {
                 classifier "sources"
             }
+
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Mockito-Kotlin')
+                root.appendNode('description', 'Using Mockito with Kotlin.')
+                root.appendNode('url', 'https://github.com/nhaarman/mockito-kotlin')
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', 'scm:git@github.com:nhaarman/mockito-kotlin.git')
+
+                def licenses = root.appendNode('licenses')
+                def mitLicense = licenses.appendNode('license')
+                mitLicense.appendNode('name', 'MIT')
+
+                def developers = root.appendNode('developers')
+                def nhaarman = developers.appendNode('developer')
+                nhaarman.appendNode('id', 'nhaarman')
+                nhaarman.appendNode('name', 'Niek Haarman')
+            }
         }
     }
 }
