@@ -14,5 +14,6 @@ internal class NullCaster : NonNullProvider {
         return castNull()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> castNull(): T = null as T
 }

@@ -30,7 +30,7 @@ import java.lang.reflect.Array as JavaArray
 
 
 inline fun <reified T : Any> createInstance(): T
-        = createInstance(T::class)
+      = createInstance(T::class)
 
 fun <T : Any> createInstance(kClass: KClass<T>): T
-        = nonNullProvider().createInstance(kClass)
+      = NonNullProvider.create().createInstance(kClass)

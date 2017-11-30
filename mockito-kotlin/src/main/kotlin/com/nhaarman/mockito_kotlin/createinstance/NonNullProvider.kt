@@ -6,29 +6,9 @@ import java.lang.reflect.Array as JavaArray
 interface NonNullProvider {
 
     fun <T : Any> createInstance(kClass: KClass<T>): T
-}
 
-fun nonNullProvider(): NonNullProvider = NonNullProviderImpl(listOf(NullCaster(), InstanceCreator()))
+    companion object Factory {
 
-internal class NonNullProviderImpl(
-        private val nonNullProviders: List<NonNullProvider>
-) : NonNullProvider {
-
-    override fun <T : Any> createInstance(kClass: KClass<T>): T {
-        return firstNonErroring(
-                nonNullProviders.map { { it.createInstance(kClass) } }
-        )
-    }
-
-    private fun <T> firstNonErroring(functions: List<() -> T>): T {
-        var error: Throwable? = null
-        functions.forEach { f ->
-            try {
-                return f()
-            } catch(e: Throwable) {
-                error = e
-            }
-        }
-        throw error ?: IllegalStateException()
+        fun create(): NonNullProvider = NullCaster()
     }
 }
