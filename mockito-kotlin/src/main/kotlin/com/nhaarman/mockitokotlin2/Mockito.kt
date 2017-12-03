@@ -230,6 +230,7 @@ infix fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>): OngoingStubb
 fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>, vararg ts: KClass<out Throwable>): OngoingStubbing<T> = thenThrow(t.java, *ts.map { it.java }.toTypedArray())
 
 infix fun <T> OngoingStubbing<T>.doAnswer(answer: (InvocationOnMock) -> T?): OngoingStubbing<T> = thenAnswer(answer)
+infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<T>): OngoingStubbing<T> = thenAnswer(answer)
 
 fun mockingDetails(toInspect: Any): MockingDetails = Mockito.mockingDetails(toInspect)!!
 fun never(): VerificationMode = Mockito.never()!!
