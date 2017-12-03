@@ -1052,4 +1052,18 @@ class MockitoTest : TestBase() {
             verify(this).nullableString(same(null))
         }
     }
+
+    @Test
+    fun stubbingExistingMock() {
+        /* Given */
+        val mock = mock<Methods>()
+
+        /* When */
+        stubbing(mock) {
+            on { stringResult() } doReturn "result"
+        }
+
+        /* Then */
+        expect(mock.stringResult()).toBe("result")
+    }
 }
