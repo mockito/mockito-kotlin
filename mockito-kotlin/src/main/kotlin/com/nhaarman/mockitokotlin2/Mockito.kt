@@ -215,7 +215,7 @@ class KStubbing<out T>(private val mock: T) {
         return try {
             Mockito.`when`(mock.methodCall())
         } catch (e: NullPointerException) {
-            throw MockitoKotlinException("NullPointerException thrown when stubbing. If you are trying to stub a generic method, try `onGeneric` instead.", e)
+            throw MockitoKotlinException("NullPointerException thrown when stubbing.\nThis may be due to two reasons:\n\t- The method you're trying to stub threw an NPE: look at the stack trace below;\n\t- You're trying to stub a generic method: try `onGeneric` instead.", e)
         }
     }
 }
