@@ -36,6 +36,8 @@ open class Open {
     }
 
     open fun stringResult() = "Default"
+
+    fun throwsNPE(): Any = throw NullPointerException("Test")
 }
 
 class Closed

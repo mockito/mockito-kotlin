@@ -9,7 +9,10 @@ import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
+<<<<<<< HEAD
 import org.mockito.stubbing.Answer
+=======
+>>>>>>> 91437b8... Improve error message on NPE in
 import java.io.*
 
 
