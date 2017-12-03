@@ -193,7 +193,7 @@ inline fun <reified T : Any> mock(s: MockSettings): T = Mockito.mock(T::class.ja
 class KStubbing<out T>(private val mock: T) {
     fun <R> on(methodCall: R) = Mockito.`when`(methodCall)
 
-    fun <R : Any> onGeneric(methodCall: T.() -> R, c: KClass<R>): OngoingStubbing<R> {
+    fun <R : Any> onGeneric(methodCall: T.() -> R?, c: KClass<R>): OngoingStubbing<R> {
         val r = try {
             mock.methodCall()
         } catch (e: NullPointerException) {
@@ -207,7 +207,7 @@ class KStubbing<out T>(private val mock: T) {
         return Mockito.`when`(r)
     }
 
-    inline fun <reified R : Any> onGeneric(noinline methodCall: T.() -> R): OngoingStubbing<R> {
+    inline fun <reified R : Any> onGeneric(noinline methodCall: T.() -> R?): OngoingStubbing<R> {
         return onGeneric(methodCall, R::class)
     }
 
