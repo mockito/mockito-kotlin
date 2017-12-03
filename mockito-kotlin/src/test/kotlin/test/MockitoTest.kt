@@ -1005,6 +1005,15 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun doReturn_withGenericNullableReturnType_onGeneric() {
+        val m = mock<GenericMethods<String>> {
+            onGeneric { nullableReturnType() } doReturn "Test"
+        }
+
+        expect(m.nullableReturnType()).toBe("Test")
+    }
+
+    @Test
     fun isA_withNonNullableString() {
         mock<Methods>().apply {
             string("")

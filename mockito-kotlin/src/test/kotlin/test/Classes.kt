@@ -77,6 +77,7 @@ abstract class ThrowingConstructor {
 
 interface GenericMethods<T> {
     fun genericMethod(): T
+    fun nullableReturnType(): T?
 }
 
 class ThrowableClass(cause: Throwable) : Throwable(cause)
