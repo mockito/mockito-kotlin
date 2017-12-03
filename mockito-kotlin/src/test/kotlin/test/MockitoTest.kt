@@ -1,8 +1,6 @@
 package test
 
-import com.nhaarman.expect.expect
-import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.expect.fail
+import com.nhaarman.expect.*
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import org.mockito.Mockito
@@ -11,9 +9,8 @@ import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
-import java.io.IOException
-import java.io.PrintStream
-import java.io.Serializable
+import org.mockito.stubbing.Answer
+import java.io.*
 
 
 /*
@@ -327,7 +324,7 @@ class MockitoTest : TestBase() {
         try {
             mock.go()
             throw AssertionError("Call should have thrown.")
-        } catch(e: IllegalStateException) {
+        } catch (e: IllegalStateException) {
         }
     }
 
@@ -425,7 +422,7 @@ class MockitoTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
         }
     }
 
@@ -440,7 +437,7 @@ class MockitoTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
         }
     }
 
@@ -455,14 +452,14 @@ class MockitoTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: UnsupportedOperationException) {
+        } catch (e: UnsupportedOperationException) {
         }
     }
 
@@ -477,19 +474,19 @@ class MockitoTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch(e: UnsupportedOperationException) {
+        } catch (e: UnsupportedOperationException) {
         }
     }
 
     @Test
-    fun testMockStubbing_doAnswer() {
+    fun testMockStubbing_doAnswer_lambda() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult() } doAnswer { "result" }
@@ -501,6 +498,21 @@ class MockitoTest : TestBase() {
         /* Then */
         expect(result).toBe("result")
     }
+
+    @Test
+    fun testMockStubbing_doAnswer_instance() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { stringResult() } doAnswer Answer<String> { "result" }
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result")
+    }
+
 
     @Test
     fun testMockStubbing_doAnswer_withArgument() {
@@ -659,7 +671,7 @@ class MockitoTest : TestBase() {
             /* When */
             verify(mock).stringResult()
             fail("Expected an exception")
-        } catch(e: WantedButNotInvoked) {
+        } catch (e: WantedButNotInvoked) {
             /* Then */
             verify(out).println("methods.stringResult();")
         }
@@ -768,7 +780,7 @@ class MockitoTest : TestBase() {
             /* When */
             verify(mock).stringResult()
             fail("Expected an exception")
-        } catch(e: WantedButNotInvoked) {
+        } catch (e: WantedButNotInvoked) {
             /* Then */
             verify(out).println("methods.stringResult();")
         }
@@ -869,7 +881,7 @@ class MockitoTest : TestBase() {
             /* When */
             verify(mock).stringResult()
             fail("Expected an exception")
-        } catch(e: WantedButNotInvoked) {
+        } catch (e: WantedButNotInvoked) {
             /* Then */
             verify(out).println("methods.stringResult();")
         }
