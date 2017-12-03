@@ -513,6 +513,19 @@ class MockitoTest : TestBase() {
         expect(result).toBe("result")
     }
 
+    @Test
+    fun testMockStubbing_doAnswer_returnsSelf() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
+        }
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBe(mock)
+    }
 
     @Test
     fun testMockStubbing_doAnswer_withArgument() {
