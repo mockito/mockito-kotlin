@@ -26,6 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
+import kotlinx.coroutines.experimental.runBlocking
 import org.mockito.InOrder
 import org.mockito.Mockito
 import org.mockito.verification.VerificationAfterDelay
@@ -39,6 +40,17 @@ import org.mockito.verification.VerificationWithTimeout
  */
 fun <T> verify(mock: T): T {
     return Mockito.verify(mock)!!
+}
+
+/**
+ * Verifies certain suspending behavior <b>happened once</b>.
+ *
+ * Warning: Only one method call can be verified in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
+    val m = Mockito.verify(mock)
+    runBlocking { m.f() }
 }
 
 /**
