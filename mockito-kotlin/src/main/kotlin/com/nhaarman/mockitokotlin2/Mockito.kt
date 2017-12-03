@@ -25,19 +25,12 @@
 
 package com.nhaarman.mockitokotlin2
 
-import org.mockito.InOrder
-import org.mockito.Incubating
-import org.mockito.MockSettings
-import org.mockito.MockingDetails
-import org.mockito.Mockito
+import org.mockito.*
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
-import org.mockito.stubbing.Answer
-import org.mockito.stubbing.OngoingStubbing
-import org.mockito.stubbing.Stubber
-import org.mockito.verification.VerificationMode
-import org.mockito.verification.VerificationWithTimeout
+import org.mockito.stubbing.*
+import org.mockito.verification.*
 import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KClass
 
@@ -177,6 +170,8 @@ inline fun <reified T : Any> mock(
 )).apply {
     KStubbing(this).stubbing(this)
 }!!
+
+inline fun <T> stubbing(mock: T, stubbing: KStubbing<T>.(T) -> Unit) = KStubbing(mock).stubbing(mock)
 
 inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit) = this.apply { KStubbing(this).stubbing(this) }
 
