@@ -25,7 +25,13 @@ repositories {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
+
     compile "org.mockito:mockito-core:2.13.0"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.nhaarman:expect.kt:1.0.0'
+    testCompile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
 }
 
 dokka {
@@ -39,3 +45,10 @@ dokka {
     }
 }
 javadoc.dependsOn dokka
+
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

@@ -26,6 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
+import kotlinx.coroutines.experimental.runBlocking
 import org.mockito.Mockito
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
@@ -42,7 +43,7 @@ inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit): T {
     return apply { KStubbing(this).stubbing(this) }
 }
 
-class KStubbing<out T>(private val mock: T) {
+class KStubbing<out T>(val mock: T) {
 
     fun <R> on(methodCall: R): OngoingStubbing<R> = Mockito.`when`(methodCall)
 
@@ -73,5 +74,11 @@ class KStubbing<out T>(private val mock: T) {
                   e
             )
         }
+    }
+
+    fun <T : Any, R> KStubbing<T>.onBlocking(
+        m: suspend T.() -> R
+    ): OngoingStubbing<R> {
+        return runBlocking { Mockito.`when`(mock.m()) }
     }
 }
