@@ -226,6 +226,23 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun testInOrderWithReceiver() {
+        /* Given */
+        val mock = mock<Methods>()
+
+        /* When */
+        mock.string("")
+        mock.int(0)
+
+        /* Then */
+        mock.inOrder {
+            verify().string(any())
+            verify().int(any())
+            verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
     fun testClearInvocations() {
         val mock = mock<Methods>().apply {
             string("")
