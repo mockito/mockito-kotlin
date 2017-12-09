@@ -200,6 +200,23 @@ fun inOrder(
 }
 
 /**
+ * Allows [InOrder] verification for a single mocked instance:
+ *
+ * mock.inOrder {
+ *    verify().foo()
+ * }
+ *
+ */
+inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Any) {
+    block.invoke(InOrderOnType(this))
+}
+
+class InOrderOnType<T>(private val t: T) : InOrder by inOrder(t as Any) {
+
+    fun verify(): T = verify(t)
+}
+
+/**
  * Allows checking if given method was the only one invoked.
  */
 fun only(): VerificationMode {
