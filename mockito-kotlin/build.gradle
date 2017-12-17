@@ -29,7 +29,7 @@ dependencies {
 
     /* Tests */
     testCompile "junit:junit:4.12"
-    testCompile "com.nhaarman:expect.kt:0.6.2"
+    testCompile "com.nhaarman:expect.kt:1.0.0"
 }
 
 dokka {
