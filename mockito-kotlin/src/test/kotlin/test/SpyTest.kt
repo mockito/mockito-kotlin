@@ -112,6 +112,27 @@ class SpyTest : TestBase() {
         expect(dateSpy.time).toBe(timeVal)
     }
 
+    @Test
+    fun postfixSpyInterfaceInstance() {
+        /* When */
+        val result = interfaceInstance.spied()
+
+        /* Then */
+        expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun doReturnWithPostfixSpyStubbing() {
+        val timeVal = 15L
+
+        val dateSpy = Date(0).spied {
+            on { time } doReturn timeVal
+        }
+
+        expect(dateSpy.time).toBe(timeVal)
+    }
+
+
     private interface MyInterface
     private open class MyClass : MyInterface
     private class ClosedClass
