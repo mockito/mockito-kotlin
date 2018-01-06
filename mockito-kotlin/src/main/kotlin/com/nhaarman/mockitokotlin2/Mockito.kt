@@ -243,6 +243,9 @@ inline fun <reified T : Any> spy(stubbing: KStubbing<T>.(T) -> Unit ): T = Mocki
 fun <T> spy(value: T): T = Mockito.spy(value)!!
 inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T = spy(value)
         .apply { KStubbing(this).stubbing(this) }!!
+fun <T> T.spied() : T = Mockito.spy(this)!!
+inline fun <reified T> T.spied(stubbing: KStubbing<T>.(T) -> Unit) : T = Mockito.spy(this)
+        .apply { KStubbing(this).stubbing(this) }!!
 
 fun timeout(millis: Long): VerificationWithTimeout = Mockito.timeout(millis)!!
 fun times(numInvocations: Int): VerificationMode = Mockito.times(numInvocations)!!
