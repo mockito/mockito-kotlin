@@ -3,7 +3,7 @@ apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
-    ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.1.61'
+    ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.2.10'
 
     repositories {
         mavenCentral()
@@ -25,13 +25,14 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.mockito:mockito-core:2.12.0"
+    compile "org.mockito:mockito-core:2.13.0"
 
     /* Tests */
     testCompile "junit:junit:4.12"
     testCompile "com.nhaarman:expect.kt:0.6.2"
 
-    testCompile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.21"
 }
 
 dokka {
