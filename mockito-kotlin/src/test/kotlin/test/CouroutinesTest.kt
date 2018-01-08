@@ -2,41 +2,106 @@
 
 package test
 
-import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.KStubbing
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import kotlinx.coroutines.experimental.runBlocking
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.experimental.*
+import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertThat
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.stubbing.OngoingStubbing
 
-interface SomeInterface {
-
-    suspend fun foo(): Int
-}
 
 class CouroutinesTest {
 
-    interface SomeInterface {
+    interface InterfaceWithSuspendFunction {
+        suspend fun foo(): Boolean
+    }
 
-        suspend fun foo(): Int
+    interface InterfaceWithNormalFuntion {
+        fun foo(): Boolean
+    }
+
+    interface Callback {
+        fun onTrue()
+        fun onFalse()
+    }
+
+    class SomeClass(
+        val interfaceWithSuspendingFunction: InterfaceWithSuspendFunction,
+        val interfaceWithNormalFuntion: InterfaceWithNormalFuntion
+    ) {
+
+
+        suspend fun suspendingFunction(callback: Callback) {
+            log("Launching suspending function")
+            launch {
+                val result = async(CommonPool) {
+                    delay(2000)
+                    log("Asynchronously  calling suspending function and awaiting result")
+                    interfaceWithSuspendingFunction.foo()
+                }.await()
+                log("Awaiting result...")
+                log("Result is: $result")
+                if (result) {
+                    log("Calling callback method onTrue()")
+                    callback.onTrue()
+                } else {
+                    log("Calling callback method onFalse()")
+                    callback.onFalse()
+                }
+            }.join()
+            log("Called join to signal completion")
+        }
+
+        fun nonSuspendingFunction(callback: Callback): Job {
+            return launch {
+                log("Launching non-suspending function")
+                val result = async(CommonPool) {
+                    delay(2000)
+                    log("Asynchronously  calling suspending function and awaiting result")
+                    interfaceWithNormalFuntion.foo()
+                }.await()
+                log("Awaiting result...")
+                log("Result is: $result")
+                if (result) {
+                    log("Calling callback method onTrue()")
+                    callback.onTrue()
+                } else {
+                    log("Calling callback method onFalse()")
+                    callback.onFalse()
+                }
+            }
+        }
+    }
+
+    val callback = mock<Callback>()
+    val suspendingInterface = mock<InterfaceWithSuspendFunction> {
+        onBlocking { foo() } doReturn true
+    }
+    val nonSuspendingInterface = mock<InterfaceWithNormalFuntion> {
+        on { foo() } doReturn true
+    }
+
+    val subject = SomeClass(suspendingInterface, nonSuspendingInterface)
+
+    @Test
+    fun testSuspendingFunction() = runBlocking {
+        subject.suspendingFunction(callback)
+
+        verify(callback).onTrue()
     }
 
     @Test
-    fun test() = runBlocking {
-        val m = mock<SomeInterface> {
-            onBlocking { foo() } doReturn 42
-        }
-
-        val result = m.foo()
-
-        expect(result).toBe(42)
+    fun testNonSuspendingFunction() = runBlocking {
+        val job = subject.nonSuspendingFunction(callback)
+        assertThat(job.isCompleted, `is`(false))
+        job.join()
+        assertThat(job.isCompleted, `is`(true))
+        verify(callback).onTrue()
     }
 }
 
-fun <T : Any, R> KStubbing<T>.onBlocking(
-    m: suspend T.() -> R
-): OngoingStubbing<R> {
-    return runBlocking { Mockito.`when`(mock.m()) }
-}
+fun log(msg: String) = println("[${Thread.currentThread().name}] $msg")

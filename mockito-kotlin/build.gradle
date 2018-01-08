@@ -32,6 +32,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.nhaarman:expect.kt:1.0.0'
     testCompile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
+
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.21"
 }
 
 dokka {
