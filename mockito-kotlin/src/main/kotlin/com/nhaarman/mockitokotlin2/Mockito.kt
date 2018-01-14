@@ -26,6 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import org.mockito.*
+import org.mockito.internal.util.MockUtil
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
@@ -243,6 +244,9 @@ inline fun <reified T : Any> spy(stubbing: KStubbing<T>.(T) -> Unit ): T = Mocki
 fun <T> spy(value: T): T = Mockito.spy(value)!!
 inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T = spy(value)
         .apply { KStubbing(this).stubbing(this) }!!
+
+fun Any.isSpy() = MockUtil.isSpy(this)
+fun Any.isMock() = MockUtil.isMock(this)
 
 fun timeout(millis: Long): VerificationWithTimeout = Mockito.timeout(millis)!!
 fun times(numInvocations: Int): VerificationMode = Mockito.times(numInvocations)!!

@@ -112,6 +112,17 @@ class SpyTest : TestBase() {
         expect(dateSpy.time).toBe(timeVal)
     }
 
+
+    @Test
+    fun checkIfSpy() {
+        val date = Date(0)
+        val dateSpy = spy(date)
+
+        expect(dateSpy.isSpy()).toBe(true)
+        expect(date.isSpy()).toBe(false)
+    }
+
+
     private interface MyInterface
     private open class MyClass : MyInterface
     private class ClosedClass
