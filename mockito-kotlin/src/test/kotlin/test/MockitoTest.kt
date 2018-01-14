@@ -11,6 +11,7 @@ import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
 import org.mockito.stubbing.Answer
 import java.io.*
+import java.util.*
 
 
 /*
@@ -1066,4 +1067,14 @@ class MockitoTest : TestBase() {
         /* Then */
         expect(mock.stringResult()).toBe("result")
     }
+
+    @Test
+    fun checkIfMock() {
+        val date = Date(0)
+        val dateMock = mock<Date>()
+
+        expect(dateMock.isMock()).toBe(true)
+        expect(date.isMock()).toBe(false)
+    }
+
 }
