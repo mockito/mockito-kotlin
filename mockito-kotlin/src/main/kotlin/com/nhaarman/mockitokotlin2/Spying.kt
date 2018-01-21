@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Niek Haarman
+ * Copyright (c) 2018 Niek Haarman
  * Copyright (c) 2007 Mockito contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,13 +25,38 @@
 
 package com.nhaarman.mockitokotlin2
 
-import com.nhaarman.mockitokotlin2.internal.NonNullProvider
-import kotlin.reflect.KClass
-import java.lang.reflect.Array as JavaArray
+import org.mockito.Mockito
 
 
-inline fun <reified T : Any> createInstance(): T
-      = createInstance(T::class)
+/**
+ * Creates a spy of the real object.
+ * The spy calls <b>real</b> methods unless they are stubbed.
+ */
+inline fun <reified T : Any> spy(): T {
+    return Mockito.spy(T::class.java)!!
+}
 
-fun <T : Any> createInstance(kClass: KClass<T>): T
-      = NonNullProvider.create().createInstance(kClass)
+/**
+ * Creates a spy of the real object, allowing for immediate stubbing.
+ * The spy calls <b>real</b> methods unless they are stubbed.
+ */
+inline fun <reified T : Any> spy(stubbing: KStubbing<T>.(T) -> Unit): T {
+    return Mockito.spy(T::class.java)
+        .apply { KStubbing(this).stubbing(this) }!!
+}
+
+/**
+ * Creates a spy of the real object. The spy calls <b>real</b> methods unless they are stubbed.
+ */
+fun <T> spy(value: T): T {
+    return Mockito.spy(value)!!
+}
+
+/**
+ * Creates a spy of the real object, allowing for immediate stubbing.
+ * The spy calls <b>real</b> methods unless they are stubbed.
+ */
+inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T {
+    return spy(value)
+        .apply { KStubbing(this).stubbing(this) }!!
+}

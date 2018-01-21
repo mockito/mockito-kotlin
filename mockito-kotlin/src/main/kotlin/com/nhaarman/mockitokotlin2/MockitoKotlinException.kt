@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Niek Haarman
+ * Copyright (c) 2018 Niek Haarman
  * Copyright (c) 2007 Mockito contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

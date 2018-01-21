@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Niek Haarman
+ * Copyright (c) 2018 Niek Haarman
  * Copyright (c) 2007 Mockito contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,15 +25,35 @@
 
 package com.nhaarman.mockitokotlin2
 
+import com.nhaarman.mockitokotlin2.internal.createInstance
 import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 
-inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
-inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+/**
+ * Creates a [KArgumentCaptor] for given type.
+ */
+inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> {
+    return KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+}
 
-inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
+/**
+ * Creates a [KArgumentCaptor] for given nullable type.
+ */
+inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> {
+    return KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+}
 
-class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, private val tClass: KClass<*>) {
+/**
+ * Alias for [ArgumentCaptor.capture].
+ */
+inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
+    return captor.capture() ?: createInstance()
+}
+
+class KArgumentCaptor<out T : Any?>(
+    private val captor: ArgumentCaptor<T>,
+    private val tClass: KClass<*>
+) {
 
     /**
      * The first captured value of the argument.
@@ -67,7 +87,9 @@ class KArgumentCaptor<out T : Any?>(private val captor: ArgumentCaptor<T>, priva
         get() = captor.allValues
 
     @Suppress("UNCHECKED_CAST")
-    fun capture(): T = captor.capture() ?: createInstance(tClass) as T
+    fun capture(): T {
+        return captor.capture() ?: createInstance(tClass) as T
+    }
 }
 
 val <T> ArgumentCaptor<T>.firstValue: T
