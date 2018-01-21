@@ -1,4 +1,6 @@
-package test/*
+package test
+
+/*
  * The MIT License
  *
  * Copyright (c) 2016 Niek Haarman
@@ -40,9 +42,7 @@ class EqTest : TestBase() {
     private lateinit var doAnswer: Open
 
     @Before
-    override fun setup() {
-        super.setup()
-
+    fun setup() {
         /* Create a proper Mockito state */
         doAnswer = Mockito.doAnswer { }.`when`(mock())
     }

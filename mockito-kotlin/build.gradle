@@ -3,7 +3,7 @@ apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
-    ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.0.7'
+    ext.kotlin_version = "1.2.20"
 
     repositories {
         mavenCentral()
@@ -24,12 +24,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.mockito:mockito-core:2.13.0"
-
-    /* Tests */
-    testCompile "junit:junit:4.12"
-    testCompile "com.nhaarman:expect.kt:1.0.0"
 }
 
 dokka {
@@ -43,26 +39,3 @@ dokka {
     }
 }
 javadoc.dependsOn dokka
-
-//Switch inline
-task createTestResources {
-    def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
-    if (System.env.MOCK_MAKER != null) {
-        logger.warn("! Using MockMaker ${System.env.MOCK_MAKER}")
-        mockMakerFile.parentFile.mkdirs()
-        mockMakerFile.createNewFile()
-        mockMakerFile.write(System.env.MOCK_MAKER)
-    } else {
-        logger.warn("! Using default MockMaker")
-    }
-}
-
-task removeTestResources {
-    def mockMakerFile = new File("$projectDir/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker")
-    if (mockMakerFile.exists()) {
-        mockMakerFile.delete()
-    }
-}
-
-test.dependsOn createTestResources
-test.finalizedBy removeTestResources

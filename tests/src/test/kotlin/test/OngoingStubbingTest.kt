@@ -4,6 +4,7 @@ import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
 import com.nhaarman.mockitokotlin2.*
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.stubbing.Answer
@@ -263,6 +264,7 @@ class OngoingStubbingTest : TestBase() {
 
     @Test
     fun doReturn_throwsNPE() {
+        assumeFalse(mockMakerInlineEnabled())
         expectErrorWithMessage("look at the stack trace below") on {
 
             /* When */
