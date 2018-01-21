@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Niek Haarman
+ * Copyright (c) 2018 Niek Haarman
  * Copyright (c) 2007 Mockito contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +25,41 @@
 
 package com.nhaarman.mockitokotlin2
 
+import org.mockito.Mockito
+import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Stubber
+import kotlin.reflect.KClass
+
+
+fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
+    return Mockito.doAnswer { answer(it) }!!
+}
+
+fun doCallRealMethod(): Stubber {
+    return Mockito.doCallRealMethod()!!
+}
+
+fun doNothing(): Stubber {
+    return Mockito.doNothing()!!
+}
+
+fun doReturn(value: Any?): Stubber {
+    return Mockito.doReturn(value)!!
+}
+
+fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber {
+    return Mockito.doReturn(
+          toBeReturned,
+          *toBeReturnedNext
+    )!!
+}
+
+fun doThrow(toBeThrown: KClass<out Throwable>): Stubber {
+    return Mockito.doThrow(toBeThrown.java)!!
+}
+
+fun doThrow(vararg toBeThrown: Throwable): Stubber {
+    return Mockito.doThrow(*toBeThrown)!!
+}
 
 fun <T> Stubber.whenever(mock: T) = `when`(mock)
