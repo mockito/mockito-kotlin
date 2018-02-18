@@ -37,10 +37,24 @@ inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> {
 }
 
 /**
+ * Creates a [KArgumentCaptor] for given type, taking in a lambda to allow fast verification.
+ */
+inline fun <reified T : Any> argumentCaptor(f: KArgumentCaptor<T>.() -> Unit): KArgumentCaptor<T> {
+    return argumentCaptor<T>().apply(f)
+}
+
+/**
  * Creates a [KArgumentCaptor] for given nullable type.
  */
 inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> {
     return KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+}
+
+/**
+ * Creates a [KArgumentCaptor] for given nullable type, taking in a lambda to allow fast verification.
+ */
+inline fun <reified T : Any> nullableArgumentCaptor(f: KArgumentCaptor<T?>.() -> Unit): KArgumentCaptor<T?> {
+    return nullableArgumentCaptor<T>().apply(f)
 }
 
 /**
