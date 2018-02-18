@@ -30,7 +30,9 @@ import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 
 inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+inline fun <reified T : Any> argumentCaptor(param: KArgumentCaptor<T>.() -> Unit): KArgumentCaptor<T> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
 inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+inline fun <reified T : Any> nullableArgumentCaptor(param: KArgumentCaptor<T?>.() -> Unit): KArgumentCaptor<T?> = KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
 
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
 
