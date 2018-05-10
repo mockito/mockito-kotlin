@@ -52,7 +52,45 @@ class VerifyTest : TestBase() {
         }
     }
 
+    @Test
+    fun verifyDefaultArgs_firstParameter() {
+        /* Given */
+        val m = mock<TestInterface>()
+
+        /* When */
+        m.defaultArgs(a = 2)
+
+        /* Then */
+        verify(m).defaultArgs(2)
+    }
+
+    @Test
+    fun verifyDefaultArgs_secondParameter() {
+        /* Given */
+        val m = mock<TestInterface>()
+
+        /* When */
+        m.defaultArgs(b = 2)
+
+        /* Then */
+        verify(m).defaultArgs(b = 2)
+    }
+
+    @Test
+    fun verifyDefaultArgs_verifyDefaultValue() {
+        /* Given */
+        val m = mock<TestInterface>()
+
+        /* When */
+        m.defaultArgs(b = 2)
+
+        /* Then */
+        verify(m).defaultArgs(a = 3, b = 2)
+    }
+
     interface TestInterface {
         fun call(arg: Int)
+
+        fun defaultArgs(a: Int = 3, b: Int = 42)
     }
 }
