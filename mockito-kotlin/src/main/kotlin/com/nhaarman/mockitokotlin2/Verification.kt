@@ -192,7 +192,7 @@ fun inOrder(vararg mocks: Any): InOrder {
  *
  * Alias for [Mockito.inOrder].
  */
-fun inOrder(
+inline fun inOrder(
     vararg mocks: Any,
     evaluation: InOrder.() -> Unit
 ) {

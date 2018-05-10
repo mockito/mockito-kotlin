@@ -3,10 +3,7 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyBlocking
+import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
@@ -138,6 +135,17 @@ class CoroutinesTest {
         runBlocking { m.suspending() }
 
         verifyBlocking(m) { suspending() }
+    }
+
+    @Test
+    fun verifySuspendMethod() = runBlocking {
+        val testSubject : SomeInterface = mock()
+
+        testSubject.suspending()
+
+        inOrder(testSubject) {
+            verify(testSubject).suspending()
+        }
     }
 }
 
