@@ -1,6 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
+import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import java.util.*
@@ -115,6 +116,38 @@ class ArgumentCaptorTest : TestBase() {
             verify(m).int(capture())
 
             expect(secondValue).toBe(2)
+        }
+    }
+
+    @Test
+    fun argumentCaptor_withSingleValue_lambda() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        argumentCaptor<Long> {
+            verify(date).time = capture()
+            expect(lastValue).toBe(5L)
+        }
+    }
+
+    @Test
+    fun argumentCaptor_withSingleValue_lambda_properlyFails() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        expectErrorWithMessage("Expected: 3 but was: 5") on {
+            argumentCaptor<Long> {
+                verify(date).time = capture()
+                expect(lastValue).toBe(3L)
+            }
         }
     }
 }
