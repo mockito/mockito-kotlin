@@ -130,6 +130,21 @@ class MatchersTest : TestBase() {
     }
 
     @Test
+    fun checkProperlyFails() {
+        mock<Methods>().apply {
+            closedList(listOf(Closed(), Closed()))
+
+            expectErrorWithMessage("Argument(s) are different!") on {
+                verify(this).closedList(
+                      check {
+                          expect(it.size).toBe(1)
+                      }
+                )
+            }
+        }
+    }
+
+    @Test
     fun checkWithNullArgument_throwsError() {
         mock<Methods>().apply {
             nullableString(null)
