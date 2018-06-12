@@ -175,7 +175,7 @@ internal class InstanceCreator() : NonNullProvider {
     @Suppress("UNCHECKED_CAST")
     fun <T> Class<T>.uncheckedMock(): T {
         val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS) as MockSettingsImpl<T>
-        val creationSettings = impl.confirm(this)
+        val creationSettings = impl.setTypeToMock(this)
         return MockUtil.createMock(creationSettings).apply {
             (this as? MockAccess)?.mockitoInterceptor = null
         }
