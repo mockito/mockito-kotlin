@@ -62,6 +62,8 @@ interface Methods {
     fun builderMethod(): Methods
 
     fun nonDefaultReturnType(): ExtraInterface
+    fun overloadToInt(number: Number): Int
+    fun overloadToInt(string: String): Int
 }
 
 interface ExtraInterface
