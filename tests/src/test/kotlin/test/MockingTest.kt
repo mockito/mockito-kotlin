@@ -3,10 +3,10 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.UseConstructor.Companion
+import com.nhaarman.mockitokotlin2.UseConstructor.Companion.parameterless
+import com.nhaarman.mockitokotlin2.UseConstructor.Companion.withArguments
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.verification.WantedButNotInvoked
@@ -101,7 +101,6 @@ class MockingTest : TestBase() {
         /* Then */
         expect(result).toBe("B")
     }
-
 
 
     @Test
@@ -215,8 +214,25 @@ class MockingTest : TestBase() {
     fun mock_withSettingsAPI_useConstructor() {
         /* Given */
         expectErrorWithMessage("Unable to create mock instance of type ") on {
-            mock<ThrowingConstructor>(useConstructor = true) {}
+            mock<ThrowingConstructor>(useConstructor = parameterless()) {}
         }
+    }
+
+    @Test
+    fun mock_withSettingsAPI_useConstructorWithArguments_failing() {
+        /* Given */
+        expectErrorWithMessage("Unable to create mock instance of type ") on {
+            mock<ThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
+        }
+    }
+
+    @Test
+    fun mock_withSettingsAPI_useConstructorWithArguments() {
+        /* When */
+        val result = mock<NonThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
+
+        /* Then */
+        expect(result).toNotBeNull()
     }
 
     @Test
@@ -316,7 +332,7 @@ class MockingTest : TestBase() {
     fun mockStubbing_withSettingsAPI_useConstructor() {
         /* Given */
         expectErrorWithMessage("Unable to create mock instance of type ") on {
-            mock<ThrowingConstructor>(useConstructor = true) {}
+            mock<ThrowingConstructor>(useConstructor = parameterless()) {}
         }
     }
 

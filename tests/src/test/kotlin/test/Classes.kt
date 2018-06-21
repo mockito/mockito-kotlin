@@ -75,6 +75,22 @@ abstract class ThrowingConstructor {
     }
 }
 
+abstract class ThrowingConstructorWithArgument {
+
+    constructor(s: String) {
+        error("Error in constructor: $s")
+    }
+}
+
+abstract class NonThrowingConstructorWithArgument {
+
+    constructor() {
+        error("Error in constructor")
+    }
+
+    constructor(s: String)
+}
+
 interface GenericMethods<T> {
     fun genericMethod(): T
     fun nullableReturnType(): T?

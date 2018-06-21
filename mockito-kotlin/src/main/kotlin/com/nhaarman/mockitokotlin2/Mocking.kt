@@ -59,7 +59,7 @@ inline fun <reified T : Any> mock(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: Boolean = false,
+    @Incubating useConstructor: UseConstructor? = null,
     @Incubating outerInstance: Any? = null
 ): T {
     return Mockito.mock(
@@ -105,7 +105,7 @@ inline fun <reified T : Any> mock(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: Boolean = false,
+    @Incubating useConstructor: UseConstructor? = null,
     @Incubating outerInstance: Any? = null,
     stubbing: KStubbing<T>.(T) -> Unit
 ): T {
@@ -153,7 +153,7 @@ fun withSettings(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: Boolean = false,
+    @Incubating useConstructor: UseConstructor? = null,
     @Incubating outerInstance: Any? = null
 ): MockSettings = Mockito.withSettings().apply {
     extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
@@ -165,10 +165,23 @@ fun withSettings(
     if (verboseLogging) verboseLogging()
     invocationListeners?.let { invocationListeners(*it) }
     if (stubOnly) stubOnly()
-    if (useConstructor) useConstructor()
+    useConstructor?.let { useConstructor(*it.args) }
     outerInstance?.let { outerInstance(it) }
 }
 
+class UseConstructor private constructor(val args: Array<Any>) {
+
+    companion object {
+
+        /** Invokes the parameterless constructor. */
+        fun parameterless() = UseConstructor(emptyArray())
+
+        /** Invokes a constructor with given arguments. */
+        fun withArguments(vararg arguments: Any): UseConstructor {
+            return UseConstructor(arguments.asList().toTypedArray())
+        }
+    }
+}
 
 @Deprecated(
       "Use mock() with optional arguments instead.",
