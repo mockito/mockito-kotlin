@@ -1,4 +1,6 @@
-package test/*
+package test
+
+/*
  * The MIT License
  *
  * Copyright (c) 2016 Niek Haarman
@@ -93,7 +95,7 @@ class SpyTest : TestBase() {
     @Test
     fun doReturnWithDefaultInstanceSpyStubbing() {
         val timeVal = 12L
-        
+
         val dateSpy = spy<Date> {
             on { time } doReturn timeVal
         }
@@ -104,7 +106,7 @@ class SpyTest : TestBase() {
     @Test
     fun doReturnWithSpyStubbing() {
         val timeVal = 15L
-        
+
         val dateSpy = spy(Date(0)) {
             on { time } doReturn timeVal
         }
@@ -112,8 +114,28 @@ class SpyTest : TestBase() {
         expect(dateSpy.time).toBe(timeVal)
     }
 
-    private interface MyInterface
-    private open class MyClass : MyInterface
+    @Test
+    fun passAnyStringToSpy() {
+        /* Given */
+        val my = spy(MyClass())
+
+        /* When */
+        doReturn("mocked").whenever(my).foo(any())
+
+        /* Then */
+        expect(my.foo("hello")).toBe("mocked")
+    }
+
+    private interface MyInterface {
+
+        fun foo(value: String): String
+    }
+
+    private open class MyClass : MyInterface {
+
+        override fun foo(value: String): String = value
+    }
+
     private class ClosedClass
 }
 
