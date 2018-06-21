@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.20'
+    ext.kotlin_version = '1.2.50'
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.0.7'
 
     repositories {
@@ -22,7 +22,7 @@ dependencies {
     compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${rootProject.ext.versionName}.jar")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.mockito:mockito-core:2.13.0"
+    compile "org.mockito:mockito-core:2.19.0"
 
     testCompile "junit:junit:4.12"
     testCompile "com.nhaarman:expect.kt:1.0.0"
