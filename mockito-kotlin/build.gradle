@@ -3,7 +3,7 @@ apply from: '../publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
-    ext.kotlin_version = "1.2.20"
+    ext.kotlin_version = "1.2.50"
 
     repositories {
         mavenCentral()
