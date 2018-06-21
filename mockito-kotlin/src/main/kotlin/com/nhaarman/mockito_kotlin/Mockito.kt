@@ -41,7 +41,13 @@ import kotlin.reflect.KClass
 fun after(millis: Long) = Mockito.after(millis)
 
 /** Matches any object, excluding nulls. */
-inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
+inline fun <reified T : Any> any() = any(T::class.java)
+
+/** Required to match overloaded methods. Use zero-arg [any] otherwise. */
+inline fun <reified T : Any> any(clazz: Class<T>) = Mockito.any(clazz) ?: createInstance<T>()
+
+/** Required to match overloaded methods. Use zero-arg [any] otherwise. */
+inline fun <reified T : Any> any(kclass: KClass<T>) = Mockito.any(kclass.java) ?: createInstance<T>()
 
 /** Matches anything, including nulls. */
 inline fun <reified T : Any> anyOrNull(): T = Mockito.any<T>() ?: createInstance<T>()

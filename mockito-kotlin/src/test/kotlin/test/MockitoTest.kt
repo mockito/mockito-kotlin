@@ -93,6 +93,17 @@ class MockitoTest : TestBase() {
     }
 
     @Test
+    fun anyOverloaded() {
+        mock<Methods>().apply {
+            overloadToInt(3.14)
+            verify(this).overloadToInt(any(Number::class))
+
+            overloadToInt("string")
+            verify(this).overloadToInt(any(String::class.java))
+        }
+    }
+
+    @Test
     fun anyNull_neverVerifiesAny() {
         mock<Methods>().apply {
             nullableString(null)
