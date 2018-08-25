@@ -8,8 +8,14 @@ A small library that provides helper functions to work with [Mockito](https://gi
 Mockito-Kotlin is available on Maven Central and JCenter.
 For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` with the latest version:
 
+1.x versions
 ```groovy
-testCompile "com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x"
+testImplementation "com.nhaarman:mockito-kotlin:1.x.x"
+```
+
+2.x versions
+```groovy
+testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.x.x"
 ```
 
 ## Example
