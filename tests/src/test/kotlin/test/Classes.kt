@@ -88,6 +88,7 @@ abstract class NonThrowingConstructorWithArgument {
         error("Error in constructor")
     }
 
+    @Suppress("UNUSED_PARAMETER")
     constructor(s: String)
 }
 

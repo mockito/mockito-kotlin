@@ -255,7 +255,7 @@ class OngoingStubbingTest : TestBase() {
     fun doReturn_withSingleItemList() {
         /* Given */
         val mock = mock<Open> {
-            on { stringResult() } doReturn listOf("a", "b")
+            on { stringResult() } doReturnConsecutively listOf("a", "b")
         }
 
         /* Then */
@@ -330,7 +330,7 @@ class OngoingStubbingTest : TestBase() {
         /* When */
         try {
             mock.stringResult()
-        } catch(e: UnfinishedStubbingException) {
+        } catch (e: UnfinishedStubbingException) {
             /* Then */
             expect(e.message).toContain("Unfinished stubbing detected here:")
             expect(e.message).toContain("-> at test.OngoingStubbingTest.testMockitoStackOnUnfinishedStubbing")
