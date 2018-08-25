@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.*
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.exceptions.misusing.UnfinishedStubbingException
 import org.mockito.stubbing.Answer
 
 class OngoingStubbingTest : TestBase() {
@@ -318,5 +319,21 @@ class OngoingStubbingTest : TestBase() {
 
         /* Then */
         expect(mock.stringResult()).toBe("result")
+    }
+
+    @Test
+    fun testMockitoStackOnUnfinishedStubbing() {
+        /* Given */
+        val mock = mock<Open>()
+        whenever(mock.stringResult())
+
+        /* When */
+        try {
+            mock.stringResult()
+        } catch(e: UnfinishedStubbingException) {
+            /* Then */
+            expect(e.message).toContain("Unfinished stubbing detected here:")
+            expect(e.message).toContain("-> at test.OngoingStubbingTest.testMockitoStackOnUnfinishedStubbing")
+        }
     }
 }

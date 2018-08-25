@@ -37,7 +37,8 @@ import kotlin.reflect.KClass
  *
  * Alias for [Mockito.when].
  */
-fun <T> whenever(methodCall: T): OngoingStubbing<T> {
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
     return Mockito.`when`(methodCall)!!
 }
 
