@@ -9,7 +9,7 @@ Mockito-Kotlin is available on Maven Central and JCenter.
 For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` with the latest version:
 
 ```groovy
-testCompile "com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x"
+testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:x.x.x"
 ```
 
 ## Example
