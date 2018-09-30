@@ -26,6 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
+import org.mockito.ArgumentMatcher
 import org.mockito.Mockito
 
 /** Object argument that is equal to the given value. */
@@ -68,6 +69,16 @@ inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
     return Mockito.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
           T::class
     )
+}
+
+/**
+ * Registers a custom ArgumentMatcher. The original Mockito function registers the matcher and returns null,
+ * here the required type is returned.
+ *
+ * @param matcher The ArgumentMatcher on [T] to be registered.
+ */
+inline fun <reified T : Any> argThat(matcher: ArgumentMatcher<T>): T {
+    return Mockito.argThat(matcher) ?: createInstance()
 }
 
 /**

@@ -4,6 +4,10 @@ import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
+import org.mockito.ArgumentMatcher
+import org.mockito.internal.matchers.VarargMatcher
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import java.io.IOException
 
 class MatchersTest : TestBase() {
@@ -194,5 +198,52 @@ class MatchersTest : TestBase() {
             nullableString(null)
             verify(this).nullableString(same(null))
         }
+    }
+
+    @Test
+    fun testVarargAnySuccess() {
+        /* Given */
+        val t = mock<Methods>()
+        // a matcher to check if any of the varargs was equals to "b"
+        val matcher = VarargAnyMatcher<String, Boolean>({ "b" == it }, true, false)
+
+        /* When */
+        whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
+
+        /* Then */
+        expect(t.varargBooleanResult("a", "b", "c")).toBe(true)
+    }
+
+    @Test
+    fun testVarargAnyFail() {
+        /* Given */
+        val t = mock<Methods>()
+        // a matcher to check if any of the varargs was equals to "d"
+        val matcher = VarargAnyMatcher<String, Boolean>({ "d" == it }, true, false)
+
+        /* When */
+        whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
+
+        /* Then */
+        expect(t.varargBooleanResult("a", "b", "c")).toBe(false)
+    }
+
+    /**
+     * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if any of the var args
+     * matched. Needs to keep state between matching invocations.
+     */
+    private class VarargAnyMatcher<T, R>(
+        private val match: ((T) -> Boolean),
+        private val success: R,
+        private val failure: R
+    ) : ArgumentMatcher<T>, VarargMatcher, Answer<R> {
+        private var anyMatched = false
+
+        override fun matches(t: T): Boolean {
+            anyMatched = anyMatched or match(t)
+            return true
+        }
+
+        override fun answer(i: InvocationOnMock) = if (anyMatched) success else failure
     }
 }
