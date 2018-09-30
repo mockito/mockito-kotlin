@@ -4,10 +4,10 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Test
 
 
@@ -139,7 +139,7 @@ class CoroutinesTest {
 
     @Test
     fun verifySuspendMethod() = runBlocking {
-        val testSubject : SomeInterface = mock()
+        val testSubject: SomeInterface = mock()
 
         testSubject.suspending()
 
@@ -157,9 +157,9 @@ interface SomeInterface {
 
 class SomeClass {
 
-    suspend fun result(r: Int) = withContext(CommonPool) { r }
+    suspend fun result(r: Int) = withContext(Dispatchers.Default) { r }
 
-    suspend fun delaying() = withContext(CommonPool) {
+    suspend fun delaying() = withContext(Dispatchers.Default) {
         delay(100)
         42
     }

@@ -26,7 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
