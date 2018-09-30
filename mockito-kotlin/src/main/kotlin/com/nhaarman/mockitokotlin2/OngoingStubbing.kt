@@ -64,18 +64,6 @@ fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> {
 /**
  * Sets consecutive return values to be returned when the method is called.
  */
-@Deprecated(
-      "Use doReturnConsecutively instead",
-      ReplaceWith("doReturnConsecutively(ts)"),
-      level = ERROR
-)
-inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> {
-    return doReturnConsecutively(ts)
-}
-
-/**
- * Sets consecutive return values to be returned when the method is called.
- */
 inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(ts: List<T>): OngoingStubbing<T> {
     return thenReturn(
           ts[0],
