@@ -37,6 +37,54 @@ inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> {
 }
 
 /**
+ * Creates 2 [KArgumentCaptor]s for given types.
+ */
+inline fun <reified A: Any, reified B: Any> argumentCaptor2(): Pair<KArgumentCaptor<A>, KArgumentCaptor<B>> {
+    return Pair(KArgumentCaptor(ArgumentCaptor.forClass(A::class.java), A::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(B::class.java), B::class))
+}
+
+/**
+ * Creates 3 [KArgumentCaptor]s for given types.
+ */
+inline fun <reified A: Any, reified B: Any, reified C: Any> argumentCaptor3(): Triple<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>> {
+    return Triple(
+            KArgumentCaptor(ArgumentCaptor.forClass(A::class.java), A::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(B::class.java), B::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(C::class.java), C::class))
+}
+
+data class ArgumentCaptorHolder4<out A, out B, out C, out D>(
+        val first: A, val second: B, val third: C, val fourth: D)
+data class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
+        val first: A, val second: B, val third: C, val fourth: D, val fifth: E)
+
+
+/**
+ * Creates 4 [KArgumentCaptor]s for given types.
+ */
+inline fun <reified A: Any, reified B: Any, reified C: Any, reified D: Any> argumentCaptor4(): ArgumentCaptorHolder4<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>> {
+    return ArgumentCaptorHolder4(
+            KArgumentCaptor(ArgumentCaptor.forClass(A::class.java), A::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(B::class.java), B::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(C::class.java), C::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(D::class.java), D::class))
+}
+/**
+ * Creates 4 [KArgumentCaptor]s for given types.
+ */
+inline fun <reified A: Any, reified B: Any, reified C: Any, reified D: Any, reified E: Any> argumentCaptor5(): ArgumentCaptorHolder5<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>, KArgumentCaptor<E>> {
+    return ArgumentCaptorHolder5(
+            KArgumentCaptor(ArgumentCaptor.forClass(A::class.java), A::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(B::class.java), B::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(C::class.java), C::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(D::class.java), D::class),
+            KArgumentCaptor(ArgumentCaptor.forClass(E::class.java), E::class))
+}
+
+
+
+/**
  * Creates a [KArgumentCaptor] for given type, taking in a lambda to allow fast verification.
  */
 inline fun <reified T : Any> argumentCaptor(f: KArgumentCaptor<T>.() -> Unit): KArgumentCaptor<T> {

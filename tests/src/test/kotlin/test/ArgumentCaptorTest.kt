@@ -23,6 +23,82 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
+    fun argumentCaptor_destructuring2() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        val (captor1, captor2) = argumentCaptor2<Long, Long>()
+        verify(date).time = captor1.capture()
+        verify(date).time = captor2.capture()
+        expect(captor1.lastValue).toBe(5L)
+        expect(captor2.lastValue).toBe(5L)
+    }
+
+    @Test
+    fun argumentCaptor_destructuring3() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        val (captor1, captor2, captor3) = argumentCaptor3<Long, Long, Long>()
+        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+            verify(date).time = capture()
+            expect(lastValue).toBe(5L)
+        }
+        captor1.apply(verifyCaptor)
+        captor2.apply(verifyCaptor)
+        captor3.apply(verifyCaptor)
+    }
+
+    @Test
+    fun argumentCaptor_destructuring4() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        val (captor1, captor2, captor3, captor4) = argumentCaptor4<Long, Long, Long, Long>()
+        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+            verify(date).time = capture()
+            expect(lastValue).toBe(5L)
+        }
+        captor1.apply(verifyCaptor)
+        captor2.apply(verifyCaptor)
+        captor3.apply(verifyCaptor)
+        captor4.apply(verifyCaptor)
+    }
+
+    @Test
+    fun argumentCaptor_destructuring5() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        val (captor1, captor2, captor3, captor4, captor5) = argumentCaptor5<Long, Long, Long, Long, Long>()
+        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+            verify(date).time = capture()
+            expect(lastValue).toBe(5L)
+        }
+        captor1.apply(verifyCaptor)
+        captor2.apply(verifyCaptor)
+        captor3.apply(verifyCaptor)
+        captor4.apply(verifyCaptor)
+        captor5.apply(verifyCaptor)
+    }
+
+    @Test
     fun argumentCaptor_withNullValue_usingNonNullable() {
         /* Given */
         val m: Methods = mock()
