@@ -22,7 +22,7 @@ dependencies {
     compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${rootProject.ext.versionName}.jar")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.mockito:mockito-core:2.19.0"
+    compile "org.mockito:mockito-core:2.23.0"
 
     testCompile "junit:junit:4.12"
     testCompile "com.nhaarman:expect.kt:1.0.0"
