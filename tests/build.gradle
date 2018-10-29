@@ -1,10 +1,9 @@
 buildscript {
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.0.7'
-    ext.kotlin_version = '1.3.0-rc-116'
+    ext.kotlin_version = '1.3.0'
 
     repositories {
         mavenCentral()
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -17,7 +16,6 @@ apply plugin: 'kotlin'
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 dependencies {
