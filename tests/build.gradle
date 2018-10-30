@@ -1,10 +1,9 @@
 buildscript {
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.0.7'
-    ext.kotlin_version = '1.3.0-rc-116'
+    ext.kotlin_version = '1.3.0'
 
     repositories {
         mavenCentral()
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -17,14 +16,13 @@ apply plugin: 'kotlin'
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 dependencies {
     compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${rootProject.ext.versionName}.jar")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.mockito:mockito-core:2.19.0"
+    compile "org.mockito:mockito-core:2.23.0"
 
     testCompile "junit:junit:4.12"
     testCompile "com.nhaarman:expect.kt:1.0.0"
