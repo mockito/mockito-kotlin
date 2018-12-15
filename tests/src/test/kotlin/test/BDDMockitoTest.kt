@@ -3,8 +3,21 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
+import org.mockito.stubbing.Answer
 
 class BDDMockitoTest {
+
+    @Test
+    fun given_will_properlyStubs() {
+        /* Given */
+        val mock = mock<Methods>()
+
+        /* When */
+        given(mock.stringResult()) will Answer<String> { "Test" }
+
+        /* Then */
+        expect(mock.stringResult()).toBe("Test")
+    }
 
     @Test
     fun given_willReturn_properlyStubs() {
