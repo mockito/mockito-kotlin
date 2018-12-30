@@ -56,6 +56,16 @@ fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
 /**
  * Verifies certain behavior happened at least once / exact number of times / never.
  *
+ * Warning: Only one method call can be verified in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit) {
+    val m = Mockito.verify(mock, mode)
+    runBlocking { m.f() }
+}
+/**
+ * Verifies certain behavior happened at least once / exact number of times / never.
+ *
  * Alias for [Mockito.verify].
  */
 fun <T> verify(mock: T, mode: VerificationMode): T {
