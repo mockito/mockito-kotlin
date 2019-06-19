@@ -64,13 +64,33 @@ inline fun <reified A : Any, reified B : Any, reified C : Any> argumentCaptor(
     )
 }
 
-data class ArgumentCaptorHolder4<out A, out B, out C, out D>(
-    val first: A, val second: B, val third: C, val fourth: D
-)
+class ArgumentCaptorHolder4<out A, out B, out C, out D>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D
+) {
 
-data class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
-    val first: A, val second: B, val third: C, val fourth: D, val fifth: E
-)
+    operator fun component1() = first
+    operator fun component2() = second
+    operator fun component3() = third
+    operator fun component4() = fourth
+}
+
+class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D,
+    val fifth: E
+) {
+
+    operator fun component1() = first
+    operator fun component2() = second
+    operator fun component3() = third
+    operator fun component4() = fourth
+    operator fun component5() = fifth
+}
 
 
 /**
