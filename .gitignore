@@ -8,6 +8,7 @@ out/
 
 .idea/caches/*
 .idea/compiler.xml
+.idea/encodings.xml
 .idea/gradle.xml
 .idea/kotlinc.xml
 .idea/libraries/*

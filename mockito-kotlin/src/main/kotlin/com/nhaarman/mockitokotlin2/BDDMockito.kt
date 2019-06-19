@@ -27,6 +27,7 @@ package com.nhaarman.mockitokotlin2
 
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing
+import org.mockito.stubbing.Answer
 
 /**
  * Alias for [BDDMockito.given].
@@ -47,6 +48,13 @@ fun <T> given(methodCall: () -> T): BDDMyOngoingStubbing<T> {
  */
 fun <T> then(mock: T): BDDMockito.Then<T> {
     return BDDMockito.then(mock)
+}
+
+/**
+ * Alias for [BDDMyOngoingStubbing.will]
+ * */
+infix fun <T> BDDMyOngoingStubbing<T>.will(value: Answer<T>): BDDMockito.BDDMyOngoingStubbing<T> {
+    return will(value)
 }
 
 /**

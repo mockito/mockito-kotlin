@@ -138,6 +138,16 @@ class CoroutinesTest {
     }
 
     @Test
+    fun verifyAtLeastOnceSuspendFunctionCalled_verifyBlocking() {
+        val m = mock<SomeInterface>()
+
+        runBlocking { m.suspending() }
+        runBlocking { m.suspending() }
+
+        verifyBlocking(m, atLeastOnce()) { suspending() }
+    }
+
+    @Test
     fun verifySuspendMethod() = runBlocking {
         val testSubject: SomeInterface = mock()
 

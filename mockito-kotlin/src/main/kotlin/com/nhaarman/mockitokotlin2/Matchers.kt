@@ -133,7 +133,7 @@ fun <T : Any> notNull(): T? {
  * Object argument that is reflection-equal to the given value with support for excluding
  * selected fields from a class.
  */
-fun <T> refEq(value: T, vararg excludeFields: String): T? {
-    return Mockito.refEq(value, *excludeFields)
+inline fun <reified T : Any> refEq(value: T, vararg excludeFields: String): T {
+    return Mockito.refEq<T>(value, *excludeFields) ?: createInstance()
 }
 

@@ -5,12 +5,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath "io.spring.gradle:spring-bintray-plugin:0.9.0"
+        classpath "io.spring.gradle:spring-bintray-plugin:0.11.1"
     }
 }
 
 plugins {
-    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
 apply from: 'gradle/scripts/tagging.gradle'
