@@ -228,6 +228,19 @@ class MatchersTest : TestBase() {
         expect(t.varargBooleanResult("a", "b", "c")).toBe(false)
     }
 
+    /** https://github.com/nhaarman/mockito-kotlin/issues/328 */
+    @Test
+    fun testRefEqForNonNullableParameter() {
+       mock<Methods>().apply {
+           /* When */
+           val array = intArrayOf(2, 3)
+           intArray(array)
+           
+           /* Then */
+           verify(this).intArray(refEq(array))
+       }
+    }
+
     /**
      * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if any of the var args
      * matched. Needs to keep state between matching invocations.
