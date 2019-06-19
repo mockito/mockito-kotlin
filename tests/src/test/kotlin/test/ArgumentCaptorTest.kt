@@ -31,7 +31,7 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        val (captor1, captor2) = argumentCaptor2<Long, Long>()
+        val (captor1, captor2) = argumentCaptor<Long, Long>()
         verify(date).time = captor1.capture()
         verify(date).time = captor2.capture()
         expect(captor1.lastValue).toBe(5L)
@@ -47,8 +47,8 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        val (captor1, captor2, captor3) = argumentCaptor3<Long, Long, Long>()
-        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+        val (captor1, captor2, captor3) = argumentCaptor<Long, Long, Long>()
+        val verifyCaptor: KArgumentCaptor<Long>.() -> Unit = {
             verify(date).time = capture()
             expect(lastValue).toBe(5L)
         }
@@ -66,8 +66,8 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        val (captor1, captor2, captor3, captor4) = argumentCaptor4<Long, Long, Long, Long>()
-        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+        val (captor1, captor2, captor3, captor4) = argumentCaptor<Long, Long, Long, Long>()
+        val verifyCaptor: KArgumentCaptor<Long>.() -> Unit = {
             verify(date).time = capture()
             expect(lastValue).toBe(5L)
         }
@@ -86,8 +86,8 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        val (captor1, captor2, captor3, captor4, captor5) = argumentCaptor5<Long, Long, Long, Long, Long>()
-        val verifyCaptor:KArgumentCaptor<Long>.() ->Unit = {
+        val (captor1, captor2, captor3, captor4, captor5) = argumentCaptor<Long, Long, Long, Long, Long>()
+        val verifyCaptor: KArgumentCaptor<Long>.() -> Unit = {
             verify(date).time = capture()
             expect(lastValue).toBe(5L)
         }
