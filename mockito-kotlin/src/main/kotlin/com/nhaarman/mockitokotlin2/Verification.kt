@@ -165,8 +165,8 @@ fun description(description: String): VerificationMode {
  * interaction rather than failing immediately if has not already happened. May be useful for testing in concurrent
  * conditions.
  */
-fun after(millis: Long): VerificationAfterDelay? {
-    return Mockito.after(millis)
+fun after(millis: Long): VerificationAfterDelay {
+    return Mockito.after(millis)!!
 }
 
 /**
