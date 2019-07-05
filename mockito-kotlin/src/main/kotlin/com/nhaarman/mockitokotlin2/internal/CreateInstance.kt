@@ -29,7 +29,17 @@ import kotlin.reflect.KClass
 import java.lang.reflect.Array as JavaArray
 
 inline fun <reified T : Any> createInstance(): T {
-    return createInstance(T::class)
+    return when (T::class) {
+        Boolean::class -> false as T
+        Byte::class -> 0.toByte() as T
+        Char::class -> 0.toChar() as T
+        Short::class -> 0.toShort() as T
+        Int::class -> 0 as T
+        Long::class -> 0L as T
+        Float::class -> 0f as T
+        Double::class -> 0.0 as T
+        else -> createInstance(T::class)
+    }
 }
 
 fun <T : Any> createInstance(kClass: KClass<T>): T {
