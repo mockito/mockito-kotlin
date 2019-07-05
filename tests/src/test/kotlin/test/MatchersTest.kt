@@ -21,6 +21,14 @@ class MatchersTest : TestBase() {
     }
 
     @Test
+    fun anyInt() {
+        mock<Methods>().apply {
+            string("")
+            verify(this).string(any())
+        }
+    }
+
+    @Test
     fun anyClosedClass() {
         mock<Methods>().apply {
             closed(Closed())
@@ -73,6 +81,69 @@ class MatchersTest : TestBase() {
         mock<Methods>().apply {
             nullableString(null)
             verify(this).nullableString(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveBoolean() {
+        mock<Methods>().apply {
+            boolean(false)
+            verify(this).boolean(anyOrNull())
+        }
+    }
+    @Test
+    fun anyNull_forPrimitiveByte() {
+        mock<Methods>().apply {
+            byte(3)
+            verify(this).byte(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveChar() {
+        mock<Methods>().apply {
+            char('a')
+            verify(this).char(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveShort() {
+        mock<Methods>().apply {
+            short(3)
+            verify(this).short(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveInt() {
+        mock<Methods>().apply {
+            int(3)
+            verify(this).int(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveLong() {
+        mock<Methods>().apply {
+            long(3)
+            verify(this).long(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveFloat() {
+        mock<Methods>().apply {
+            float(3f)
+            verify(this).float(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyNull_forPrimitiveDouble() {
+        mock<Methods>().apply {
+            double(3.0)
+            verify(this).double(anyOrNull())
         }
     }
 
