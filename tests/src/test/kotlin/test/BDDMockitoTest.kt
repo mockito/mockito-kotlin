@@ -91,6 +91,21 @@ class BDDMockitoTest {
         expect(mock.stringResult()).toBe("Test")
     }
 
+    @Test
+    fun given_willAnswerInfix_withInvocationInfo_properlyStubs() {
+        /* Given */
+        val mock = mock<Methods>()
+
+        /* When */
+        given(mock.stringResult(any())) willAnswer { invocation ->
+            (invocation.arguments[0] as String)
+                .reversed()
+        }
+
+        /* Then */
+        expect(mock.stringResult("Test")).toBe("tseT")
+    }
+
     @Test(expected = IllegalStateException::class)
     fun given_willThrowInfix_properlyStubs() {
         /* Given */

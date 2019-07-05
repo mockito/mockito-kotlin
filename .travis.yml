@@ -11,7 +11,7 @@ matrix:
   - jdk: oraclejdk8
     env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.2.50
   - jdk: oraclejdk8
-    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.3.0
+    env: TERM=dumb MOCK_MAKER=mock-maker-inline KOTLIN_VERSION=1.3.40
   - jdk: oraclejdk8
     env: TERM=dumb KOTLIN_VERSION=1.0.7
   - jdk: oraclejdk8
@@ -19,7 +19,7 @@ matrix:
   - jdk: oraclejdk8
     env: TERM=dumb KOTLIN_VERSION=1.2.50
   - jdk: oraclejdk8
-    env: TERM=dumb KOTLIN_VERSION=1.3.0
+    env: TERM=dumb KOTLIN_VERSION=1.3.40
 
 
 env:

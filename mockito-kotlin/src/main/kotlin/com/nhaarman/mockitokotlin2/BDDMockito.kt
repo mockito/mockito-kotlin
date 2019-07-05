@@ -27,6 +27,7 @@ package com.nhaarman.mockitokotlin2
 
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing
+import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
 /**
@@ -60,8 +61,8 @@ infix fun <T> BDDMyOngoingStubbing<T>.will(value: Answer<T>): BDDMockito.BDDMyOn
 /**
  * Alias for [BBDMyOngoingStubbing.willAnswer], accepting a lambda.
  */
-infix fun <T> BDDMyOngoingStubbing<T>.willAnswer(value: () -> T): BDDMockito.BDDMyOngoingStubbing<T> {
-    return willAnswer { value() }
+infix fun <T> BDDMyOngoingStubbing<T>.willAnswer(value: (InvocationOnMock) -> T?): BDDMockito.BDDMyOngoingStubbing<T> {
+    return willAnswer { value(it) }
 }
 
 /**
