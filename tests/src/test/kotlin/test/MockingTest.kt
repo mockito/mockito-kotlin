@@ -3,10 +3,12 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
-import com.nhaarman.mockitokotlin2.*
-import com.nhaarman.mockitokotlin2.UseConstructor.Companion
 import com.nhaarman.mockitokotlin2.UseConstructor.Companion.parameterless
 import com.nhaarman.mockitokotlin2.UseConstructor.Companion.withArguments
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.verification.WantedButNotInvoked
@@ -253,6 +255,20 @@ class MockingTest : TestBase() {
         expectErrorWithMessage("myName.stringResult()") on {
             verify(mock).stringResult()
         }
+    }
+
+    @Test
+    fun mockStubbing_withSettingsAPIAndStubbing_name() {
+        /* Given */
+        val mock = mock<Methods>(name = "myName") {
+            on { nullableStringResult() } doReturn "foo"
+        }
+
+        /* When */
+        val result = mock.nullableStringResult()
+
+        /* Then */
+        expect(result).toBe("foo")
     }
 
     @Test
