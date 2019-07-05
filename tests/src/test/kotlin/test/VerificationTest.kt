@@ -103,4 +103,12 @@ class VerificationTest : TestBase() {
             expect(e.message).toContain("Test")
         }
     }
+
+    @Test
+    fun testAfter() {
+        mock<Methods>().apply {
+            int(3)
+            verify(this, after(10)).int(3)
+        }
+    }
 }
