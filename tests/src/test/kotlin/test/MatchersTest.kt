@@ -23,8 +23,8 @@ class MatchersTest : TestBase() {
     @Test
     fun anyInt() {
         mock<Methods>().apply {
-            string("")
-            verify(this).string(any())
+            int(3)
+            verify(this).int(any())
         }
     }
 
