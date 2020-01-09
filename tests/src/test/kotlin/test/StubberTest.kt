@@ -100,4 +100,17 @@ class StubberTest : TestBase() {
             mock.go()
         }
     }
+
+    @Test
+    fun testThenReturnVararg() {
+        val mock = mock<Methods>()
+
+        mockVararg(mock, "test1", "test2")
+
+        expect(mock.stringResult()).toBe("test1")
+        expect(mock.stringResult()).toBe("test2")
+    }
+
+    private fun mockVararg(mock: Methods, vararg values: String) =
+        whenever(mock.stringResult()).thenReturn(*values)
 }
