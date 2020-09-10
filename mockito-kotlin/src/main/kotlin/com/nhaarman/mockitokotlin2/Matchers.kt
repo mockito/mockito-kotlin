@@ -27,36 +27,36 @@ package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
 import org.mockito.ArgumentMatcher
-import org.mockito.Mockito
+import org.mockito.ArgumentMatchers
 
 /** Object argument that is equal to the given value. */
 fun <T> eq(value: T): T {
-    return Mockito.eq(value) ?: value
+    return ArgumentMatchers.eq(value) ?: value
 }
 
 /**  Object argument that is the same as the given value. */
 fun <T> same(value: T): T {
-    return Mockito.same(value) ?: value
+    return ArgumentMatchers.same(value) ?: value
 }
 
 /** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any(): T {
-    return Mockito.any(T::class.java) ?: createInstance()
+    return ArgumentMatchers.any(T::class.java) ?: createInstance()
 }
 
 /** Matches anything, including nulls. */
 inline fun <reified T : Any> anyOrNull(): T {
-    return Mockito.any<T>() ?: createInstance()
+    return ArgumentMatchers.any<T>() ?: createInstance()
 }
 
 /** Matches any vararg object, including nulls. */
 inline fun <reified T : Any> anyVararg(): T {
-    return Mockito.any<T>() ?: createInstance()
+    return ArgumentMatchers.any<T>() ?: createInstance()
 }
 
 /** Matches any array of type T. */
 inline fun <reified T : Any?> anyArray(): Array<T> {
-    return Mockito.any(Array<T>::class.java) ?: arrayOf()
+    return ArgumentMatchers.any(Array<T>::class.java) ?: arrayOf()
 }
 
 /**
@@ -66,7 +66,7 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
  * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
  */
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
-    return Mockito.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
+    return ArgumentMatchers.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
           T::class
     )
 }
@@ -78,7 +78,7 @@ inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
  * @param matcher The ArgumentMatcher on [T] to be registered.
  */
 inline fun <reified T : Any> argThat(matcher: ArgumentMatcher<T>): T {
-    return Mockito.argThat(matcher) ?: createInstance()
+    return ArgumentMatchers.argThat(matcher) ?: createInstance()
 }
 
 /**
@@ -107,26 +107,26 @@ inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean): T {
  * Argument that implements the given class.
  */
 inline fun <reified T : Any> isA(): T {
-    return Mockito.isA(T::class.java) ?: createInstance()
+    return ArgumentMatchers.isA(T::class.java) ?: createInstance()
 }
 
 /**
  * `null` argument.
  */
-fun <T : Any> isNull(): T? = Mockito.isNull()
+fun <T : Any> isNull(): T? = ArgumentMatchers.isNull()
 
 /**
  * Not `null` argument.
  */
 fun <T : Any> isNotNull(): T? {
-    return Mockito.isNotNull()
+    return ArgumentMatchers.isNotNull()
 }
 
 /**
  * Not `null` argument.
  */
 fun <T : Any> notNull(): T? {
-    return Mockito.notNull()
+    return ArgumentMatchers.notNull()
 }
 
 /**
@@ -134,6 +134,6 @@ fun <T : Any> notNull(): T? {
  * selected fields from a class.
  */
 inline fun <reified T : Any> refEq(value: T, vararg excludeFields: String): T {
-    return Mockito.refEq<T>(value, *excludeFields) ?: createInstance()
+    return ArgumentMatchers.refEq<T>(value, *excludeFields) ?: createInstance()
 }
 
