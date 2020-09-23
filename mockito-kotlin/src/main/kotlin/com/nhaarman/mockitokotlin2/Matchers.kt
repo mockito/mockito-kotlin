@@ -66,9 +66,7 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
  * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
  */
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
-    return Mockito.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
-          T::class
-    )
+    return Mockito.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance()
 }
 
 /**
