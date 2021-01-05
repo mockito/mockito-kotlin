@@ -65,3 +65,8 @@ Usually it is enough to test only using the default Kotlin versions;
 CI will test against multiple versions.
 If you want to test using a different Kotlin version locally, set
 an environment variable `KOTLIN_VERSION` and run the tests.
+
+### Acknowledgements
+
+`mockito-kotlin` was created and developed by [nhaarman@](https://github.com/nhaarman) after which the repository was integrated into the official Mockito GitHub organization.
+We would like to thank Niek for the original idea and extensive work plus support that went into `mockito-kotlin`.
