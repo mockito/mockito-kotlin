@@ -1,18 +1,24 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "io.spring.gradle:spring-bintray-plugin:0.11.1"
-    }
-}
-
 plugins {
-    id 'com.github.ben-manes.versions' version '0.20.0'
+    id "org.shipkit.shipkit-auto-version" version "1.1.1"
+    id "org.shipkit.shipkit-changelog" version "1.1.1"
+    id "org.shipkit.shipkit-github-release" version "1.1.1"
 }
 
-apply from: 'gradle/scripts/tagging.gradle'
+//TODO: update the group to 'org.mockito'
+group = 'com.nhaarman.mockito-kotlin2'
 
-println ext.versionName
+tasks.named("generateChangelog") {
+    previousRevision = project.ext.'shipkit-auto-version.previous-tag'
+    githubToken = System.getenv("GITHUB_TOKEN")
+    repository = "mockito/mockito-kotlin"
+}
+
+tasks.named("githubRelease") {
+    def genTask = tasks.named("generateChangelog").get()
+    dependsOn genTask
+    repository = genTask.repository
+    changelog = genTask.outputFile
+    githubToken = System.getenv("GITHUB_TOKEN")
+    newTagRevision = System.getenv("GITHUB_SHA")
+}
+

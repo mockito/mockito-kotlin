@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply from: '../publishing.gradle'
+apply from: '../gradle/publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
 
 buildscript {
@@ -13,8 +13,8 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.9.17"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:2.1" //TODO do we need android-maven-gradle-plugin?
     }
 }
 

@@ -1,0 +1,67 @@
+apply plugin: 'maven-publish'
+
+//bintray.bintrayUser = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+//bintray.bintrayKey = hasProperty('bintray_key') ? bintray_key : System.getenv('BINTRAY_KEY')
+//bintray.repo = 'maven'
+//bintray.org = hasProperty('bintray_username') ? bintray_username : System.getenv('BINTRAY_USER')
+//bintray.packageName = 'Mockito-Kotlin'
+//bintray.publication = 'mavenJava'
+//
+//bintray.licenses = ['MIT']
+//bintray.ossrhUser = hasProperty('sonatype_username') ? sonatype_username : System.getenv('SONATYPE_USERNAME')
+//bintray.ossrhPassword = hasProperty('sonatype_password') ? sonatype_password : System.getenv('SONATYPE_PASSWORD')
+//bintray.overrideOnUpload = false
+//bintray.gpgPassphrase = hasProperty('signing_password') ? signing_password : System.getenv('SIGNING_PASSWORD')
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/javadoc'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId 'mockito-kotlin'
+
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Mockito-Kotlin')
+                root.appendNode('description', 'Using Mockito with Kotlin.')
+                root.appendNode('url', 'https://github.com/mockito/mockito-kotlin')
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', 'scm:git@github.com:mockito/mockito-kotlin.git')
+
+                def licenses = root.appendNode('licenses')
+                def mitLicense = licenses.appendNode('license')
+                mitLicense.appendNode('name', 'MIT')
+
+                def developers = root.appendNode('developers')
+                def nhaarman = developers.appendNode('developer')
+                nhaarman.appendNode('id', 'nhaarman')
+                nhaarman.appendNode('name', 'Niek Haarman')
+            }
+        }
+    }
+
+    //useful for testing - running "publish" will create artifacts/pom in a local dir
+    repositories { maven { url = "$rootProject.buildDir/repo" } }
+}
+
+// Avoid generation of the module metadata so that we don't have to publish an additional file
+// and keep the build logic simple.
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
