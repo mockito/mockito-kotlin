@@ -4,9 +4,6 @@ plugins {
     id "org.shipkit.shipkit-github-release" version "1.1.1"
 }
 
-//TODO: update the group to 'org.mockito'
-group = 'com.nhaarman.mockito-kotlin2'
-
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
     githubToken = System.getenv("GITHUB_TOKEN")
