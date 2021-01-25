@@ -65,7 +65,7 @@ jobs:
     - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
       run: |
         ops/mockMakerInline.sh
-        ./gradlew build bintrayUpload idea -PbintrayDryRun
+        ./gradlew build bintrayUpload -PbintrayDryRun
       env:
         KOTLIN_VERSION: ${{ matrix.kotlin }}
         MOCK_MAKER: ${{ matrix.mock-maker }}
@@ -96,8 +96,8 @@ jobs:
 
     - name: Build and publish to Bintray/MavenCentral
       run: ./gradlew tasks # TODO, in progress: bintrayUpload githubRelease
-#      env:
-#        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 #        BINTRAY_API_KEY: ${{secrets.BINTRAY_API_KEY}}
 #        NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
 #        NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}

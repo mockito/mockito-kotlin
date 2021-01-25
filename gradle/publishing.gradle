@@ -14,7 +14,7 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        javaLibrary(MavenPublication) {
             artifactId 'mockito-kotlin'
 
             from components.java
@@ -75,7 +75,7 @@ bintray {
     publish = false //can be changed to 'false' for testing
     dryRun = project.hasProperty('bintrayDryRun')
 
-    publications = ['mavenJava']
+    publications = ['javaLibrary']
 
     pkg {
         repo = 'test' //https://bintray.com/mockito/maven // TODO change to 'maaven' when CI ready
