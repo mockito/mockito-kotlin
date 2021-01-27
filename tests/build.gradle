@@ -1,5 +1,6 @@
 buildscript {
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.3.50'
+    println "$project uses Kotlin $kotlin_version"
 
     repositories {
         mavenCentral()
@@ -18,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${rootProject.ext.versionName}.jar")
+    compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${version}.jar")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.mockito:mockito-core:2.23.0"
