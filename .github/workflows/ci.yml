@@ -97,10 +97,10 @@ jobs:
         java-version: 8
 
     - name: Build and publish to Bintray/MavenCentral
-      run: ./gradlew tasks # TODO, in progress: bintrayUpload githubRelease
+      run: ./gradlew githubRelease bintrayUpload
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-#        BINTRAY_API_KEY: ${{secrets.BINTRAY_API_KEY}}
-#        NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
-#        NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}
+        BINTRAY_API_KEY: ${{secrets.BINTRAY_API_KEY}}
+        NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
+        NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}
 
