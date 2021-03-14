@@ -67,7 +67,7 @@ jobs:
     - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
       run: |
         ops/mockMakerInline.sh
-        ./gradlew build bintrayUpload -PbintrayDryRun
+        ./gradlew build
       env:
         KOTLIN_VERSION: ${{ matrix.kotlin }}
         MOCK_MAKER: ${{ matrix.mock-maker }}
@@ -96,11 +96,11 @@ jobs:
       with:
         java-version: 8
 
-    - name: Build and publish to Bintray/MavenCentral
-      run: ./gradlew githubRelease bintrayUpload
+    - name: Build and release
+      run: ./gradlew githubRelease publishToSonatype # closeAndReleaseStagingRepository
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        BINTRAY_API_KEY: ${{secrets.BINTRAY_API_KEY}}
         NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
         NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}
-
+        PGP_KEY: ${{secrets.PGP_KEY}}
+        PGP_PWD: ${{secrets.PGP_PWD}}

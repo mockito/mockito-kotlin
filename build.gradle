@@ -1,8 +1,12 @@
 plugins {
     id "org.shipkit.shipkit-auto-version" version "1.1.1"
-    id "org.shipkit.shipkit-changelog" version "1.1.1"
-    id "org.shipkit.shipkit-github-release" version "1.1.1"
+    id "org.shipkit.shipkit-changelog" version "1.1.10"
+    id "org.shipkit.shipkit-github-release" version "1.1.10"
+    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
 }
+
+//TODO: change java packages to "org.mockito.kotlin"
+group = 'org.mockito.kotlin'
 
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
@@ -19,3 +23,13 @@ tasks.named("githubRelease") {
     newTagRevision = System.getenv("GITHUB_SHA")
 }
 
+nexusPublishing {
+    repositories {
+        if (System.getenv("NEXUS_TOKEN_PWD")) {
+            sonatype {
+                username = System.getenv("NEXUS_TOKEN_USER")
+                password = System.getenv("NEXUS_TOKEN_PWD")
+            }
+        }
+    }
+}
