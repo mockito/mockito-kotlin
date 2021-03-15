@@ -38,6 +38,7 @@ inline fun <reified T : Any> createInstance(): T {
         Long::class -> 0L as T
         Float::class -> 0f as T
         Double::class -> 0.0 as T
+        String::class -> "" as T
         else -> createInstance(T::class)
     }
 }
