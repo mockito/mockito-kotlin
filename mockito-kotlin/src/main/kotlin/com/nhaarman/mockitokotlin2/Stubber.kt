@@ -27,6 +27,7 @@ package com.nhaarman.mockitokotlin2
 
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
@@ -63,3 +64,6 @@ fun doThrow(vararg toBeThrown: Throwable): Stubber {
 }
 
 fun <T> Stubber.whenever(mock: T) = `when`(mock)
+
+fun <T> OngoingStubbing<T>.thenReturn(vararg values: T): OngoingStubbing<T>
+      = thenReturn(values[0], *values.sliceArray(1..values.lastIndex))
