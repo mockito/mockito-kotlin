@@ -39,7 +39,7 @@ inline fun <T> stubbing(
     KStubbing(mock).stubbing(mock)
 }
 
-inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit): T {
+inline infix fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit): T {
     return apply { KStubbing(this).stubbing(this) }
 }
 
