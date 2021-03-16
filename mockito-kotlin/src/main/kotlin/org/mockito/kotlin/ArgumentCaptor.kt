@@ -23,9 +23,9 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2
+package org.mockito.kotlin
 
-import com.nhaarman.mockitokotlin2.internal.createInstance
+import org.mockito.kotlin.internal.createInstance
 import org.mockito.ArgumentCaptor
 import kotlin.reflect.KClass
 

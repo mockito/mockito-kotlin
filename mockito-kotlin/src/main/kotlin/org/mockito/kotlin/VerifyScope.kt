@@ -23,43 +23,26 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2
-
-import org.mockito.Mockito
-import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.Stubber
-import kotlin.reflect.KClass
+package org.mockito.kotlin
 
 
-fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer { answer(it) }!!
+/**
+ * Verify multiple calls on mock
+ * Supports an easier to read style of
+ *
+ * ```
+ * verify(mock) {
+ *     2 * { call() }
+ * }
+ * ```
+ */
+inline fun <T> verify(mock: T, block: VerifyScope<T>.() -> Unit) {
+    VerifyScope(mock).block()
 }
 
-fun doCallRealMethod(): Stubber {
-    return Mockito.doCallRealMethod()!!
-}
+class VerifyScope<out T>(val mock: T) {
 
-fun doNothing(): Stubber {
-    return Mockito.doNothing()!!
+    operator inline fun Int.times(call: T.() -> Unit) {
+        verify(mock, org.mockito.kotlin.times(this)).call()
+    }
 }
-
-fun doReturn(value: Any?): Stubber {
-    return Mockito.doReturn(value)!!
-}
-
-fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber {
-    return Mockito.doReturn(
-          toBeReturned,
-          *toBeReturnedNext
-    )!!
-}
-
-fun doThrow(toBeThrown: KClass<out Throwable>): Stubber {
-    return Mockito.doThrow(toBeThrown.java)!!
-}
-
-fun doThrow(vararg toBeThrown: Throwable): Stubber {
-    return Mockito.doThrow(*toBeThrown)!!
-}
-
-fun <T> Stubber.whenever(mock: T) = `when`(mock)

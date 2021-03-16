@@ -23,40 +23,19 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2
+package org.mockito.kotlin
 
+import org.mockito.MockingDetails
 import org.mockito.Mockito
 
-
-/**
- * Creates a spy of the real object.
- * The spy calls <b>real</b> methods unless they are stubbed.
- */
-inline fun <reified T : Any> spy(): T {
-    return Mockito.spy(T::class.java)!!
+fun validateMockitoUsage() {
+    Mockito.validateMockitoUsage()
 }
 
-/**
- * Creates a spy of the real object, allowing for immediate stubbing.
- * The spy calls <b>real</b> methods unless they are stubbed.
- */
-inline fun <reified T : Any> spy(stubbing: KStubbing<T>.(T) -> Unit): T {
-    return Mockito.spy(T::class.java)
-        .apply { KStubbing(this).stubbing(this) }!!
+fun <T> reset(vararg mocks: T) {
+    Mockito.reset(*mocks)
 }
 
-/**
- * Creates a spy of the real object. The spy calls <b>real</b> methods unless they are stubbed.
- */
-fun <T> spy(value: T): T {
-    return Mockito.spy(value)!!
-}
-
-/**
- * Creates a spy of the real object, allowing for immediate stubbing.
- * The spy calls <b>real</b> methods unless they are stubbed.
- */
-inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T {
-    return spy(value)
-        .apply { KStubbing(this).stubbing(this) }!!
+fun mockingDetails(toInspect: Any): MockingDetails {
+    return Mockito.mockingDetails(toInspect)!!
 }

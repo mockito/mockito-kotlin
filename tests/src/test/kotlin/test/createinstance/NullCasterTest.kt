@@ -1,7 +1,7 @@
 package test.createinstance
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.internal.createInstance
+import org.mockito.kotlin.internal.createInstance
 import org.junit.Test
 import test.TestBase
 

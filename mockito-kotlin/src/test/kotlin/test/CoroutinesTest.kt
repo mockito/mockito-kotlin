@@ -3,12 +3,12 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Test
+import org.mockito.kotlin.*
 
 
 class CoroutinesTest {

@@ -26,10 +26,10 @@ package test
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.*
 import org.junit.After
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.*
 import java.util.*
 
 class SpyTest : TestBase() {

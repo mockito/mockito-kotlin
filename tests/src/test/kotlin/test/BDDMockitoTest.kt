@@ -1,8 +1,8 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
+import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 
 class BDDMockitoTest {
@@ -126,6 +126,6 @@ class BDDMockitoTest {
         mock.stringResult()
 
         /* Then */
-        then(mock).should().stringResult()
+        org.mockito.kotlin.then(mock).should().stringResult()
     }
 }

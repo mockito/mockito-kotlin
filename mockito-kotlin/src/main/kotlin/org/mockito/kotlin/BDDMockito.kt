@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2
+package org.mockito.kotlin
 
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing

@@ -23,19 +23,6 @@
  * THE SOFTWARE.
  */
 
-package com.nhaarman.mockitokotlin2
+package org.mockito.kotlin
 
-import org.mockito.MockingDetails
-import org.mockito.Mockito
-
-fun validateMockitoUsage() {
-    Mockito.validateMockitoUsage()
-}
-
-fun <T> reset(vararg mocks: T) {
-    Mockito.reset(*mocks)
-}
-
-fun mockingDetails(toInspect: Any): MockingDetails {
-    return Mockito.mockingDetails(toInspect)!!
-}
+class MockitoKotlinException(message: String?, cause: Throwable?) : RuntimeException(message, cause)
