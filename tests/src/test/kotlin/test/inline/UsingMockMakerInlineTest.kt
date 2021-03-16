@@ -23,10 +23,10 @@
  */
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.*
 import test.mockMakerInlineEnabled
 import java.io.IOException
 import java.math.BigInteger

@@ -2,13 +2,14 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import org.mockito.ArgumentMatcher
 import org.mockito.internal.matchers.VarargMatcher
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 import java.io.IOException
+import kotlin.check
 
 class MatchersTest : TestBase() {
 

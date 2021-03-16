@@ -1,9 +1,10 @@
 package test
 
 import com.nhaarman.expect.expect
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
+import org.mockito.kotlin.*
+import org.mockito.kotlin.verify
 
 class VerificationTest : TestBase() {
 

@@ -2,8 +2,8 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
+import org.mockito.kotlin.*
 
 class StubberTest : TestBase() {
 

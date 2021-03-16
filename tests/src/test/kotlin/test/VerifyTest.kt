@@ -1,8 +1,8 @@
 package test
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.junit.Test
 import org.mockito.exceptions.verification.TooLittleActualInvocations
 import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent
