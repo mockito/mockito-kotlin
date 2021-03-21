@@ -34,12 +34,16 @@ tasks.named("githubRelease") {
     githubToken = System.getenv("GITHUB_TOKEN")
     newTagRevision = System.getenv("GITHUB_SHA")
     releaseTag = project.version
+    releaseName = project.version
 }
 
 nexusPublishing {
     repositories {
         if (System.getenv("NEXUS_TOKEN_PWD")) {
-            sonatype {
+            sonatype { // Publishing to: https://s01.oss.sonatype.org (faster instance)
+                nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+                snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+
                 username = System.getenv("NEXUS_TOKEN_USER")
                 password = System.getenv("NEXUS_TOKEN_PWD")
             }
