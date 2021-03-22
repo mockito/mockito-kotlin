@@ -17,7 +17,9 @@ apply plugin: "org.shipkit.shipkit-auto-version"
 apply plugin: "org.shipkit.shipkit-changelog"
 apply plugin: "org.shipkit.shipkit-github-release"
 
-group = 'org.mockito.kotlin'
+allprojects {
+    group = 'org.mockito.kotlin'
+}
 
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
