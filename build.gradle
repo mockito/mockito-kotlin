@@ -1,17 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()        // for local testing
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.shipkit:shipkit-changelog:1.+"
+        classpath "org.shipkit:shipkit-auto-version:1.+"
+    }
+}
+
 plugins {
-    id "org.shipkit.shipkit-auto-version" version "1.1.1"
-    id "org.shipkit.shipkit-changelog" version "1.1.10"
-    id "org.shipkit.shipkit-github-release" version "1.1.10"
     id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
 }
 
-//TODO: change java packages to "org.mockito.kotlin"
+apply plugin: "org.shipkit.shipkit-auto-version"
+apply plugin: "org.shipkit.shipkit-changelog"
+apply plugin: "org.shipkit.shipkit-github-release"
+
 group = 'org.mockito.kotlin'
 
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
     githubToken = System.getenv("GITHUB_TOKEN")
     repository = "mockito/mockito-kotlin"
+    releaseTag = project.version
 }
 
 tasks.named("githubRelease") {
@@ -21,6 +33,7 @@ tasks.named("githubRelease") {
     changelog = genTask.outputFile
     githubToken = System.getenv("GITHUB_TOKEN")
     newTagRevision = System.getenv("GITHUB_SHA")
+    releaseTag = project.version
 }
 
 nexusPublishing {
