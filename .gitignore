@@ -5,20 +5,9 @@ repo
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-*.iml
 
-.idea/caches/*
-.idea/compiler.xml
-.idea/encodings.xml
-.idea/gradle.xml
-.idea/kotlinc.xml
-.idea/libraries/*
-.idea/misc.xml
-.idea/modules.xml
-.idea/runConfigurations.xml
-.idea/shelf
-.idea/uiDesigner.xml
-.idea/vcs.xml
-.idea/workspace.xml
+# intelliJ
+.idea/
+*.iml
 
 *.orig
