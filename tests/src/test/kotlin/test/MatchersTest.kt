@@ -2,7 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatcher
 import org.mockito.internal.matchers.VarargMatcher
 import org.mockito.invocation.InvocationOnMock

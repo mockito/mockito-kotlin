@@ -1,10 +1,10 @@
 package test
 
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 
 abstract class TestBase {
 
-    @After
+    @AfterEach
     open fun tearDown() {
         mockMakerInlineEnabled = null
     }

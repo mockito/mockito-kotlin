@@ -23,9 +23,9 @@
  */
 
 import com.nhaarman.expect.expect
-import org.junit.Assume.assumeTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
 import test.mockMakerInlineEnabled
 import java.io.IOException
@@ -43,7 +43,7 @@ class UsingMockMakerInlineTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockMakerInlineEnabled = null
         assumeTrue(mockMakerInlineEnabled())

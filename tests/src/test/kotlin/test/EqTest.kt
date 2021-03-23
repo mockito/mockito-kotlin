@@ -26,11 +26,11 @@ package test
  */
 
 import com.nhaarman.expect.expect
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
 class EqTest : TestBase() {
@@ -41,13 +41,13 @@ class EqTest : TestBase() {
 
     private lateinit var doAnswer: Open
 
-    @Before
+    @BeforeEach
     fun setup() {
         /* Create a proper Mockito state */
         doAnswer = Mockito.doAnswer { }.`when`(mock())
     }
 
-    @After
+    @AfterEach
     override fun tearDown() {
         super.tearDown()
 

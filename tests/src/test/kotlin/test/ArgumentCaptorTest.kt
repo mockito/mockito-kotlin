@@ -2,7 +2,8 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
 import java.util.*
 
@@ -179,7 +180,7 @@ class ArgumentCaptorTest : TestBase() {
         }
     }
 
-    @Test(expected = IndexOutOfBoundsException::class)
+    @Test
     fun argumentCaptor_callPropertyNotAvailable() {
         /* Given */
         val m: Methods = mock()
@@ -188,10 +189,12 @@ class ArgumentCaptorTest : TestBase() {
         m.int(1)
 
         /* Then */
-        argumentCaptor<Int>().apply {
-            verify(m).int(capture())
+        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
+            argumentCaptor<Int>().apply {
+                verify(m).int(capture())
 
-            expect(secondValue).toBe(2)
+                expect(secondValue).toBe(2)
+            }
         }
     }
 

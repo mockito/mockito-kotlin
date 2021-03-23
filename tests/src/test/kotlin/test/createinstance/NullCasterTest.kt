@@ -1,10 +1,9 @@
 package test.createinstance
 
 import com.nhaarman.expect.expect
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.internal.createInstance
-import org.junit.Test
 import test.TestBase
-
 
 class NullCasterTest : TestBase() {
 

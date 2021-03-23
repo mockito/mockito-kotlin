@@ -3,13 +3,12 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
-import org.junit.Assume.assumeFalse
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.misusing.UnfinishedStubbingException
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
-import kotlin.check
 
 class OngoingStubbingTest : TestBase() {
 

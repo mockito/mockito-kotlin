@@ -1,7 +1,8 @@
 package test
 
 import com.nhaarman.expect.expect
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 
@@ -106,14 +107,16 @@ class BDDMockitoTest {
         expect(mock.stringResult("Test")).toBe("tseT")
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun given_willThrowInfix_properlyStubs() {
         /* Given */
         val mock = mock<Methods>()
 
         /* When */
-        given(mock.stringResult()) willThrow { IllegalStateException() }
-        mock.stringResult()
+        Assertions.assertThrows(IllegalStateException::class.java) {
+            given(mock.stringResult()) willThrow { IllegalStateException() }
+            mock.stringResult()
+        }
     }
 
     @Test
