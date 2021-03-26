@@ -59,3 +59,14 @@ nexusPublishing {
         }
     }
 }
+
+if (version.endsWith("-SNAPSHOT")) {
+    tasks.named("githubRelease") {
+        //snapshot versions do not produce changelog / GitHub releases
+        enabled = false
+    }
+    tasks.named("closeAndReleaseStagingRepository") {
+        //snapshot binaries are available in Sonatype without the need to close the staging repo
+        enabled = false
+    }
+}
