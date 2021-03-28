@@ -11,8 +11,6 @@ on:
   push:
     branches:
       - main
-    tags-ignore:
-      - v* # release tags are automatically generated after a successful CI build, no need to run CI against them
   pull_request:
     branches:
       - main

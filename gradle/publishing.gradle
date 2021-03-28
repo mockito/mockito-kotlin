@@ -1,3 +1,4 @@
+//Maven publication plugins & configuration
 apply plugin: 'maven-publish'
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
