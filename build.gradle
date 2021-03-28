@@ -4,25 +4,30 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "org.shipkit:shipkit-changelog:1.+"
-        classpath "org.shipkit:shipkit-auto-version:1.+"
+        classpath "org.shipkit:shipkit-changelog:1.1.13"
+        classpath "pl.allegro.tech.build:axion-release-plugin:1.13.0"
+        classpath "io.github.gradle-nexus:publish-plugin:1.0.0"
     }
 }
 
-plugins {
-    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
-}
-
-apply plugin: "org.shipkit.shipkit-auto-version"
+apply plugin: "io.github.gradle-nexus.publish-plugin"
 apply plugin: "org.shipkit.shipkit-changelog"
 apply plugin: "org.shipkit.shipkit-github-release"
+apply plugin: "pl.allegro.tech.build.axion-release"
+
+scmVersion {
+    tag {
+        prefix = ''
+    }
+}
 
 allprojects {
     group = 'org.mockito.kotlin'
+    version = scmVersion.version
 }
 
 tasks.named("generateChangelog") {
-    previousRevision = project.ext.'shipkit-auto-version.previous-tag'
+    previousRevision = scmVersion.previousVersion
     githubToken = System.getenv("GITHUB_TOKEN")
     repository = "mockito/mockito-kotlin"
     releaseTag = project.version
@@ -42,7 +47,8 @@ tasks.named("githubRelease") {
 nexusPublishing {
     repositories {
         if (System.getenv("NEXUS_TOKEN_PWD")) {
-            sonatype { // Publishing to: https://s01.oss.sonatype.org (faster instance)
+            sonatype {
+                // Publishing to: https://s01.oss.sonatype.org (faster instance)
                 nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
                 snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 
@@ -50,5 +56,16 @@ nexusPublishing {
                 password = System.getenv("NEXUS_TOKEN_PWD")
             }
         }
+    }
+}
+
+if (version.endsWith("-SNAPSHOT")) {
+    tasks.named("githubRelease") {
+        //snapshot versions do not produce changelog / GitHub releases
+        enabled = false
+    }
+    tasks.named("closeAndReleaseStagingRepository") {
+        //snapshot binaries are available in Sonatype without the need to close the staging repo
+        enabled = false
     }
 }
