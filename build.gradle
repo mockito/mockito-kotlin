@@ -26,6 +26,8 @@ allprojects {
     version = scmVersion.version
 }
 
+println "Building version $version"
+
 tasks.named("generateChangelog") {
     previousRevision = scmVersion.previousVersion
     githubToken = System.getenv("GITHUB_TOKEN")
@@ -59,13 +61,31 @@ nexusPublishing {
     }
 }
 
-if (version.endsWith("-SNAPSHOT")) {
+def isSnapshot = version.endsWith("-SNAPSHOT")
+
+if (isSnapshot) {
+    println "Building a -SNAPSHOT version (Github release and Maven Central tasks are skipped)"
     tasks.named("githubRelease") {
-        //snapshot versions do not produce changelog / GitHub releases
+        //snapshot versions do not produce changelog / Github releases
         enabled = false
     }
     tasks.named("closeAndReleaseStagingRepository") {
         //snapshot binaries are available in Sonatype without the need to close the staging repo
         enabled = false
+    }
+}
+
+tasks.register("releaseSummary") {
+    doLast {
+        if (isSnapshot) {
+            println "RELEASE SUMMARY\n" +
+                    "  SNAPSHOTS released to: https://s01.oss.sonatype.org/content/repositories/snapshots/org/mockito/kotlin/mockito-kotlin\n" +
+                    "  Release to Maven Central: SKIPPED FOR SNAPSHOTS\n" +
+                    "  Github releases: SKIPPED FOR SNAPSHOTS"
+        } else {
+            println "RELEASE SUMMARY\n" +
+                    "  Release to Maven Central (available after delay): https://repo1.maven.org/maven2/org/mockito/kotlin/mockito-kotlin/\n" +
+                    "  Github releases: https://github.com/mockito/mockito-kotlin/releases"
+        }
     }
 }
