@@ -1,7 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.kotlin.*
 import org.mockito.kotlin.verify

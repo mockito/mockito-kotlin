@@ -7,9 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
-
 
 class CoroutinesTest {
 

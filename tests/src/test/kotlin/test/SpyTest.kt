@@ -26,8 +26,9 @@ package test
  */
 
 import com.nhaarman.expect.expect
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.*
 import java.util.*
@@ -38,7 +39,7 @@ class SpyTest : TestBase() {
     private val openClassInstance: MyClass = MyClass()
     private val closedClassInstance: ClosedClass = ClosedClass()
 
-    @After
+    @AfterEach
     override fun tearDown() {
         super.tearDown()
         Mockito.validateMockitoUsage()
@@ -77,11 +78,13 @@ class SpyTest : TestBase() {
         expect(date.time).toBe(0L)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun doThrowWithSpy() {
         val date = spy(Date(0))
-        doThrow(IllegalArgumentException()).whenever(date).time
-        date.time
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            doThrow(IllegalArgumentException()).whenever(date).time
+            date.time
+        }
     }
 
     @Test

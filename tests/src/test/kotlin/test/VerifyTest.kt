@@ -1,9 +1,10 @@
 package test
 
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.junit.Test
 import org.mockito.exceptions.verification.TooLittleActualInvocations
 import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent
 
@@ -30,25 +31,29 @@ class VerifyTest : TestBase() {
         }
     }
 
-    @Test(expected = TooLittleActualInvocations::class)
+    @Test
     fun verifyFailsWithWrongCount() {
         val iface = mock<TestInterface>()
 
         iface.call(0)
 
-        verify(iface) {
-            2 * { call(0) }
+        Assertions.assertThrows(TooLittleActualInvocations::class.java) {
+            verify(iface) {
+                2 * { call(0) }
+            }
         }
     }
 
-    @Test(expected = ArgumentsAreDifferent::class)
+    @Test
     fun verifyFailsWithWrongArg() {
         val iface = mock<TestInterface>()
 
         iface.call(3)
 
-        verify(iface) {
-            1 * { call(0) }
+        Assertions.assertThrows(ArgumentsAreDifferent::class.java) {
+            verify(iface) {
+                1 * { call(0) }
+            }
         }
     }
 
