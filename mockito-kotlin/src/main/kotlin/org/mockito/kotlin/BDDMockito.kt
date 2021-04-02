@@ -28,7 +28,9 @@ package org.mockito.kotlin
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Answer
+import kotlin.reflect.KClass
 
 /**
  * Alias for [BDDMockito.given].
@@ -66,6 +68,13 @@ infix fun <T> BDDMyOngoingStubbing<T>.willAnswer(value: (InvocationOnMock) -> T?
 }
 
 /**
+ * Alias for [BBDMyOngoingStubbing.willAnswer], accepting a suspend lambda.
+ */
+infix fun <T> BDDMyOngoingStubbing<T>.willSuspendableAnswer(value: suspend (InvocationOnMock) -> T?): BDDMockito.BDDMyOngoingStubbing<T> {
+    return willAnswer(SuspendableAnswer(value))
+}
+
+/**
  * Alias for [BBDMyOngoingStubbing.willReturn].
  */
 infix fun <T> BDDMyOngoingStubbing<T>.willReturn(value: () -> T): BDDMockito.BDDMyOngoingStubbing<T> {
@@ -79,3 +88,34 @@ infix fun <T> BDDMyOngoingStubbing<T>.willThrow(value: () -> Throwable): BDDMock
     return willThrow(value())
 }
 
+/**
+ * Sets a Throwable type to be thrown when the method is called.
+ *
+ * Alias for [BDDMyOngoingStubbing.willThrow]
+ */
+infix fun <T> BDDMyOngoingStubbing<T>.willThrow(t: KClass<out Throwable>): BDDMyOngoingStubbing<T> {
+    return willThrow(t.java)
+}
+
+/**
+ * Sets Throwable classes to be thrown when the method is called.
+ *
+ * Alias for [BDDMyOngoingStubbing.willThrow]
+ */
+fun <T> BDDMyOngoingStubbing<T>.willThrow(
+    t: KClass<out Throwable>,
+    vararg ts: KClass<out Throwable>
+): BDDMyOngoingStubbing<T> {
+    return willThrow(t.java, *ts.map { it.java }.toTypedArray())
+}
+
+/**
+ * Sets consecutive return values to be returned when the method is called.
+ * Same as [BDDMyOngoingStubbing.willReturn], but accepts list instead of varargs.
+ */
+inline infix fun <reified T> BDDMyOngoingStubbing<T>.willReturnConsecutively(ts: List<T>): BDDMyOngoingStubbing<T> {
+    return willReturn(
+          ts[0],
+          *ts.drop(1).toTypedArray()
+    )
+}
