@@ -1,5 +1,6 @@
 # Mockito-Kotlin
 [ ![Download](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin/badge.svg) ](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin)
+[![Nexus Snapshot](https://img.shields.io/nexus/s/org.mockito.kotlin/mockito-kotlin?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/snapshots/org/mockito/kotlin/mockito-kotlin/)
 
 A small library that provides helper functions to work with [Mockito](https://github.com/mockito/mockito) in Kotlin.
 
