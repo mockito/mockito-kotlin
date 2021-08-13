@@ -84,8 +84,21 @@ fun <T> verifyNoMoreInteractions(vararg mocks: T) {
 /**
  * Verifies that no interactions happened on given mocks beyond the previously verified interactions.
  *
- * Alias for [Mockito.verifyZeroInteractions].
+ * Alias for [Mockito.verifyNoInteractions].
  */
+fun verifyNoInteractions(vararg mocks: Any) {
+    Mockito.verifyNoInteractions(*mocks)
+}
+
+/**
+ * @deprecated
+ *
+ * Please migrate your code to [verifyNoInteractions].
+ */
+@Deprecated(
+      "Use verifyNoInteractions() instead.",
+      ReplaceWith("verifyNoInteractions(vararg mocks: Any)")
+)
 fun verifyZeroInteractions(vararg mocks: Any) {
     Mockito.verifyZeroInteractions(*mocks)
 }
