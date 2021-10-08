@@ -91,19 +91,6 @@ fun verifyNoInteractions(vararg mocks: Any) {
 }
 
 /**
- * @deprecated
- *
- * Please migrate your code to [verifyNoInteractions].
- */
-@Deprecated(
-      "Use verifyNoInteractions() instead.",
-      ReplaceWith("verifyNoInteractions(vararg mocks: Any)")
-)
-fun verifyZeroInteractions(vararg mocks: Any) {
-    Mockito.verifyZeroInteractions(*mocks)
-}
-
-/**
  * Allows verifying exact number of invocations.
  *
  * Alias for [Mockito.times].

@@ -12,6 +12,8 @@ import org.mockito.kotlin.whenever
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.verification.WantedButNotInvoked
+import org.mockito.invocation.DescribedInvocation
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
 import java.io.PrintStream
@@ -182,7 +184,10 @@ class MockingTest : TestBase() {
             fail("Expected an exception")
         } catch (e: WantedButNotInvoked) {
             /* Then */
-            verify(out).println("methods.stringResult();")
+            argumentCaptor<DescribedInvocation>().apply {
+                verify(out).println(capture())
+                expect(lastValue.toString()).toBe("methods.stringResult();")
+            }
         }
     }
 
@@ -314,7 +319,10 @@ class MockingTest : TestBase() {
             fail("Expected an exception")
         } catch (e: WantedButNotInvoked) {
             /* Then */
-            verify(out).println("methods.stringResult();")
+            argumentCaptor<DescribedInvocation>().apply {
+                verify(out).println(capture())
+                expect(lastValue.toString()).toBe("methods.stringResult();")
+            }
         }
     }
 

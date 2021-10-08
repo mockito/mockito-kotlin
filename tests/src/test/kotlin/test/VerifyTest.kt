@@ -4,7 +4,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.junit.Test
-import org.mockito.exceptions.verification.TooLittleActualInvocations
+import org.mockito.exceptions.verification.TooFewActualInvocations
 import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent
 
 class VerifyTest : TestBase() {
@@ -30,7 +30,7 @@ class VerifyTest : TestBase() {
         }
     }
 
-    @Test(expected = TooLittleActualInvocations::class)
+    @Test(expected = TooFewActualInvocations::class)
     fun verifyFailsWithWrongCount() {
         val iface = mock<TestInterface>()
 
