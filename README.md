@@ -6,7 +6,7 @@ A small library that provides helper functions to work with [Mockito](https://gi
 
 ## Install
 
-Mockito-Kotlin is available on Maven Central and JCenter.
+Mockito-Kotlin is available on Maven Central.
 For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` with the latest version:
 
 ```groovy
