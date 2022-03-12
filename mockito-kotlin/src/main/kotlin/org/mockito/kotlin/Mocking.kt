@@ -35,55 +35,6 @@ import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 /**
- * Creates a mock for [T].
- *
- * @param extraInterfaces Specifies extra interfaces the mock should implement.
- * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in all verification errors.
- * @param spiedInstance Specifies the instance to spy on. Makes sense only for spies/partial mocks.
- * @param defaultAnswer Specifies default answers to interactions.
- * @param serializable Configures the mock to be serializable.
- * @param serializableMode Configures the mock to be serializable with a specific serializable mode.
- * @param verboseLogging Enables real-time logging of method invocations on this mock.
- * @param invocationListeners Registers a listener for method invocations on this mock. The listener is notified every time a method on this mock is called.
- * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
- * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
- * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
- * @param lenient Lenient mocks bypass "strict stubbing" validation.
- */
-inline fun <reified T : Any> mock(
-    extraInterfaces: Array<out KClass<out Any>>? = null,
-    name: String? = null,
-    spiedInstance: Any? = null,
-    defaultAnswer: Answer<Any>? = null,
-    serializable: Boolean = false,
-    serializableMode: SerializableMode? = null,
-    verboseLogging: Boolean = false,
-    invocationListeners: Array<InvocationListener>? = null,
-    stubOnly: Boolean = false,
-    @Incubating useConstructor: UseConstructor? = null,
-    @Incubating outerInstance: Any? = null,
-    @Incubating lenient: Boolean = false
-): T {
-    return Mockito.mock(
-          T::class.java,
-          withSettings(
-                extraInterfaces = extraInterfaces,
-                name = name,
-                spiedInstance = spiedInstance,
-                defaultAnswer = defaultAnswer,
-                serializable = serializable,
-                serializableMode = serializableMode,
-                verboseLogging = verboseLogging,
-                invocationListeners = invocationListeners,
-                stubOnly = stubOnly,
-                useConstructor = useConstructor,
-                outerInstance = outerInstance,
-                lenient = lenient
-          )
-    )!!
-}
-
-/**
  * Creates a mock for [T], allowing for immediate stubbing.
  *
  * @param extraInterfaces Specifies extra interfaces the mock should implement.
@@ -112,7 +63,7 @@ inline fun <reified T : Any> mock(
     @Incubating useConstructor: UseConstructor? = null,
     @Incubating outerInstance: Any? = null,
     @Incubating lenient: Boolean = false,
-    stubbing: KStubbing<T>.(T) -> Unit
+    stubbing: KStubbing<T>.(T) -> Unit = {}
 ): T {
     return Mockito.mock(
           T::class.java,
