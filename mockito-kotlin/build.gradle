@@ -25,7 +25,7 @@ dependencies {
 
     compile "org.mockito:mockito-core:4.5.1"
 
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.13.2'
     testCompile 'com.nhaarman:expect.kt:1.0.1'
 
     testCompile  "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
