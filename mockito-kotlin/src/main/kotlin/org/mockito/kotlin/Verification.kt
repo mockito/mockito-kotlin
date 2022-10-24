@@ -29,6 +29,7 @@ import org.mockito.kotlin.internal.createInstance
 import kotlinx.coroutines.runBlocking
 import org.mockito.InOrder
 import org.mockito.Mockito
+import org.mockito.kotlin.internal.KInOrderDecorator
 import org.mockito.verification.VerificationAfterDelay
 import org.mockito.verification.VerificationMode
 import org.mockito.verification.VerificationWithTimeout
@@ -188,32 +189,33 @@ fun ignoreStubs(vararg mocks: Any): Array<out Any> {
 }
 
 /**
- * Creates [InOrder] object that allows verifying mocks in order.
+ * Creates [KInOrder] object that allows verifying mocks in order.
  *
- * Alias for [Mockito.inOrder].
+ * Wrapper for [Mockito.inOrder] that also allows to verify suspending method calls.
  */
-fun inOrder(vararg mocks: Any): InOrder {
-    return Mockito.inOrder(*mocks)!!
+fun inOrder(vararg mocks: Any): KInOrder {
+    return KInOrderDecorator(Mockito.inOrder(*mocks)!!)
 }
 
 /**
- * Creates [InOrder] object that allows verifying mocks in order.
+ * Creates [KInOrder] object that allows verifying mocks in order.
  * Accepts a lambda to allow easy evaluation.
  *
- * Alias for [Mockito.inOrder].
+ * Wrapper for [Mockito.inOrder] that also allows to verify suspending method calls.
  */
 inline fun inOrder(
     vararg mocks: Any,
-    evaluation: InOrder.() -> Unit
+    evaluation: KInOrder.() -> Unit
 ) {
-    Mockito.inOrder(*mocks).evaluation()
+    KInOrderDecorator(Mockito.inOrder(*mocks)).evaluation()
 }
 
 /**
- * Allows [InOrder] verification for a single mocked instance:
+ * Allows [KInOrder] verification for a single mocked instance:
  *
  * mock.inOrder {
  *    verify().foo()
+ *    verifyBlocking { bar() }
  * }
  *
  */
@@ -221,9 +223,33 @@ inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Any) {
     block.invoke(InOrderOnType(this))
 }
 
-class InOrderOnType<T>(private val t: T) : InOrder by inOrder(t as Any) {
+class InOrderOnType<T>(private val t: T) : KInOrder by inOrder(t as Any) {
 
+    /**
+     * Verifies certain behavior <b>happened once</b> in order.
+     */
     fun verify(): T = verify(t)
+
+    /**
+     * Verifies certain behavior happened at least once / exact number of times / never in order.
+     */
+    fun verify(mode: VerificationMode): T = verify(t, mode)
+
+    /**
+     * Verifies certain suspending behavior <b>happened once</b> in order.
+     *
+     * Warning: Only one method call can be verified in the function.
+     * Subsequent method calls are ignored!
+     */
+    fun verifyBlocking(f: suspend T.() -> Unit) = verifyBlocking(t, f)
+
+    /**
+     * Verifies certain suspending behavior happened at least once / exact number of times / never in order.
+     *
+     * Warning: Only one method call can be verified in the function.
+     * Subsequent method calls are ignored!
+     */
+    fun verifyBlocking(mode: VerificationMode, f: suspend T.() -> Unit) = verifyBlocking(t, mode, f)
 }
 
 /**
