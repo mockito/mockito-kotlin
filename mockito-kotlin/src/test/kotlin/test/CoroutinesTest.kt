@@ -10,7 +10,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
+import org.mockito.InOrder
 import org.mockito.kotlin.*
 import java.util.*
 
@@ -253,6 +255,134 @@ class CoroutinesTest {
 
         withTimeout(100) {
             assertEquals(5, asyncTask.await())
+        }
+    }
+
+    @Test
+    fun inOrderRemainsCompatible() {
+        /* Given */
+        val fixture: SomeInterface = mock()
+
+        /* When */
+        val inOrder = inOrder(fixture)
+
+        /* Then */
+        expect(inOrder).toBeInstanceOf<InOrder>()
+    }
+
+    @Test
+    fun inOrderSuspendingCalls() {
+        /* Given */
+        val fixtureOne: SomeInterface = mock()
+        val fixtureTwo: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixtureOne.suspending()
+            fixtureTwo.suspending()
+        }
+
+        /* Then */
+        val inOrder = inOrder(fixtureOne, fixtureTwo)
+        inOrder.verifyBlocking(fixtureOne) { suspending() }
+        inOrder.verifyBlocking(fixtureTwo) { suspending() }
+    }
+
+    @Test
+    fun inOrderSuspendingCallsFailure() {
+        /* Given */
+        val fixtureOne: SomeInterface = mock()
+        val fixtureTwo: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixtureOne.suspending()
+            fixtureTwo.suspending()
+        }
+
+        /* Then */
+        val inOrder = inOrder(fixtureOne, fixtureTwo)
+        inOrder.verifyBlocking(fixtureTwo) { suspending() }
+        assertThrows(AssertionError::class.java) {
+            inOrder.verifyBlocking(fixtureOne) { suspending() }
+        }
+    }
+
+    @Test
+    fun inOrderBlockSuspendingCalls() {
+        /* Given */
+        val fixtureOne: SomeInterface = mock()
+        val fixtureTwo: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixtureOne.suspending()
+            fixtureTwo.suspending()
+        }
+
+        /* Then */
+        inOrder(fixtureOne, fixtureTwo) {
+            verifyBlocking(fixtureOne) { suspending() }
+            verifyBlocking(fixtureTwo) { suspending() }
+        }
+    }
+
+    @Test
+    fun inOrderBlockSuspendingCallsFailure() {
+        /* Given */
+        val fixtureOne: SomeInterface = mock()
+        val fixtureTwo: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixtureOne.suspending()
+            fixtureTwo.suspending()
+        }
+
+        /* Then */
+        inOrder(fixtureOne, fixtureTwo) {
+            verifyBlocking(fixtureTwo) { suspending() }
+            assertThrows(AssertionError::class.java) {
+                verifyBlocking(fixtureOne) { suspending() }
+            }
+        }
+    }
+
+    @Test
+    fun inOrderOnObjectSuspendingCalls() {
+        /* Given */
+        val fixture: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixture.suspendingWithArg(1)
+            fixture.suspendingWithArg(2)
+        }
+
+        /* Then */
+        fixture.inOrder {
+            verifyBlocking { suspendingWithArg(1) }
+            verifyBlocking { suspendingWithArg(2) }
+        }
+    }
+
+    @Test
+    fun inOrderOnObjectSuspendingCallsFailure() {
+        /* Given */
+        val fixture: SomeInterface = mock()
+
+        /* When */
+        runBlocking {
+            fixture.suspendingWithArg(1)
+            fixture.suspendingWithArg(2)
+        }
+
+        /* Then */
+        fixture.inOrder {
+            verifyBlocking { suspendingWithArg(2) }
+            assertThrows(AssertionError::class.java) {
+                verifyBlocking { suspendingWithArg(1) }
+            }
         }
     }
 }
