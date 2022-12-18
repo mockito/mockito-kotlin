@@ -25,8 +25,11 @@
 
 package org.mockito.kotlin
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing
+import org.mockito.BDDMockito.Then
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Answer
@@ -47,10 +50,28 @@ fun <T> given(methodCall: () -> T): BDDMyOngoingStubbing<T> {
 }
 
 /**
+ * Alias for [BDDMockito.given] with a suspending lambda
+ *
+ * Warning: Only last method call can be stubbed in the function.
+ * other method calls are ignored!
+ */
+fun <T> givenBlocking(methodCall: suspend CoroutineScope.() -> T): BDDMockito.BDDMyOngoingStubbing<T> {
+    return runBlocking { BDDMockito.given(methodCall()) }
+}
+
+/**
  * Alias for [BDDMockito.then].
  */
 fun <T> then(mock: T): BDDMockito.Then<T> {
     return BDDMockito.then(mock)
+}
+
+/**
+ * Alias for [Then.should], with suspending lambda.
+ */
+fun <T, R> Then<T>.shouldBlocking(f: suspend T.() -> R): R {
+    val m = should()
+    return runBlocking { m.f() }
 }
 
 /**

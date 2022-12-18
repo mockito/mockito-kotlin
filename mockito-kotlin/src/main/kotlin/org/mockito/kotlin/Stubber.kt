@@ -25,6 +25,7 @@
 
 package org.mockito.kotlin
 
+import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Stubber
@@ -63,3 +64,14 @@ fun doThrow(vararg toBeThrown: Throwable): Stubber {
 }
 
 fun <T> Stubber.whenever(mock: T) = `when`(mock)
+
+/**
+ * Alias for when with suspending function
+ *
+ * Warning: Only one method call can be stubbed in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> Stubber.wheneverBlocking(mock: T, f: suspend T.() -> Unit) {
+    val m = whenever(mock)
+    runBlocking { m.f() }
+}

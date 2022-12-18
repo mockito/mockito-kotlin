@@ -62,6 +62,36 @@ class CoroutinesTest {
     }
 
     @Test
+    fun stubbingSuspending_wheneverBlocking() {
+        /* Given */
+        val m: SomeInterface = mock()
+        wheneverBlocking { m.suspending() }
+            .doReturn(42)
+
+        /* When */
+        val result = runBlocking { m.suspending() }
+
+        /* Then */
+        expect(result).toBe(42)
+    }
+
+    @Test
+    fun stubbingSuspending_doReturn() {
+        /* Given */
+        val m = spy(SomeClass())
+        doReturn(10)
+            .wheneverBlocking(m) {
+                delaying()
+            }
+
+        /* When */
+        val result = runBlocking { m.delaying() }
+
+        /* Then */
+        expect(result).toBe(10)
+    }
+
+    @Test
     fun stubbingNonSuspending() {
         /* Given */
         val m = mock<SomeInterface> {
@@ -394,11 +424,11 @@ interface SomeInterface {
     fun nonsuspending(): Int
 }
 
-class SomeClass {
+open class SomeClass {
 
     suspend fun result(r: Int) = withContext(Dispatchers.Default) { r }
 
-    suspend fun delaying() = withContext(Dispatchers.Default) {
+    open suspend fun delaying() = withContext(Dispatchers.Default) {
         delay(100)
         42
     }
