@@ -25,6 +25,8 @@
 
 package org.mockito.kotlin
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.internal.SuspendableAnswer
@@ -41,6 +43,16 @@ import kotlin.reflect.KClass
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
     return Mockito.`when`(methodCall)!!
+}
+
+/**
+ * Enables stubbing suspending methods. Use it when you want the mock to return particular value when particular suspending method is called.
+ *
+ * Warning: Only one method call can be stubbed in the function.
+ * other method calls are ignored!
+ */
+fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T> {
+    return runBlocking { Mockito.`when`(methodCall()) }
 }
 
 /**
