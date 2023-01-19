@@ -74,7 +74,7 @@ fun <T> verify(mock: T, mode: VerificationMode): T {
 }
 
 /**
- * Checks if any of given mocks has any unverified interaction.
+ * Verifies that no interactions happened on given mocks beyond the previously verified interactions.
  *
  * Alias for [Mockito.verifyNoMoreInteractions].
  */
@@ -83,7 +83,7 @@ fun <T> verifyNoMoreInteractions(vararg mocks: T) {
 }
 
 /**
- * Verifies that no interactions happened on given mocks beyond the previously verified interactions.
+ * Checks if any of given mocks has any unverified interaction.
  *
  * Alias for [Mockito.verifyNoInteractions].
  */
