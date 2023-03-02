@@ -28,6 +28,7 @@ package org.mockito.kotlin
 import org.mockito.kotlin.internal.createInstance
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
+import org.mockito.exceptions.misusing.NotAMockException
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
 
@@ -44,6 +45,9 @@ inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit): T {
 }
 
 class KStubbing<out T : Any>(val mock: T) {
+    init {
+        if(!mockingDetails(mock).isMock) throw NotAMockException("Stubbing target is not a mock!")
+    }
 
     fun <R> on(methodCall: R): OngoingStubbing<R> = Mockito.`when`(methodCall)
 
