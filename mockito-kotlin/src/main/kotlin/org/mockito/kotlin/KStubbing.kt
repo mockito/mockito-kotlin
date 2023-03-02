@@ -32,7 +32,7 @@ import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
 
 
-inline fun <T> stubbing(
+inline fun <T : Any> stubbing(
     mock: T,
     stubbing: KStubbing<T>.(T) -> Unit
 ) {
@@ -43,7 +43,7 @@ inline fun <T : Any> T.stub(stubbing: KStubbing<T>.(T) -> Unit): T {
     return apply { KStubbing(this).stubbing(this) }
 }
 
-class KStubbing<out T>(val mock: T) {
+class KStubbing<out T : Any>(val mock: T) {
 
     fun <R> on(methodCall: R): OngoingStubbing<R> = Mockito.`when`(methodCall)
 

@@ -56,7 +56,7 @@ fun <T> spy(value: T): T {
  * Creates a spy of the real object, allowing for immediate stubbing.
  * The spy calls <b>real</b> methods unless they are stubbed.
  */
-inline fun <reified T> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T {
+inline fun <reified T : Any> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T {
     return spy(value)
         .apply { KStubbing(this).stubbing(this) }!!
 }
