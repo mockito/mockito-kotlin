@@ -242,6 +242,16 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun stubbingRealObject() {
+        val notAMock = ""
+
+        /* Expect */
+        expectErrorWithMessage("is not a mock!").on {
+            notAMock.stub { }
+        }
+    }
+
+    @Test
     fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
         /* Expect */
         expectErrorWithMessage("null").on {
