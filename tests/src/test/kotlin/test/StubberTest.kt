@@ -100,4 +100,13 @@ class StubberTest : TestBase() {
             mock.go()
         }
     }
+
+    @Test
+    fun testStubberOnBlockExtension() {
+        val mock = mock<Methods> {
+            doReturn("Test").on { stringResult() }
+        }
+
+        expect(mock.stringResult()).toBe("Test")
+    }
 }

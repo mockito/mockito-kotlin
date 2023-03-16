@@ -30,6 +30,7 @@ import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.exceptions.misusing.NotAMockException
 import org.mockito.stubbing.OngoingStubbing
+import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
 
@@ -84,5 +85,9 @@ class KStubbing<out T : Any>(val mock: T) {
         m: suspend T.() -> R
     ): OngoingStubbing<R> {
         return runBlocking { Mockito.`when`(mock.m()) }
+    }
+
+    fun Stubber.on(methodCall: T.() -> Unit) {
+        this.`when`(mock).methodCall()
     }
 }
