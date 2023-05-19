@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.4.20'
     println "$project uses Kotlin $kotlin_version"
@@ -25,4 +27,10 @@ dependencies {
 
     testCompile 'junit:junit:4.13.2'
     testCompile "com.nhaarman:expect.kt:1.0.1"
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
 }

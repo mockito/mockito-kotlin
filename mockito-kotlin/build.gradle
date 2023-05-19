@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'kotlin'
 apply from: '../gradle/publishing.gradle'
 apply plugin: 'org.jetbrains.dokka'
@@ -45,4 +47,11 @@ dokka {
         suffix = "#L"
     }
 }
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
+}
+
 javadoc.dependsOn dokka
