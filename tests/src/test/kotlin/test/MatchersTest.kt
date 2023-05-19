@@ -4,12 +4,10 @@ import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import org.junit.Test
 import org.mockito.ArgumentMatcher
-import org.mockito.internal.matchers.VarargMatcher
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 import java.io.IOException
-import kotlin.check
 
 class MatchersTest : TestBase() {
 
@@ -321,7 +319,7 @@ class MatchersTest : TestBase() {
         private val match: ((T) -> Boolean),
         private val success: R,
         private val failure: R
-    ) : ArgumentMatcher<T>, VarargMatcher, Answer<R> {
+    ) : ArgumentMatcher<T>, Answer<R> {
         private var anyMatched = false
 
         override fun matches(t: T): Boolean {
@@ -330,5 +328,7 @@ class MatchersTest : TestBase() {
         }
 
         override fun answer(i: InvocationOnMock) = if (anyMatched) success else failure
+
+        override fun type(): Class<*> = Any::class.java
     }
 }
