@@ -25,9 +25,10 @@
 
 package org.mockito.kotlin
 
-import org.mockito.kotlin.internal.createInstance
 import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
+import org.mockito.kotlin.internal.createInstance
+import kotlin.reflect.KClass
 
 /** Object argument that is equal to the given value. */
 fun <T> eq(value: T): T {
@@ -51,7 +52,18 @@ inline fun <reified T : Any> anyOrNull(): T {
 
 /** Matches any vararg object, including nulls. */
 inline fun <reified T : Any> anyVararg(): T {
-    return ArgumentMatchers.any<T>() ?: createInstance()
+    return anyVararg(T::class)
+}
+
+fun <T : Any> anyVararg(clazz: KClass<T>): T {
+    return ArgumentMatchers.argThat(VarargMatcher(clazz.java))?: createInstance(clazz)
+}
+
+private class VarargMatcher<T>(private val clazz: Class<T>) : ArgumentMatcher<T>{
+    override fun matches(t: T): Boolean = true
+
+    // In Java >= 12 you can do clazz.arrayClass()
+    override fun type(): Class<*> = java.lang.reflect.Array.newInstance(clazz, 0).javaClass
 }
 
 /** Matches any array of type T. */

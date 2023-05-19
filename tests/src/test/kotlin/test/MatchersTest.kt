@@ -8,6 +8,7 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 import java.io.IOException
+import kotlin.reflect.KClass
 
 class MatchersTest : TestBase() {
 
@@ -64,6 +65,14 @@ class MatchersTest : TestBase() {
         mock<Methods>().apply {
             closedVararg(Closed(), Closed())
             verify(this).closedVararg(anyVararg())
+        }
+    }
+
+    @Test
+    fun anyVarargMatching() {
+        mock<Methods>().apply {
+            whenever(varargBooleanResult(anyVararg())).thenReturn(true)
+            expect(varargBooleanResult()).toBe(true)
         }
     }
 
@@ -275,7 +284,7 @@ class MatchersTest : TestBase() {
         /* Given */
         val t = mock<Methods>()
         // a matcher to check if any of the varargs was equals to "b"
-        val matcher = VarargAnyMatcher<String, Boolean>({ "b" == it }, true, false)
+        val matcher = VarargAnyMatcher({ "b" == it }, String::class.java, true, false)
 
         /* When */
         whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
@@ -289,7 +298,7 @@ class MatchersTest : TestBase() {
         /* Given */
         val t = mock<Methods>()
         // a matcher to check if any of the varargs was equals to "d"
-        val matcher = VarargAnyMatcher<String, Boolean>({ "d" == it }, true, false)
+        val matcher = VarargAnyMatcher({ "d" == it }, String::class.java, true, false)
 
         /* When */
         whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
@@ -317,18 +326,20 @@ class MatchersTest : TestBase() {
      */
     private class VarargAnyMatcher<T, R>(
         private val match: ((T) -> Boolean),
+        private val clazz: Class<T>,
         private val success: R,
         private val failure: R
     ) : ArgumentMatcher<T>, Answer<R> {
         private var anyMatched = false
 
         override fun matches(t: T): Boolean {
-            anyMatched = anyMatched or match(t)
-            return true
+            @Suppress("UNCHECKED_CAST") // No idea how to solve this better
+            anyMatched = (t as Array<T>).any(match)
+            return anyMatched
         }
 
         override fun answer(i: InvocationOnMock) = if (anyMatched) success else failure
 
-        override fun type(): Class<*> = Any::class.java
+        override fun type(): Class<*> = java.lang.reflect.Array.newInstance(clazz, 0).javaClass
     }
 }
