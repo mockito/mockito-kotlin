@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     ext.kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.4.20'
     println "$project uses Kotlin $kotlin_version"
@@ -21,8 +23,14 @@ dependencies {
     compile files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${version}.jar")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.mockito:mockito-core:4.5.1"
+    compile "org.mockito:mockito-core:5.3.1"
 
     testCompile 'junit:junit:4.13.2'
     testCompile "com.nhaarman:expect.kt:1.0.1"
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
+    }
 }
