@@ -34,4 +34,18 @@ open class LenientStubberTest {
 
         Assert.assertEquals("List should contain hello", "hello", mock[1])
     }
+
+    @Test
+    fun unused_and_lenient_stubbings_with_nullable() {
+        val mock = mock<NullableToString>()
+        lenient().whenever(mock.returnsNullableString()).doReturn(null)
+        whenever(mock.returnsNonNullableString()).doReturn("hello")
+
+        Assert.assertEquals("Should return hello", "hello", mock.returnsNonNullableString())
+    }
+
+    private class NullableToString {
+        fun returnsNullableString(): String? = ""
+        fun returnsNonNullableString(): String = ""
+    }
 }
