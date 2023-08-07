@@ -27,6 +27,7 @@ package org.mockito.kotlin
 
 import org.mockito.kotlin.internal.createInstance
 import org.mockito.ArgumentCaptor
+import java.lang.reflect.Array
 import kotlin.reflect.KClass
 
 /**
@@ -202,12 +203,14 @@ class KArgumentCaptor<out T : Any?>(
         // In Java, `captor.capture` returns null and so the method is called with `[null]`
         // In Kotlin, we have to create `[null]` explicitly.
         // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
-        return if (tClass.java.isArray) {
-            captor.capture() ?: java.lang.reflect.Array.newInstance(tClass.java.componentType, 1) as T
+        return captor.capture() ?: if (tClass.java.isArray) {
+            singleElementArray()
         } else {
-            captor.capture() ?: createInstance(tClass) as T
-        }
+            createInstance(tClass)
+        } as T
     }
+
+    private fun singleElementArray(): Any? = Array.newInstance(tClass.java.componentType, 1)
 }
 
 val <T> ArgumentCaptor<T>.firstValue: T
