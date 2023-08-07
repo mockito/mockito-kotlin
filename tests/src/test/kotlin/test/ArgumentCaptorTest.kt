@@ -226,4 +226,88 @@ class ArgumentCaptorTest : TestBase() {
             }
         }
     }
+
+    @Test
+    fun argumentCaptor_vararg() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.varargBooleanResult("a", "b", "c")
+
+        /* Then */
+        val captor = argumentCaptor<Array<String>>()
+        verify(m).varargBooleanResult(*captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
+    }
+
+    @Test
+    fun argumentCaptor_empty_vararg() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.varargBooleanResult()
+
+        /* Then */
+        val captor = argumentCaptor<Array<String>>()
+        verify(m).varargBooleanResult(*captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf())
+    }
+
+    @Test
+    fun argumentCaptor_arg_vararg() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.argAndVararg("first", "a", "b", "c")
+
+        /* Then */
+        val captor = argumentCaptor<Array<String>>()
+        verify(m).argAndVararg(any(), *captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
+    }
+
+    @Test
+    fun argumentCaptor_intarray() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.intArray(intArrayOf(1, 2, 3))
+
+        /* Then */
+        val captor = argumentCaptor<IntArray>()
+        verify(m).intArray(captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf(1, 2, 3))
+    }
+
+    @Test
+    fun argumentCaptor_array() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.stringArray(arrayOf("a", "b", "c"))
+
+        /* Then */
+        val captor = argumentCaptor<Array<String>>()
+        verify(m).stringArray(captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
+    }
+
+    @Test
+    fun argumentCaptor_empty_array() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.stringArray(arrayOf())
+
+        /* Then */
+        val captor = argumentCaptor<Array<String>>()
+        verify(m).stringArray(captor.capture())
+        expect(captor.firstValue.toList()).toBe(listOf())
+    }
 }

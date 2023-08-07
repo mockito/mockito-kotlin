@@ -27,6 +27,7 @@ package org.mockito.kotlin
 
 import org.mockito.kotlin.internal.createInstance
 import org.mockito.ArgumentCaptor
+import java.lang.reflect.Array
 import kotlin.reflect.KClass
 
 /**
@@ -195,8 +196,21 @@ class KArgumentCaptor<out T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     fun capture(): T {
-        return captor.capture() ?: createInstance(tClass) as T
+        // Special handling for arrays to make it work for varargs
+        // In Kotlin we want have to capture vararg like this `verify(m).methodName(*captor.capture())` to make the types work
+        // If we return null for array types, the spread `*` operator will fail with NPE
+        // If we return empty array, it will fail in MatchersBinder.validateMatchers
+        // In Java, `captor.capture` returns null and so the method is called with `[null]`
+        // In Kotlin, we have to create `[null]` explicitly.
+        // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
+        return captor.capture() ?: if (tClass.java.isArray) {
+            singleElementArray()
+        } else {
+            createInstance(tClass)
+        } as T
     }
+
+    private fun singleElementArray(): Any? = Array.newInstance(tClass.java.componentType, 1)
 }
 
 val <T> ArgumentCaptor<T>.firstValue: T

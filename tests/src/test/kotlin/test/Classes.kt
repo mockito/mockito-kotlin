@@ -70,6 +70,8 @@ interface Methods {
     fun nullableStringResult(): String?
     fun builderMethod(): Methods
     fun varargBooleanResult(vararg values: String): Boolean
+    fun stringArray(a: Array<String>)
+    fun argAndVararg(s: String, vararg a: String)
 
     fun nonDefaultReturnType(): ExtraInterface
 }
