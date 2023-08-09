@@ -12,8 +12,7 @@ on:
     branches:
       - main
     tags:
-      - 3.*
-      - 4.*
+      - 5.*
   pull_request:
     branches:
       - main
@@ -81,7 +80,7 @@ jobs:
     needs: [build] # build job must pass before we can release
 
     if: github.event_name == 'push'
-        && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/3.') || startsWith(github.ref, 'refs/tags/4.'))
+        && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/5.'))
         && github.repository == 'mockito/mockito-kotlin'
         && !contains(toJSON(github.event.commits.*.message), '[skip release]')
 
