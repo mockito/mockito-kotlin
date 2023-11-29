@@ -2,11 +2,12 @@
 apply plugin: 'maven-publish'
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from 'build/javadoc'
 }
 
 task sourceJar(type: Jar) {
+    archiveClassifier = "sources"
     from sourceSets.main.allSource
 }
 
@@ -17,10 +18,7 @@ publishing {
 
             from components.java
 
-            artifact sourceJar {
-                classifier "sources"
-            }
-
+            artifact sourceJar
             artifact javadocJar
 
             pom.withXml {

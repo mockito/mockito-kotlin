@@ -7,9 +7,18 @@ import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.misusing.UnfinishedStubbingException
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.check
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doReturnConsecutively
+import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.stub
+import org.mockito.kotlin.stubbing
+import org.mockito.kotlin.whenever
 import org.mockito.stubbing.Answer
-import kotlin.check
 
 class OngoingStubbingTest : TestBase() {
 
@@ -288,14 +297,13 @@ class OngoingStubbingTest : TestBase() {
 
     @Test
     fun doReturn_withGenericIntReturnType_on() {
-        /* Expect */
-        expectErrorWithMessage("onGeneric") on {
-
-            /* When */
-            mock<GenericMethods<Int>> {
-                on { genericMethod() } doReturn 2
-            }
+        /* When */
+        val mock = mock<GenericMethods<Int>> {
+            on { genericMethod() } doReturn 2
         }
+
+        /* Then */
+        expect(mock.genericMethod()).toBe(2)
     }
 
     @Test
