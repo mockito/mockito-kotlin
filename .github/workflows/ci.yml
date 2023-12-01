@@ -50,7 +50,7 @@ jobs:
     strategy:
       matrix:
         mock-maker: ['mock-maker-default', 'mock-maker-inline']
-        kotlin: ['1.3.50', '1.4.21']
+        kotlin: ['1.9.20']
         # Note that the old Travis CI referenced other Kotlin versions: '1.0.7', '1.1.61', '1.2.50'
         # However, those versions of Kotlin don't work with latest Gradle
 
