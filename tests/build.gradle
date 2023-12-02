@@ -25,10 +25,9 @@ tasks.named('compileTestKotlin') {
 }
 
 dependencies {
-    implementation files("${rootProject.projectDir}/mockito-kotlin/build/libs/mockito-kotlin-${version}.jar")
+    implementation project(":mockito-kotlin")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.mockito:mockito-core:5.7.0"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.nhaarman:expect.kt:1.0.1"
