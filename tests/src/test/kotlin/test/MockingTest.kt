@@ -76,7 +76,6 @@ class MockingTest : TestBase() {
         expect(cal.time.time).toBe(123L)
     }
 
-
     @Test
     fun testMockStubbing_lambda() {
         /* Given */
@@ -105,7 +104,6 @@ class MockingTest : TestBase() {
         /* Then */
         expect(result).toBe("B")
     }
-
 
     @Test
     fun mock_withCustomDefaultAnswer_parameterName() {

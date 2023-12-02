@@ -63,6 +63,7 @@ fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit)
     val m = Mockito.verify(mock, mode)
     runBlocking { m.f() }
 }
+
 /**
  * Verifies certain behavior happened at least once / exact number of times / never.
  *
@@ -257,7 +258,6 @@ class InOrderOnType<T>(private val t: T) : KInOrder by inOrder(t as Any) {
 fun only(): VerificationMode {
     return Mockito.only()!!
 }
-
 
 /**
  * For usage with verification only.

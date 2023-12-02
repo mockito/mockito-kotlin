@@ -28,7 +28,7 @@ package org.mockito.kotlin
 import org.mockito.InOrder
 import org.mockito.verification.VerificationMode
 
-interface KInOrder: InOrder {
+interface KInOrder : InOrder {
     /**
      * Verifies certain suspending behavior <b>happened once</b> in order.
      *

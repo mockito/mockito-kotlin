@@ -98,6 +98,7 @@ class MatchersTest : TestBase() {
             verify(this).boolean(anyOrNull())
         }
     }
+
     @Test
     fun anyNull_forPrimitiveByte() {
         mock<Methods>().apply {
@@ -237,7 +238,6 @@ class MatchersTest : TestBase() {
         }
     }
 
-
     @Test
     fun isA_withNonNullableString() {
         mock<Methods>().apply {
@@ -309,14 +309,14 @@ class MatchersTest : TestBase() {
     /** https://github.com/nhaarman/mockito-kotlin/issues/328 */
     @Test
     fun testRefEqForNonNullableParameter() {
-       mock<Methods>().apply {
-           /* When */
-           val array = intArrayOf(2, 3)
-           intArray(array)
-           
-           /* Then */
-           verify(this).intArray(refEq(array))
-       }
+        mock<Methods>().apply {
+            /* When */
+            val array = intArrayOf(2, 3)
+            intArray(array)
+
+            /* Then */
+            verify(this).intArray(refEq(array))
+        }
     }
 
     /**

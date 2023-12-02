@@ -16,7 +16,6 @@ import org.mockito.InOrder
 import org.mockito.kotlin.*
 import java.util.*
 
-
 class CoroutinesTest {
 
     @Test

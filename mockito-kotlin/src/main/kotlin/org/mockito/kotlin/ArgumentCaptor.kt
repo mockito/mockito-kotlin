@@ -93,7 +93,6 @@ class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
     operator fun component5() = fifth
 }
 
-
 /**
  * Creates 4 [KArgumentCaptor]s for given types.
  */

@@ -34,7 +34,6 @@ import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
 
-
 /**
  * Enables stubbing methods. Use it when you want the mock to return particular value when particular method is called.
  *

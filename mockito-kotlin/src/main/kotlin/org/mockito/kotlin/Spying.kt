@@ -27,7 +27,6 @@ package org.mockito.kotlin
 
 import org.mockito.Mockito
 
-
 /**
  * Creates a spy of the real object.
  * The spy calls <b>real</b> methods unless they are stubbed.

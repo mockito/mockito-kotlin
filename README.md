@@ -1,4 +1,5 @@
 # Mockito-Kotlin
+
 [ ![Download](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin/badge.svg) ](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin)
 [![Nexus Snapshot](https://img.shields.io/nexus/s/org.mockito.kotlin/mockito-kotlin?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/snapshots/org/mockito/kotlin/mockito-kotlin/)
 
@@ -56,7 +57,7 @@ keeping the base module at a recent version.
 
  - `./gradlew check` runs the checks including tests.
 
-Usually it is enough to test only using the default Kotlin versions; 
+Usually it is enough to test only using the default Kotlin versions;
 CI will test against multiple versions.
 If you want to test using a different Kotlin version locally, set
 an environment variable `KOTLIN_VERSION` and run the tests.
