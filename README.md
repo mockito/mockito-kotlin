@@ -58,8 +58,8 @@ keeping the base module at a recent version.
 
 Usually it is enough to test only using the default Kotlin versions; 
 CI will test against multiple versions.
-If you want to test using a different Kotlin version locally, set
-an environment variable `KOTLIN_VERSION` and run the tests.
+If you want to test using a different Kotlin version locally,
+add the `-PtestKotlinVersion=1.2.3` argument to the Gradle invocation while running the tests.
 
 ### Acknowledgements
 
