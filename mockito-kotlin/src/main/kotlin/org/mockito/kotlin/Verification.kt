@@ -270,11 +270,12 @@ fun only(): VerificationMode {
 inline fun <reified T : Any> check(noinline predicate: (T) -> Unit): T {
     return Mockito.argThat { arg: T? ->
         if (arg == null) error(
-              """The argument passed to the predicate was null.
-
-If you are trying to verify an argument to be null, use `isNull()`.
-If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
-""".trimIndent()
+            """
+                The argument passed to the predicate was null.
+                
+                If you are trying to verify an argument to be null, use `isNull()`.
+                If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
+            """.trimIndent()
         )
 
         try {
