@@ -26,7 +26,6 @@
 package org.mockito.kotlin.internal
 
 import kotlin.reflect.KClass
-import java.lang.reflect.Array as JavaArray
 
 inline fun <reified T : Any> createInstance(): T {
     return when (T::class) {

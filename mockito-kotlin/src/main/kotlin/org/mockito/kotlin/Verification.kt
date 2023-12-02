@@ -27,7 +27,6 @@ package org.mockito.kotlin
 
 import org.mockito.kotlin.internal.createInstance
 import kotlinx.coroutines.runBlocking
-import org.mockito.InOrder
 import org.mockito.Mockito
 import org.mockito.kotlin.internal.KInOrderDecorator
 import org.mockito.verification.VerificationAfterDelay

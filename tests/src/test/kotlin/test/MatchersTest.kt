@@ -8,7 +8,6 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 import java.io.IOException
-import kotlin.reflect.KClass
 
 class MatchersTest : TestBase() {
 
