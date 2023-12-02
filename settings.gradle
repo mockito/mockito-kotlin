@@ -1,2 +1,2 @@
 include 'mockito-kotlin'
-include 'tests'
+includeBuild 'tests'
