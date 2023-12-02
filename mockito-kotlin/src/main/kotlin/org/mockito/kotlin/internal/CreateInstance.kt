@@ -42,7 +42,7 @@ inline fun <reified T : Any> createInstance(): T {
     }
 }
 
-fun <T : Any> createInstance(kClass: KClass<T>): T {
+fun <T : Any> createInstance(@Suppress("UNUSED_PARAMETER") kClass: KClass<T>): T {
     return castNull()
 }
 
