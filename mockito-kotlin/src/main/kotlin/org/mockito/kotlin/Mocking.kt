@@ -30,6 +30,7 @@ import org.mockito.MockSettings
 import org.mockito.Mockito
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
+import org.mockito.quality.Strictness
 import org.mockito.stubbing.Answer
 import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
@@ -175,7 +176,7 @@ fun withSettings(
     if (stubOnly) stubOnly()
     useConstructor?.let { useConstructor(*it.args) }
     outerInstance?.let { outerInstance(it) }
-    if (lenient) lenient()
+    if (lenient) strictness(Strictness.LENIENT)
 }
 
 class UseConstructor private constructor(val args: Array<Any>) {
