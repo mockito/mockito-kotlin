@@ -1,9 +1,11 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply plugin: 'kotlin'
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.dokka"
+}
 apply from: '../gradle/publishing.gradle'
-apply plugin: 'org.jetbrains.dokka'
 
 group = 'org.mockito.kotlin'
 

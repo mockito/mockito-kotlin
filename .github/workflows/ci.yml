@@ -67,9 +67,8 @@ jobs:
       - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
         run: |
           ops/mockMakerInline.sh
-          ./gradlew build
+          ./gradlew build -PtestKotlinVersion=${{ matrix.kotlin }}
         env:
-          KOTLIN_VERSION: ${{ matrix.kotlin }}
           MOCK_MAKER: ${{ matrix.mock-maker }}
 
   #
