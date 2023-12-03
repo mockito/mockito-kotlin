@@ -5,7 +5,6 @@ import org.mockito.kotlin.internal.createInstance
 import org.junit.Test
 import test.TestBase
 
-
 class NullCasterTest : TestBase() {
 
     @Test

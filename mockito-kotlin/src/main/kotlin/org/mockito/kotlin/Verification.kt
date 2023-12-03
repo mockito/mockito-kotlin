@@ -27,7 +27,6 @@ package org.mockito.kotlin
 
 import org.mockito.kotlin.internal.createInstance
 import kotlinx.coroutines.runBlocking
-import org.mockito.InOrder
 import org.mockito.Mockito
 import org.mockito.kotlin.internal.KInOrderDecorator
 import org.mockito.verification.VerificationAfterDelay
@@ -64,6 +63,7 @@ fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit)
     val m = Mockito.verify(mock, mode)
     runBlocking { m.f() }
 }
+
 /**
  * Verifies certain behavior happened at least once / exact number of times / never.
  *
@@ -259,7 +259,6 @@ fun only(): VerificationMode {
     return Mockito.only()!!
 }
 
-
 /**
  * For usage with verification only.
  *
@@ -271,11 +270,12 @@ fun only(): VerificationMode {
 inline fun <reified T : Any> check(noinline predicate: (T) -> Unit): T {
     return Mockito.argThat { arg: T? ->
         if (arg == null) error(
-              """The argument passed to the predicate was null.
-
-If you are trying to verify an argument to be null, use `isNull()`.
-If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
-""".trimIndent()
+            """
+                The argument passed to the predicate was null.
+                
+                If you are trying to verify an argument to be null, use `isNull()`.
+                If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
+            """.trimIndent()
         )
 
         try {

@@ -236,7 +236,6 @@ class OngoingStubbingTest : TestBase() {
         expect(result).toBe("result2")
     }
 
-
     @Test
     fun stubbingTwiceWithArgumentMatchers() {
         /* When */

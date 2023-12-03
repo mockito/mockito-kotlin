@@ -27,7 +27,6 @@ package org.mockito.kotlin
 
 import org.mockito.Mockito
 
-
 /**
  * Creates a spy of the real object.
  * The spy calls <b>real</b> methods unless they are stubbed.
@@ -58,5 +57,5 @@ fun <T> spy(value: T): T {
  */
 inline fun <reified T : Any> spy(value: T, stubbing: KStubbing<T>.(T) -> Unit): T {
     return spy(value)
-        .apply { KStubbing(this).stubbing(this) }!!
+        .apply { KStubbing(this).stubbing(this) }
 }

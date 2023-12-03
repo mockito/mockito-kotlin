@@ -31,7 +31,6 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
-
 fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
     return Mockito.doAnswer { answer(it) }!!
 }

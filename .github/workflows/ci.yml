@@ -23,7 +23,7 @@ jobs:
   # SINGLE-JOB
   #
   verify:
-    runs-on:  ubuntu-latest
+    runs-on: ubuntu-latest
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
 
     steps:
@@ -44,7 +44,7 @@ jobs:
   #
   build:
     needs: [verify]
-    runs-on:  ubuntu-latest
+    runs-on: ubuntu-latest
 
     # Definition of the build matrix
     strategy:
@@ -56,20 +56,20 @@ jobs:
 
     steps:
 
-    - name: 1. Check out code
-      uses: actions/checkout@v2 # https://github.com/actions/checkout
+      - name: 1. Check out code
+        uses: actions/checkout@v2 # https://github.com/actions/checkout
 
-    - name: 2. Set up Java 11
-      uses: actions/setup-java@v1 # https://github.com/actions/setup-java
-      with:
-        java-version: 11
+      - name: 2. Set up Java 11
+        uses: actions/setup-java@v1 # https://github.com/actions/setup-java
+        with:
+          java-version: 11
 
-    - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
-      run: |
-        ops/mockMakerInline.sh
-        ./gradlew build -PtestKotlinVersion=${{ matrix.kotlin }}
-      env:
-        MOCK_MAKER: ${{ matrix.mock-maker }}
+      - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
+        run: |
+          ops/mockMakerInline.sh
+          ./gradlew build -PtestKotlinVersion=${{ matrix.kotlin }}
+        env:
+          MOCK_MAKER: ${{ matrix.mock-maker }}
 
   #
   # Release job, only for pushes to the main development branch
@@ -85,21 +85,21 @@ jobs:
 
     steps:
 
-    - name: Check out code
-      uses: actions/checkout@v2 # https://github.com/actions/checkout
-      with:
-        fetch-depth: '0' # https://github.com/shipkit/shipkit-changelog#fetch-depth-on-ci
+      - name: Check out code
+        uses: actions/checkout@v2 # https://github.com/actions/checkout
+        with:
+          fetch-depth: '0' # https://github.com/shipkit/shipkit-changelog#fetch-depth-on-ci
 
-    - name: Set up Java 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
+      - name: Set up Java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
-    - name: Build and release
-      run: ./gradlew githubRelease publishToSonatype closeAndReleaseStagingRepository releaseSummary
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
-        NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}
-        PGP_KEY: ${{secrets.PGP_KEY}}
-        PGP_PWD: ${{secrets.PGP_PWD}}
+      - name: Build and release
+        run: ./gradlew githubRelease publishToSonatype closeAndReleaseStagingRepository releaseSummary
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NEXUS_TOKEN_USER: ${{secrets.NEXUS_TOKEN_USER}}
+          NEXUS_TOKEN_PWD: ${{secrets.NEXUS_TOKEN_PWD}}
+          PGP_KEY: ${{secrets.PGP_KEY}}
+          PGP_PWD: ${{secrets.PGP_PWD}}

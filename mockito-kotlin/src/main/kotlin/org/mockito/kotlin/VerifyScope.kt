@@ -25,7 +25,6 @@
 
 package org.mockito.kotlin
 
-
 /**
  * Verify multiple calls on mock
  * Supports an easier to read style of
