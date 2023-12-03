@@ -1,19 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        def kotlin_version = System.getenv("KOTLIN_VERSION") ?: '1.9.20'
-        println "$project uses Kotlin $kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "org.gradle.java"
+    id "org.jetbrains.kotlin.jvm" version "${testKotlinVersion}"
 }
 
-apply plugin: 'java'
-apply plugin: 'kotlin'
+logger.lifecycle "${project} uses Kotlin ${testKotlinVersion}"
 
 repositories {
     mavenCentral()
