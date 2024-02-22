@@ -3,10 +3,6 @@
 package test
 
 import com.nhaarman.expect.expect
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
 import org.junit.Assert.assertEquals
@@ -263,6 +259,17 @@ class CoroutinesTest {
         }
 
         assertEquals(42, fixture.suspending())
+    }
+
+    @Test
+    fun answerWithSuspendFunctionWithDestructuredArgs() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        whenever(fixture.suspendingWithArg(any())).doSuspendableAnswer { (i: Int) ->
+            withContext(Dispatchers.Default) { i }
+        }
+
+        assertEquals(5, fixture.suspendingWithArg(5))
     }
 
     @Test
