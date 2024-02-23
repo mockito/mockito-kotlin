@@ -23,29 +23,17 @@
  * THE SOFTWARE.
  */
 
-package org.mockito.kotlin.internal
+package org.mockito.kotlin
 
-import org.mockito.internal.invocation.InterceptedInvocation
 import org.mockito.invocation.InvocationOnMock
-import org.mockito.kotlin.KInvocationOnMock
-import org.mockito.stubbing.Answer
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 
-/**
- * This class properly wraps suspendable lambda into [Answer]
- */
-@Suppress("UNCHECKED_CAST")
-internal class SuspendableAnswer<T>(
-    private val body: suspend (KInvocationOnMock) -> T?
-) : Answer<T> {
-    override fun answer(invocation: InvocationOnMock?): T {
-        //all suspend functions/lambdas has Continuation as the last argument.
-        //InvocationOnMock does not see last argument
-        val rawInvocation = invocation as InterceptedInvocation
-        val continuation = rawInvocation.rawArguments.last() as Continuation<T?>
+class KInvocationOnMock(
+    private val invocationOnMock: InvocationOnMock
+) : InvocationOnMock by invocationOnMock {
 
-        // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
-        return body.startCoroutineUninterceptedOrReturn(KInvocationOnMock(invocation), continuation) as T
-    }
+    operator fun <T> component1(): T = invocationOnMock.getArgument(0)
+    operator fun <T> component2(): T = invocationOnMock.getArgument(1)
+    operator fun <T> component3(): T = invocationOnMock.getArgument(2)
+    operator fun <T> component4(): T = invocationOnMock.getArgument(3)
+    operator fun <T> component5(): T = invocationOnMock.getArgument(4)
 }

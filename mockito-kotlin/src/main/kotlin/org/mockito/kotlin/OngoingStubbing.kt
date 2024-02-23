@@ -28,7 +28,7 @@ package org.mockito.kotlin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
-import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.internal.KAnswer
 import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
@@ -132,10 +132,10 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<*>): OngoingStubbing<T>
 /**
  * Sets a generic Answer for the method using a lambda.
  */
-infix fun <T> OngoingStubbing<T>.doAnswer(answer: (InvocationOnMock) -> T?): OngoingStubbing<T> {
-    return thenAnswer(answer)
+infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): OngoingStubbing<T> {
+    return thenAnswer(KAnswer(answer))
 }
 
-infix fun <T> OngoingStubbing<T>.doSuspendableAnswer(answer: suspend (InvocationOnMock) -> T?): OngoingStubbing<T> {
+infix fun <T> OngoingStubbing<T>.doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): OngoingStubbing<T> {
     return thenAnswer(SuspendableAnswer(answer))
 }

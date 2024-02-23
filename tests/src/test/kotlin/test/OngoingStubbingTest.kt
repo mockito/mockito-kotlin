@@ -202,6 +202,36 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun testOngoingStubbing_doAnswer_withDestructuredArgument() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
+        }
+
+        /* When */
+        val result = mock.stringResult("argument")
+
+        /* Then */
+        expect(result).toBe("argument-result")
+    }
+
+    @Test
+    fun testOngoingStubbing_doAnswer_withDestructuredArguments() {
+        /* Given */
+        val mock = mock<Methods> {
+            on { varargBooleanResult(any(), any()) } doAnswer { (a: String, b: String) ->
+                a == b.trim()
+            }
+        }
+
+        /* When */
+        val result = mock.varargBooleanResult("argument", "   argument   ")
+
+        /* Then */
+        expect(result).toBe(true)
+    }
+
+    @Test
     fun testMockStubbingAfterCreatingMock() {
         val mock = mock<Methods>()
 
