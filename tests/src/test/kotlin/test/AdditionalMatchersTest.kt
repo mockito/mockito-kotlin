@@ -134,7 +134,7 @@ class AdditionalCaptorsTest : TestBase() {
     }
 
     @Test
-    fun testfind() {
+    fun testFind() {
         mock<Methods>().apply {
             string("Hello")
             verify(this).string(find("l+o$".toRegex()))
