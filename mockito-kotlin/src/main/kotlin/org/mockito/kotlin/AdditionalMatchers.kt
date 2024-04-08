@@ -26,7 +26,6 @@ package org.mockito.kotlin
 
 import org.mockito.AdditionalMatchers
 import org.mockito.kotlin.internal.createInstance
-import kotlin.reflect.KClass
 
 /** comparable argument greater than or equal the given value. */
 inline fun <reified T : Comparable<T>> geq(value: T): T {
