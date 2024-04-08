@@ -3,7 +3,7 @@ plugins {
     id "org.shipkit.shipkit-changelog" version "1.2.0"
     id "org.shipkit.shipkit-github-release" version "1.2.0"
     id "org.shipkit.shipkit-auto-version" version "1.2.2"
-    id "io.github.gradle-nexus.publish-plugin" version "1.3.0"
+    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
     id "org.jetbrains.kotlin.jvm" version "1.9.20" apply false
     id "org.jetbrains.dokka" version "1.9.10" apply false
 }
@@ -56,7 +56,7 @@ if (isSnapshot) {
         //snapshot versions do not produce changelog / Github releases
         enabled = false
     }
-    tasks.named("closeAndReleaseStagingRepository") {
+    tasks.named("closeAndReleaseStagingRepositories") {
         //snapshot binaries are available in Sonatype without the need to close the staging repo
         enabled = false
     }
