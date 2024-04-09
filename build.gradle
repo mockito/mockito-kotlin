@@ -33,6 +33,9 @@ tasks.named("githubRelease") {
     releaseName = project.version
 }
 
+// Will be used to handle Sonatype staging repositories.
+group = 'org.mockito.kotlin'
+
 nexusPublishing {
     repositories {
         if (System.getenv("NEXUS_TOKEN_PWD")) {

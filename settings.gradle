@@ -1,2 +1,4 @@
+rootProject.name = 'mockito-kotln-root'
+
 include 'mockito-kotlin'
 includeBuild 'tests'
