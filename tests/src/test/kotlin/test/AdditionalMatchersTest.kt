@@ -53,11 +53,74 @@ class AdditionalCaptorsTest : TestBase() {
     }
 
     @Test
-    fun testAryEqPrimitive() {
+    fun testAryEqBoolean() {
+        mock<Methods>().apply {
+            booleanArray(booleanArrayOf(true, false, true))
+            verify(this).booleanArray(aryEq(booleanArrayOf(true, false, true)))
+            verify(this, never()).booleanArray(aryEq(booleanArrayOf(true, false)))
+        }
+    }
+
+    @Test
+    fun testAryEqByte() {
+        mock<Methods>().apply {
+            byteArray(byteArrayOf(1, 2, 3))
+            verify(this).byteArray(aryEq(byteArrayOf(1, 2, 3)))
+            verify(this, never()).byteArray(aryEq(byteArrayOf(1, 2)))
+        }
+    }
+
+    @Test
+    fun testAryEqShort() {
+        mock<Methods>().apply {
+            shortArray(shortArrayOf(1, 2, 3))
+            verify(this).shortArray(aryEq(shortArrayOf(1, 2, 3)))
+            verify(this, never()).shortArray(aryEq(shortArrayOf(1, 2)))
+        }
+    }
+
+    @Test
+    fun testAryEqInt() {
         mock<Methods>().apply {
             intArray(intArrayOf(1, 2, 3))
             verify(this).intArray(aryEq(intArrayOf(1, 2, 3)))
             verify(this, never()).intArray(aryEq(intArrayOf(1, 2)))
+        }
+    }
+
+    @Test
+    fun testAryEqLong() {
+        mock<Methods>().apply {
+            longArray(longArrayOf(1, 2, 3))
+            verify(this).longArray(aryEq(longArrayOf(1, 2, 3)))
+            verify(this, never()).longArray(aryEq(longArrayOf(1, 2)))
+        }
+    }
+
+    @Test
+    fun testAryEqChar() {
+        mock<Methods>().apply {
+            charArray(charArrayOf('1', '2', '3'))
+            verify(this).charArray(aryEq(charArrayOf('1', '2', '3')))
+            verify(this, never()).charArray(aryEq(charArrayOf('1', '2')))
+        }
+    }
+
+    @Test
+    fun testAryEqFloat() {
+        mock<Methods>().apply {
+            floatArray(floatArrayOf(1f, 2f, 3.4f))
+            verify(this).floatArray(aryEq(floatArrayOf(1f, 2f, 3.4f)))
+            verify(this, never()).floatArray(aryEq(floatArrayOf(1f, 2f)))
+        }
+    }
+
+    @Test
+    fun testAryEqDouble() {
+        mock<Methods>().apply {
+            doubleArray(doubleArrayOf(1.0, 2.0, 3.4))
+            verify(this).doubleArray(aryEq(doubleArrayOf(1.0, 2.0, 3.4)))
+            verify(this, never()).doubleArray(aryEq(doubleArrayOf(1.0, 2.0)))
         }
     }
 
@@ -71,7 +134,7 @@ class AdditionalCaptorsTest : TestBase() {
     }
 
     @Test
-    fun testfind() {
+    fun testFind() {
         mock<Methods>().apply {
             string("Hello")
             verify(this).string(find("l+o$".toRegex()))

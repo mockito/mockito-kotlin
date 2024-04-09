@@ -26,7 +26,6 @@ package org.mockito.kotlin
 
 import org.mockito.AdditionalMatchers
 import org.mockito.kotlin.internal.createInstance
-import kotlin.reflect.KClass
 
 /** comparable argument greater than or equal the given value. */
 inline fun <reified T : Comparable<T>> geq(value: T): T {
@@ -143,20 +142,4 @@ inline fun <reified T : Any> or(left: T, right: T): T {
 /** argument that does not match the given argument matcher. */
 inline fun <reified T : Any> not(matcher: T): T {
     return AdditionalMatchers.not(matcher) ?: createInstance()
-}
-
-/**
- * float argument that has an absolute difference to the given value that is
- * less than the given delta details.
- */
-fun eq(value: Double, delta: Double): Double {
-    return AdditionalMatchers.eq(value, delta) ?: 0.0
-}
-
-/**
- * double argument that has an absolute difference to the given value that
- * is less than the given delta details.
- */
-fun eq(value: Float, delta: Float): Float {
-    return AdditionalMatchers.eq(value, delta) ?: 0.0f
 }
