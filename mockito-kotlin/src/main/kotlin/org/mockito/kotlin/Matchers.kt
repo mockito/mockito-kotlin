@@ -78,6 +78,7 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
     return ArgumentMatchers.any(Array<T>::class.java) ?: arrayOf()
 }
 
+/** Matches any Kotlin value class with the same boxed type by taking its boxed type. */
 inline fun <reified T > anyValueClass(): T {
     require(T::class.isValue) {
         "${T::class.qualifiedName} is not a value class."
