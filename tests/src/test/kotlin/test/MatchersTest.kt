@@ -319,6 +319,32 @@ class MatchersTest : TestBase() {
         }
     }
 
+    @Test
+    fun any_forValueClass() {
+        mock<Methods>().apply {
+            valueClass(ValueClass("Content"))
+            verify(this).valueClass(any())
+        }
+    }
+
+    @Test
+    fun anyValueClass_withValueClass() {
+        mock<Methods>().apply {
+            valueClass(ValueClass("Content"))
+            verify(this).valueClass(anyValueClass())
+        }
+    }
+
+    @Test
+    fun anyValueClass_withNonValueClass() {
+        expectErrorWithMessage("kotlin.Float is not a value class.") on {
+            mock<Methods>().apply {
+                float(10f)
+                verify(this).float(anyValueClass())
+            }
+        }
+    }
+
     /**
      * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if any of the var args
      * matched. Needs to keep state between matching invocations.

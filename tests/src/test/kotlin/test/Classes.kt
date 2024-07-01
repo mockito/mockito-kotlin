@@ -81,7 +81,12 @@ interface Methods {
     fun argAndVararg(s: String, vararg a: String)
 
     fun nonDefaultReturnType(): ExtraInterface
+
+    fun valueClass(v: ValueClass)
 }
+
+@JvmInline
+value class ValueClass(private val content: String)
 
 interface ExtraInterface
 

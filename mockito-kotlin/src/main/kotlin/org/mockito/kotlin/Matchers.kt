@@ -29,6 +29,7 @@ import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
 import org.mockito.kotlin.internal.createInstance
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType.Object
 
 /** Object argument that is equal to the given value. */
 fun <T> eq(value: T): T {
@@ -42,11 +43,17 @@ fun <T> same(value: T): T {
 
 /** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any(): T {
+    if(T::class.isValue)
+        return anyValueClass()
+
     return ArgumentMatchers.any(T::class.java) ?: createInstance()
 }
 
 /** Matches anything, including nulls. */
 inline fun <reified T : Any> anyOrNull(): T {
+    if(T::class.isValue)
+        return anyValueClass()
+
     return ArgumentMatchers.any<T>() ?: createInstance()
 }
 
@@ -69,6 +76,20 @@ private class VarargMatcher<T>(private val clazz: Class<T>) : ArgumentMatcher<T>
 /** Matches any array of type T. */
 inline fun <reified T : Any?> anyArray(): Array<T> {
     return ArgumentMatchers.any(Array<T>::class.java) ?: arrayOf()
+}
+
+inline fun <reified T > anyValueClass(): T {
+    require(T::class.isValue) {
+        "${T::class.qualifiedName} is not a value class."
+    }
+
+    val boxImpls = T::class.java.declaredMethods.filter { it.name == "box-impl" && it.parameterCount == 1 }
+    require(boxImpls.size == 1) // Sanity check
+
+    val boxImpl = boxImpls.first()
+    val boxedType = boxImpl.parameters[0].type
+
+    return boxImpl.invoke(null, ArgumentMatchers.any(boxedType)) as T
 }
 
 /**
