@@ -16,6 +16,7 @@ repositories {
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib"
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.20"
 
     api "org.mockito:mockito-core:5.7.0"
 
