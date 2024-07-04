@@ -29,7 +29,6 @@ import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
 import org.mockito.kotlin.internal.createInstance
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType.Object
 
 /** Object argument that is equal to the given value. */
 fun <T> eq(value: T): T {
