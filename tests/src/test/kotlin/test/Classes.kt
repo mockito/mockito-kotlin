@@ -82,11 +82,15 @@ interface Methods {
 
     fun nonDefaultReturnType(): ExtraInterface
 
-    fun valueClass(v: ValueClass)
+    fun valueClass(v: ValueClass?)
+    fun nestedValueClass(v: NestedValueClass)
 }
 
 @JvmInline
 value class ValueClass(private val content: String)
+
+@JvmInline
+value class NestedValueClass(val value: ValueClass)
 
 interface ExtraInterface
 

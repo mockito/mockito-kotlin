@@ -328,6 +328,22 @@ class MatchersTest : TestBase() {
     }
 
     @Test
+    fun anyOrNull_forValueClass() {
+        mock<Methods>().apply {
+            valueClass(ValueClass("Content"))
+            verify(this).valueClass(anyOrNull())
+        }
+    }
+
+    @Test
+    fun anyOrNull_forValueClass_withNull() {
+        mock<Methods>().apply {
+            valueClass(null)
+            verify(this).valueClass(anyOrNull())
+        }
+    }
+
+    @Test
     fun anyValueClass_withValueClass() {
         mock<Methods>().apply {
             valueClass(ValueClass("Content"))
@@ -340,8 +356,17 @@ class MatchersTest : TestBase() {
         expectErrorWithMessage("kotlin.Float is not a value class.") on {
             mock<Methods>().apply {
                 float(10f)
-                verify(this).float(anyValueClass())
+                // Should throw an error because Float is not a value class
+                float(anyValueClass())
             }
+        }
+    }
+
+    @Test
+    fun anyValueClass_withNestedValueClass() {
+        mock<Methods>().apply {
+            nestedValueClass(NestedValueClass(ValueClass("Content")))
+            verify(this).nestedValueClass(anyValueClass())
         }
     }
 

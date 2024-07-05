@@ -50,9 +50,6 @@ inline fun <reified T : Any> any(): T {
 
 /** Matches anything, including nulls. */
 inline fun <reified T : Any> anyOrNull(): T {
-    if(T::class.isValue)
-        return anyValueClass()
-
     return ArgumentMatchers.any<T>() ?: createInstance()
 }
 
