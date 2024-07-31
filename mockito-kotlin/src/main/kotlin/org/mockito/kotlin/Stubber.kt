@@ -28,11 +28,17 @@ package org.mockito.kotlin
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.internal.SuspendableAnswer
+import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
 fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
     return Mockito.doAnswer { answer(it) }!!
+}
+
+fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): Stubber {
+    return Mockito.doAnswer(SuspendableAnswer(answer))
 }
 
 fun doCallRealMethod(): Stubber {
