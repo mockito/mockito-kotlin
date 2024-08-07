@@ -295,6 +295,100 @@ class CoroutinesTest {
     }
 
     @Test
+    fun stubberAnswerWithSuspendFunction() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        doSuspendableAnswer {
+            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
+        }.whenever(fixture).suspendingWithArg(any())
+
+        assertEquals(5, fixture.suspendingWithArg(5))
+    }
+
+    @Test
+    fun stubberCallFromSuspendFunction() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        doSuspendableAnswer {
+            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
+        }.whenever(fixture).suspendingWithArg(any())
+
+        val result = async {
+            val answer = fixture.suspendingWithArg(5)
+
+            Result.success(answer)
+        }
+
+        assertEquals(5, result.await().getOrThrow())
+    }
+
+    @Test
+    fun stubberCallFromActor() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        doSuspendableAnswer {
+            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
+        }.whenever(fixture).suspendingWithArg(any())
+
+        val actor = actor<Optional<Int>> {
+            for (element in channel) {
+                fixture.suspendingWithArg(element.get())
+            }
+        }
+
+        actor.send(Optional.of(10))
+        actor.close()
+
+        verify(fixture).suspendingWithArg(10)
+
+        Unit
+    }
+
+    @Test
+    fun stubberAnswerWithSuspendFunctionWithoutArgs() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        doSuspendableAnswer {
+            withContext(Dispatchers.Default) { 42 }
+        }.whenever(fixture).suspending()
+
+        assertEquals(42, fixture.suspending())
+    }
+
+    @Test
+    fun stubberAnswerWithSuspendFunctionWithDestructuredArgs() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        doSuspendableAnswer { (i: Int) ->
+            withContext(Dispatchers.Default) { i }
+        }.whenever(fixture).suspendingWithArg(any())
+
+        assertEquals(5, fixture.suspendingWithArg(5))
+    }
+
+    @Test
+    fun stubberWillAnswerWithControlledSuspend() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        val job = Job()
+
+        doSuspendableAnswer {
+            job.join()
+            5
+        }.whenever(fixture).suspending()
+
+        val asyncTask = async {
+            fixture.suspending()
+        }
+
+        job.complete()
+
+        withTimeout(100) {
+            assertEquals(5, asyncTask.await())
+        }
+    }
+
+    @Test
     fun inOrderRemainsCompatible() {
         /* Given */
         val fixture: SomeInterface = mock()
