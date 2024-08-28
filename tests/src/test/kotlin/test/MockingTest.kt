@@ -3,12 +3,14 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
+import kotlinx.coroutines.test.runTest
 import org.mockito.kotlin.UseConstructor.Companion.parameterless
 import org.mockito.kotlin.UseConstructor.Companion.withArguments
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.any
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.exceptions.verification.WantedButNotInvoked
@@ -272,6 +274,34 @@ class MockingTest : TestBase() {
 
         /* Then */
         expect(result).toBe("foo")
+    }
+
+    @Test
+    fun mockCoroutines_withClosedBooleanReturn_name() = runTest {
+        /* Given */
+        val mock = mock<Methods>(name = "myName") {
+            onBlocking { coroutinesClosedBooleanResult(any()) } doReturn true
+        }
+
+        /* When */
+        val result = mock.coroutinesClosedBooleanResult(Closed())
+
+        /* Then */
+        expect(result).toBe(true)
+    }
+
+    @Test
+    fun mockCoroutines_withClassClosedBooleanReturn_name() = runTest {
+        /* Given */
+        val mock = mock<Methods>(name = "myName") {
+            onBlocking { coroutinesClassClosedBooleanResult(any()) } doReturn true
+        }
+
+        /* When */
+        val result = mock.coroutinesClassClosedBooleanResult(Closed::class.java)
+
+        /* Then */
+        expect(result).toBe(true)
     }
 
     @Test
