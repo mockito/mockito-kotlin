@@ -49,7 +49,7 @@ class MatchersTest : TestBase() {
         mock<Methods>().apply {
             runTest {
                 coroutinesClosed(Closed())
-                //TODO verify(this).coroutinesClosed(any())
+                verify(this@apply).coroutinesClosed(any())
             }
         }
     }
