@@ -45,6 +45,8 @@ class Closed
 interface Methods {
 
     fun closed(c: Closed)
+    fun classClosed(c: Class<Closed>)
+    suspend fun coroutinesClosed(c: Closed)
     fun closedArray(a: Array<Closed>)
     fun closedNullableArray(a: Array<Closed?>)
     fun closedCollection(c: Collection<Closed>)
@@ -77,6 +79,8 @@ interface Methods {
     fun nullableStringResult(): String?
     fun builderMethod(): Methods
     fun varargBooleanResult(vararg values: String): Boolean
+    suspend fun coroutinesClosedBooleanResult(c: Closed): Boolean
+    suspend fun coroutinesClassClosedBooleanResult(c: Class<Closed>): Boolean
     fun stringArray(a: Array<String>)
     fun argAndVararg(s: String, vararg a: String)
 

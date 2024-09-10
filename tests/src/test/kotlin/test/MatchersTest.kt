@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.ArgumentMatcher
 import org.mockito.invocation.InvocationOnMock
@@ -32,6 +33,24 @@ class MatchersTest : TestBase() {
         mock<Methods>().apply {
             closed(Closed())
             verify(this).closed(any())
+        }
+    }
+
+    @Test
+    fun anyClassClosedClass() {
+        mock<Methods>().apply {
+            classClosed(Closed::class.java)
+            verify(this).classClosed(any())
+        }
+    }
+
+    @Test
+    fun anyCoroutinesClosedClass() {
+        mock<Methods>().apply {
+            runTest {
+                coroutinesClosed(Closed())
+                verify(this@apply).coroutinesClosed(any())
+            }
         }
     }
 
