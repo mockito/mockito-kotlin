@@ -3,6 +3,9 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.kotlin.*
 import java.util.*
 
@@ -124,6 +127,35 @@ class ArgumentCaptorTest : TestBase() {
         val captor = nullableArgumentCaptor<String>()
         verify(m).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
+    }
+
+    @Test
+    fun argumentCaptor_singleValue() {
+        /* Given */
+        val date: Date = mock()
+
+        /* When */
+        date.time = 5L
+
+        /* Then */
+        val captor = argumentCaptor<Long>()
+        verify(date).time = captor.capture()
+        expect(captor.singleValue).toBe(5L)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun argumentCaptor_singleValue_properlyFails() {
+        /* Given */
+        val date: Date = mock()
+        val captor = argumentCaptor<Long>()
+        doNothing().whenever(date).time = captor.capture()
+
+        /* When */
+        date.time = 5L
+        date.time = 7L
+
+        /* Then */
+        expect(captor.singleValue).toBe(5)
     }
 
     @Test
