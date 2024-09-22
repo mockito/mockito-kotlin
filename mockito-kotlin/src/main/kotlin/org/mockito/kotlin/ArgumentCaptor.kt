@@ -190,6 +190,13 @@ class KArgumentCaptor<out T : Any?>(
     val lastValue: T
         get() = captor.lastValue
 
+    /**
+     * The *only* captured value of the argument,
+     * or throws an exception if no value or more than one value was captured.
+     */
+    val singleValue: T
+        get() = captor.singleValue
+
     val allValues: List<T>
         get() = captor.allValues
 
@@ -223,3 +230,6 @@ val <T> ArgumentCaptor<T>.thirdValue: T
 
 val <T> ArgumentCaptor<T>.lastValue: T
     get() = allValues.last()
+
+val <T> ArgumentCaptor<T>.singleValue: T
+    get() = allValues.single()
