@@ -37,7 +37,7 @@ jobs:
           java-version: 11
 
       - name: 3. Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1 # https://github.com/gradle/wrapper-validation-action
+        uses: gradle/wrapper-validation-action@v4 # https://github.com/gradle/wrapper-validation-action
 
   #
   # Main build job
