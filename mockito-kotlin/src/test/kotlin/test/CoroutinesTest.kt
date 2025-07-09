@@ -229,6 +229,7 @@ class CoroutinesTest {
     }
 
     @Test
+    @OptIn(ObsoleteCoroutinesApi::class)
     fun callFromActor() = runBlocking {
         val fixture: SomeInterface = mock()
 
@@ -323,6 +324,7 @@ class CoroutinesTest {
     }
 
     @Test
+    @OptIn(ObsoleteCoroutinesApi::class)
     fun stubberCallFromActor() = runBlocking {
         val fixture: SomeInterface = mock()
 

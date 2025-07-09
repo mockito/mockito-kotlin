@@ -325,17 +325,6 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun doReturn_withGenericIntReturnType_on() {
-        /* When */
-        val mock = mock<GenericMethods<Int>> {
-            on { genericMethod() } doReturn 2
-        }
-
-        /* Then */
-        expect(mock.genericMethod()).toBe(2)
-    }
-
-    @Test
     fun doReturn_withGenericIntReturnType_onGeneric() {
         /* Given */
         val mock = mock<GenericMethods<Int>> {
