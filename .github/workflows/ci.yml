@@ -12,7 +12,7 @@ on:
     branches:
       - main
     tags:
-      - 5.*
+      - v*
   pull_request:
     branches:
       - main
