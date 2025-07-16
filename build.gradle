@@ -18,18 +18,18 @@ tasks.named("check") {
 def isSnapshot = version.endsWith("-SNAPSHOT")
 def githubTokenProvider = providers.environmentVariable("GITHUB_TOKEN").orElse("")
 def githubShaProvider = providers.environmentVariable("GITHUB_SHA").orElse("")
-def repository = "mockito/mockito"
+def repositoryName = "mockito/mockito-kotlin"
 
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
     githubToken = githubTokenProvider.get()
-    repository = repository
+    repository = repositoryName
 }
 
 tasks.named("githubRelease") {
     def genTask = tasks.named("generateChangelog").get()
     dependsOn genTask
-    repository = repository
+    repository = repositoryName
     changelog = genTask.outputFile
     githubToken = githubTokenProvider.get()
     newTagRevision = githubShaProvider.get()
