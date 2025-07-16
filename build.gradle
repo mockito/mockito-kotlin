@@ -15,22 +15,24 @@ tasks.named("check") {
     dependsOn test
 }
 
+def isSnapshot = version.endsWith("-SNAPSHOT")
+def githubTokenProvider = providers.environmentVariable("GITHUB_TOKEN").orElse("")
+def githubShaProvider = providers.environmentVariable("GITHUB_SHA").orElse("")
+def repository = "mockito/mockito"
+
 tasks.named("generateChangelog") {
-    previousRevision = project.ext.'shipkit-auto-version.previous-version'
-    githubToken = System.getenv("GITHUB_TOKEN")
-    repository = "mockito/mockito-kotlin"
-    releaseTag = project.version
+    previousRevision = project.ext.'shipkit-auto-version.previous-tag'
+    githubToken = githubTokenProvider.get()
+    repository = repository
 }
 
 tasks.named("githubRelease") {
     def genTask = tasks.named("generateChangelog").get()
     dependsOn genTask
-    repository = genTask.repository
+    repository = repository
     changelog = genTask.outputFile
-    githubToken = System.getenv("GITHUB_TOKEN")
-    newTagRevision = System.getenv("GITHUB_SHA")
-    releaseTag = project.version
-    releaseName = project.version
+    githubToken = githubTokenProvider.get()
+    newTagRevision = githubShaProvider.get()
 }
 
 // Will be used to handle Sonatype staging repositories.
@@ -49,8 +51,6 @@ nexusPublishing {
         }
     }
 }
-
-def isSnapshot = version.endsWith("-SNAPSHOT")
 
 if (isSnapshot) {
     println "Building a -SNAPSHOT version (Github release and Maven Central tasks are skipped)"
