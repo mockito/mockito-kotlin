@@ -7,6 +7,4 @@ to Sonatype snapshot repo at https://s01.oss.sonatype.org/content/repositories/s
 git tag -a -m "Release 3.4.5" 3.4.5
 git push origin 3.4.5
 ```
-3. At the moment, you **may not create releases from GitHub Web UI**.
-Doing so will make the CI build fail because the CI creates the changelog and posts to GitHub releases.
-In the future supporting this would be nice but currently please make releases by pushing from CLI.
+You can do so using the GitHub UI as well.
