@@ -31,7 +31,10 @@ import org.mockito.kotlin.internal.createInstance
 import kotlin.reflect.KClass
 
 /** Object argument that is equal to the given value. */
-fun <T> eq(value: T): T {
+inline fun <reified T : Any?> eq(value: T): T {
+    if(T::class.isValue)
+        return eqValueClass(value)
+
     return ArgumentMatchers.eq(value) ?: value
 }
 
@@ -80,13 +83,28 @@ inline fun <reified T > anyValueClass(): T {
         "${T::class.qualifiedName} is not a value class."
     }
 
-    val boxImpls = T::class.java.declaredMethods.filter { it.name == "box-impl" && it.parameterCount == 1 }
-    require(boxImpls.size == 1) // Sanity check
-
-    val boxImpl = boxImpls.first()
+    val boxImpl =
+        T::class.java.declaredMethods
+            .single { it.name == "box-impl" && it.parameterCount == 1 }
     val boxedType = boxImpl.parameters[0].type
 
     return boxImpl.invoke(null, ArgumentMatchers.any(boxedType)) as T
+}
+
+inline fun <reified T > eqValueClass(value: T): T {
+    require(T::class.isValue) {
+        "${T::class.qualifiedName} is not a value class."
+    }
+
+    val unboxImpl =
+        T::class.java.declaredMethods
+            .single { it.name == "unbox-impl" && it.parameterCount == 0 }
+    val unboxed = unboxImpl.invoke(value)
+
+    val boxImpl =
+        T::class.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
+
+    return boxImpl.invoke(null, ArgumentMatchers.eq(unboxed) ?: unboxed) as T
 }
 
 /**

@@ -94,6 +94,18 @@ class EqTest : TestBase() {
         expect(result).toBeNull()
     }
 
+    @Test
+    fun eqValueClassInstance() {
+        /* Given */
+        val valueClass = ValueClass("Content")
+
+        /* When */
+        val result = eq(valueClass)
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
     private interface MyInterface
     private open class MyClass : MyInterface
     class ClosedClass
