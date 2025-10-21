@@ -86,7 +86,8 @@ interface Methods {
 
     fun nonDefaultReturnType(): ExtraInterface
 
-    fun valueClass(v: ValueClass?)
+    fun valueClass(v: ValueClass)
+    fun nullableValueClass(v: ValueClass?)
     fun nestedValueClass(v: NestedValueClass)
 }
 

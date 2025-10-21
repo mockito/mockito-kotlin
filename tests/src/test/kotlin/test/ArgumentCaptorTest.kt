@@ -3,9 +3,6 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import org.junit.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.kotlin.*
 import java.util.*
 
@@ -341,5 +338,48 @@ class ArgumentCaptorTest : TestBase() {
         val captor = argumentCaptor<Array<String>>()
         verify(m).stringArray(captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf())
+    }
+
+    @Test
+    fun argumentCaptor_value_class() {
+        /* Given */
+        val m: Methods = mock()
+        val valueClass = ValueClass("Content")
+
+        /* When */
+        m.valueClass(valueClass)
+
+        /* Then */
+        val captor = argumentCaptor<ValueClass>()
+        verify(m).valueClass(captor.capture())
+        expect(captor.firstValue).toBe(valueClass)
+    }
+
+    @Test
+    fun argumentCaptor_value_class_withNullValue_usingNonNullable() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.nullableValueClass(null)
+
+        /* Then */
+        val captor = argumentCaptor<ValueClass>()
+        verify(m).nullableValueClass(captor.capture())
+        expect(captor.firstValue).toBeNull()
+    }
+
+    @Test
+    fun argumentCaptor_value_class_withNullValue_usingNullable() {
+        /* Given */
+        val m: Methods = mock()
+
+        /* When */
+        m.nullableValueClass(null)
+
+        /* Then */
+        val captor = nullableArgumentCaptor<ValueClass>()
+        verify(m).nullableValueClass(captor.capture())
+        expect(captor.firstValue).toBeNull()
     }
 }
