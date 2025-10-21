@@ -31,7 +31,7 @@ dependencies {
 }
 
 dokkaHtml.configure {
-    outputDirectory.set(file("${layout.buildDirectory}/javadoc"))
+    outputDirectory.set(layout.buildDirectory.dir("javadoc"))
 
     dokkaSourceSets {
         named("main") {
