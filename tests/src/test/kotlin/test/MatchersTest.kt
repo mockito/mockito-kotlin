@@ -389,6 +389,41 @@ class MatchersTest : TestBase() {
         }
     }
 
+    @Test
+    fun eq_forValueClass() {
+        val valueClass = ValueClass("Content")
+        mock<Methods>().apply {
+            valueClass(valueClass)
+            verify(this).valueClass(eq(valueClass))
+        }
+    }
+
+    @Test
+    fun eq_withNestedValueClass() {
+        val nestedValueClass = NestedValueClass(ValueClass("Content"))
+        mock<Methods>().apply {
+            nestedValueClass(nestedValueClass)
+            verify(this).nestedValueClass(eq(nestedValueClass))
+        }
+    }
+
+    @Test
+    fun eq_withClosedClass() {
+        val closedClassInstance = Closed()
+        mock<Methods>().apply {
+            closed(closedClassInstance)
+            verify(this).closed(eq(closedClassInstance))
+        }
+    }
+
+    @Test
+    fun eq_withInt() {
+        mock<Methods>().apply {
+            int(3)
+            verify(this).int(eq(3))
+        }
+    }
+
     /**
      * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if any of the var args
      * matched. Needs to keep state between matching invocations.
