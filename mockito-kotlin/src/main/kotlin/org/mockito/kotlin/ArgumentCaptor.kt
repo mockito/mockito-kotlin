@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
  * Creates a [KArgumentCaptor] for given type.
  */
 inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> {
-    return KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+    return KArgumentCaptor(T::class)
 }
 
 /**
@@ -45,8 +45,8 @@ inline fun <reified A : Any, reified B : Any> argumentCaptor(
     b: KClass<B> = B::class
 ): Pair<KArgumentCaptor<A>, KArgumentCaptor<B>> {
     return Pair(
-          KArgumentCaptor(ArgumentCaptor.forClass(a.java), a),
-          KArgumentCaptor(ArgumentCaptor.forClass(b.java), b)
+        KArgumentCaptor(a),
+        KArgumentCaptor(b)
     )
 }
 
@@ -59,9 +59,9 @@ inline fun <reified A : Any, reified B : Any, reified C : Any> argumentCaptor(
     c: KClass<C> = C::class
 ): Triple<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>> {
     return Triple(
-          KArgumentCaptor(ArgumentCaptor.forClass(a.java), a),
-          KArgumentCaptor(ArgumentCaptor.forClass(b.java), b),
-          KArgumentCaptor(ArgumentCaptor.forClass(c.java), c)
+        KArgumentCaptor(a),
+        KArgumentCaptor(b),
+        KArgumentCaptor(c)
     )
 }
 
@@ -103,10 +103,10 @@ inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> 
     d: KClass<D> = D::class
 ): ArgumentCaptorHolder4<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>> {
     return ArgumentCaptorHolder4(
-          KArgumentCaptor(ArgumentCaptor.forClass(a.java), a),
-          KArgumentCaptor(ArgumentCaptor.forClass(b.java), b),
-          KArgumentCaptor(ArgumentCaptor.forClass(c.java), c),
-          KArgumentCaptor(ArgumentCaptor.forClass(d.java), d)
+        KArgumentCaptor(a),
+        KArgumentCaptor(b),
+        KArgumentCaptor(c),
+        KArgumentCaptor(d)
     )
 }
 
@@ -121,11 +121,11 @@ inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any, 
     e: KClass<E> = E::class
 ): ArgumentCaptorHolder5<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>, KArgumentCaptor<E>> {
     return ArgumentCaptorHolder5(
-          KArgumentCaptor(ArgumentCaptor.forClass(a.java), a),
-          KArgumentCaptor(ArgumentCaptor.forClass(b.java), b),
-          KArgumentCaptor(ArgumentCaptor.forClass(c.java), c),
-          KArgumentCaptor(ArgumentCaptor.forClass(d.java), d),
-          KArgumentCaptor(ArgumentCaptor.forClass(e.java), e)
+        KArgumentCaptor(a),
+        KArgumentCaptor(b),
+        KArgumentCaptor(c),
+        KArgumentCaptor(d),
+        KArgumentCaptor(e)
     )
 }
 
@@ -140,7 +140,7 @@ inline fun <reified T : Any> argumentCaptor(f: KArgumentCaptor<T>.() -> Unit): K
  * Creates a [KArgumentCaptor] for given nullable type.
  */
 inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> {
-    return KArgumentCaptor(ArgumentCaptor.forClass(T::class.java), T::class)
+    return KArgumentCaptor(T::class)
 }
 
 /**
@@ -157,48 +157,58 @@ inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
     return captor.capture() ?: createInstance()
 }
 
-class KArgumentCaptor<out T : Any?>(
-    private val captor: ArgumentCaptor<T>,
+class KArgumentCaptor<out T : Any?> (
     private val tClass: KClass<*>
 ) {
+    private val captor: ArgumentCaptor<Any?> =
+        if (tClass.isValue) {
+            val boxImpl =
+                tClass.java.declaredMethods
+                    .single { it.name == "box-impl" && it.parameterCount == 1 }
+            boxImpl.parameters[0].type // is the boxed type of the value type
+        } else {
+            tClass.java
+        }.let {
+            ArgumentCaptor.forClass(it)
+        }
 
     /**
      * The first captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val firstValue: T
-        get() = captor.firstValue
+        get() = toKotlinType(captor.firstValue)
 
     /**
      * The second captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val secondValue: T
-        get() = captor.secondValue
+        get() = toKotlinType(captor.secondValue)
 
     /**
      * The third captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val thirdValue: T
-        get() = captor.thirdValue
+        get() = toKotlinType(captor.thirdValue)
 
     /**
      * The last captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val lastValue: T
-        get() = captor.lastValue
+        get() = toKotlinType(captor.lastValue)
 
     /**
      * The *only* captured value of the argument,
      * or throws an exception if no value or more than one value was captured.
      */
     val singleValue: T
-        get() = captor.singleValue
+        get() = toKotlinType(captor.singleValue)
 
     val allValues: List<T>
-        get() = captor.allValues
+        get() = captor.allValues.map(::toKotlinType)
 
     @Suppress("UNCHECKED_CAST")
     fun capture(): T {
@@ -209,7 +219,7 @@ class KArgumentCaptor<out T : Any?>(
         // In Java, `captor.capture` returns null and so the method is called with `[null]`
         // In Kotlin, we have to create `[null]` explicitly.
         // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
-        return captor.capture() ?: if (tClass.java.isArray) {
+        return captor.capture() as T ?: if (tClass.java.isArray) {
             singleElementArray()
         } else {
             createInstance(tClass)
@@ -217,6 +227,20 @@ class KArgumentCaptor<out T : Any?>(
     }
 
     private fun singleElementArray(): Any? = Array.newInstance(tClass.java.componentType, 1)
+
+    @Suppress("UNCHECKED_CAST")
+    private fun toKotlinType(rawCapturedValue: Any?) : T {
+        return if(tClass.isValue) {
+            rawCapturedValue
+                ?.let {
+                    val boxImpl =
+                        tClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
+                    boxImpl.invoke(null, it)
+                } as T
+        } else {
+            rawCapturedValue as T
+        }
+    }
 }
 
 val <T> ArgumentCaptor<T>.firstValue: T

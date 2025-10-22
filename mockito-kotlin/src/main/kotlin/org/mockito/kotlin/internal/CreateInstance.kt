@@ -41,8 +41,15 @@ inline fun <reified T : Any> createInstance(): T {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 fun <T : Any> createInstance(@Suppress("UNUSED_PARAMETER") kClass: KClass<T>): T {
-    return castNull()
+    return if(kClass.isValue) {
+                val boxImpl =
+                    kClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
+                boxImpl.invoke(null, castNull()) as T
+    } else {
+        castNull()
+    }
 }
 
 /**

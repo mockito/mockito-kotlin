@@ -349,16 +349,16 @@ class MatchersTest : TestBase() {
     @Test
     fun anyOrNull_forValueClass() {
         mock<Methods>().apply {
-            valueClass(ValueClass("Content"))
-            verify(this).valueClass(anyOrNull())
+            nullableValueClass(ValueClass("Content"))
+            verify(this).nullableValueClass(anyOrNull())
         }
     }
 
     @Test
     fun anyOrNull_forValueClass_withNull() {
         mock<Methods>().apply {
-            valueClass(null)
-            verify(this).valueClass(anyOrNull())
+            nullableValueClass(null)
+            verify(this).nullableValueClass(anyOrNull())
         }
     }
 
