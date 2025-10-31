@@ -129,3 +129,8 @@ interface GenericMethods<T> {
 }
 
 class ThrowableClass(cause: Throwable) : Throwable(cause)
+
+object SomeObject {
+    @JvmStatic
+    fun aStaticMethod() {}
+}
