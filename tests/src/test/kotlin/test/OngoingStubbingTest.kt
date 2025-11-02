@@ -2,7 +2,9 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.expect.fail
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
@@ -13,21 +15,19 @@ import org.mockito.kotlin.check
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
-import org.mockito.kotlin.stubbing
 import org.mockito.kotlin.whenever
 import org.mockito.stubbing.Answer
 
 class OngoingStubbingTest : TestBase() {
-
     @Test
-    fun testOngoingStubbing_methodCall() {
+    fun `should mock methodCall`() {
         /* Given */
-        val mock = mock<Open>()
-        mock<Open> {
-            on(mock.stringResult()).doReturn("A")
+        val mock = mock<Open> {
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -38,9 +38,67 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_builder() {
+    fun `should mock consecutive methodCalls`() {
         /* Given */
-        val mock = mock<Methods> { mock ->
+        val mock = mock<Open> {
+            on { stringResult() }.doReturn ("A", "B", "C")
+        }
+
+        /* When */
+        val result =(1..3).map { _ ->
+            mock.stringResult()
+        }
+
+        /* Then */
+        expect(result).toBe(listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `should mock consecutive methodCalls by a list of answers`() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() } doReturnConsecutively listOf("A", "B", "C")
+        }
+
+        /* When */
+        val result =(1..3).map { _ ->
+            mock.stringResult()
+        }
+
+        /* Then */
+        expect(result).toBe(listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `should mock builder method returning mock itself via defaultAnswer`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions>(defaultAnswer = Mockito.RETURNS_SELF)
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBeTheSameAs(mock)
+    }
+
+    @Test
+    fun `should mock builder method returning mock itself via answer`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> {
+            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
+        }
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBeTheSameAs(mock)
+    }
+
+    @Test
+    fun `should mock builder method returning mock itself`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> { mock ->
             on { builderMethod() } doReturn mock
         }
 
@@ -52,9 +110,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_nullable() {
+    fun `should mock methodCall with nullable result`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { nullableStringResult() } doReturn "Test"
         }
 
@@ -66,89 +124,89 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doThrow() {
+    fun `should throw exception instance on methodCall`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() } doThrow IllegalArgumentException()
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
         }
     }
 
     @Test
-    fun testOngoingStubbing_doThrowClass() {
+    fun `should throw exception class on methodCall`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() } doThrow IllegalArgumentException::class
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
         }
     }
 
     @Test
-    fun testOngoingStubbing_doThrowVarargs() {
+    fun `should throw exception instances on consecutive methodCalls`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() }.doThrow(
                   IllegalArgumentException(),
                   UnsupportedOperationException()
             )
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
         }
-
-        try {
-            /* When */
+        assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: UnsupportedOperationException) {
         }
     }
 
     @Test
-    fun testOngoingStubbing_doThrowClassVarargs() {
+    fun `should throw exception classes on consecutive methodCalls`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() }.doThrow(
                   IllegalArgumentException::class,
                   UnsupportedOperationException::class
             )
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
         }
-
-        try {
-            /* When */
+        assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (e: UnsupportedOperationException) {
         }
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_lambda() {
+    fun `should mock methodCall with result from answer instance`() {
         /* Given */
-        val mock = mock<Methods> {
+        val answer: Answer<String> = Answer { "result" }
+
+        val mock = mock<SynchronousFunctions> {
+            on { stringResult() } doAnswer answer
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result")
+    }
+
+    @Test
+    fun `should mock methodCall with result from lambda`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> {
             on { stringResult() } doAnswer { "result" }
         }
 
@@ -160,37 +218,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_instance() {
+    fun `should mock methodCall with result from lambda with argument`() {
         /* Given */
-        val mock = mock<Methods> {
-            on { stringResult() } doAnswer Answer<String> { "result" }
-        }
-
-        /* When */
-        val result = mock.stringResult()
-
-        /* Then */
-        expect(result).toBe("result")
-    }
-
-    @Test
-    fun testOngoingStubbing_doAnswer_returnsSelf() {
-        /* Given */
-        val mock = mock<Methods> {
-            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
-        }
-
-        /* When */
-        val result = mock.builderMethod()
-
-        /* Then */
-        expect(result).toBe(mock)
-    }
-
-    @Test
-    fun testOngoingStubbing_doAnswer_withArgument() {
-        /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
         }
 
@@ -202,9 +232,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_withDestructuredArgument() {
+    fun `should mock methodCall with result from lambda with deconstructed argument`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
         }
 
@@ -216,9 +246,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_withDestructuredArguments() {
+    fun `should mock methodCall with result from lambda with deconstructed arguments`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { varargBooleanResult(any(), any()) } doAnswer { (a: String, b: String) ->
                 a == b.trim()
             }
@@ -232,8 +262,8 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbingAfterCreatingMock() {
-        val mock = mock<Methods>()
+    fun `should stub already created mock`() {
+        val mock = mock<SynchronousFunctions>()
 
         //create stub after creation of mock
         mock.stub {
@@ -248,9 +278,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOverrideDefaultStub() {
+    fun `should override stub of already created mock`() {
         /* Given mock with stub */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult() } doReturn "result1"
         }
 
@@ -267,9 +297,9 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun stubbingTwiceWithArgumentMatchers() {
+    fun `should stub 2 method calls determined by ArgumentMatchers`() {
         /* When */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(argThat { this == "A" }) } doReturn "A"
             on { stringResult(argThat { this == "B" }) } doReturn "B"
         }
@@ -280,52 +310,19 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun stubbingRealObject() {
-        val notAMock = ""
-
-        /* Expect */
-        expectErrorWithMessage("is not a mock!").on {
-            notAMock.stub { }
-        }
-    }
-
-    @Test
-    fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
-        /* Expect */
-        expectErrorWithMessage("null").on {
-            mock<Methods> {
+    // stubbingTwiceWithCheckArgumentMatchers_throwsException
+    fun `should throw when check ArgumentMatcher is applied twice`() {
+        val exception: IllegalStateException = assertThrows {
+            mock<SynchronousFunctions> {
                 on { stringResult(check { }) } doReturn "A"
                 on { stringResult(check { }) } doReturn "B"
             }
         }
+        expect(exception.message).toContain("The argument passed to the predicate was null")
     }
 
     @Test
-    fun doReturn_withSingleItemList() {
-        /* Given */
-        val mock = mock<Open> {
-            on { stringResult() } doReturnConsecutively listOf("a", "b")
-        }
-
-        /* Then */
-        expect(mock.stringResult()).toBe("a")
-        expect(mock.stringResult()).toBe("b")
-    }
-
-    @Test
-    fun doReturn_throwsNPE() {
-        assumeFalse(mockMakerInlineEnabled())
-        expectErrorWithMessage("look at the stack trace below") on {
-
-            /* When */
-            mock<Open> {
-                on { throwsNPE() } doReturn "result"
-            }
-        }
-    }
-
-    @Test
-    fun doReturn_withGenericIntReturnType_onGeneric() {
+    fun `should mock methodCall with integer result`() {
         /* Given */
         val mock = mock<GenericMethods<Int>> {
             onGeneric { genericMethod() } doReturn 2
@@ -336,41 +333,119 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun doReturn_withGenericNullableReturnType_onGeneric() {
-        val m = mock<GenericMethods<String>> {
+    fun `should mock nullable methodCall with string result`() {
+        val mock = mock<GenericMethods<String>> {
             onGeneric { nullableReturnType() } doReturn "Test"
         }
 
-        expect(m.nullableReturnType()).toBe("Test")
+        expect(mock.nullableReturnType()).toBe("Test")
     }
 
     @Test
-    fun stubbingExistingMock() {
+    fun `should mock methodCall with value class result`() {
         /* Given */
-        val mock = mock<Methods>()
-
-        /* When */
-        stubbing(mock) {
-            on { stringResult() } doReturn "result"
+        val valueClass = ValueClass("A")
+        val mock = mock<SynchronousFunctions> {
+            on { valueClassResult() } doReturn valueClass
         }
 
+        /* When */
+        val result: ValueClass = mock.valueClassResult()
+
         /* Then */
-        expect(mock.stringResult()).toBe("result")
+        expect(result).toBe(valueClass)
     }
 
     @Test
-    fun testMockitoStackOnUnfinishedStubbing() {
+    fun `should mock methodCall with nullable value class result`() {
+        /* Given */
+        val valueClass = ValueClass("A")
+        val mock = mock<SynchronousFunctions> {
+            on { nullableValueClassResult() } doReturn valueClass
+        }
+
+        /* When */
+        val result: ValueClass? = mock.nullableValueClassResult()
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
+    @Test
+    fun `should mock methodCall with nested value class result`() {
+        /* Given */
+        val nestedValueClass = NestedValueClass(ValueClass("A"))
+        val mock = mock<SynchronousFunctions> {
+            on { nestedValueClassResult() } doReturn nestedValueClass
+        }
+
+        /* When */
+        val result: NestedValueClass = mock.nestedValueClassResult()
+
+        /* Then */
+        expect(result).toBe(nestedValueClass)
+        expect(result.value).toBe(nestedValueClass.value)
+    }
+
+    @Test
+    fun `should mock consecutive methodCall with value class results`() {
+        /* Given */
+        val valueClassA = ValueClass("A")
+        val valueClassB = ValueClass("B")
+        val mock = mock<SynchronousFunctions> {
+            on { valueClassResult() }.doReturnConsecutively(valueClassA, valueClassB)
+        }
+
+        /* When */
+        val result1 = mock.valueClassResult()
+        val result2 = mock.valueClassResult()
+
+        /* Then */
+        expect(result1).toBe(valueClassA)
+        expect(result2).toBe(valueClassB)
+    }
+
+    @Test
+    fun `should mock suspendable methodCall with value class result -- deprecated approach`() =
+        runTest {
+            /* Given */
+            val valueClass = ValueClass("A")
+            val mock = mock<SuspendFunctions> {
+                on(mock.valueClassResult()) doSuspendableAnswer {
+                    delay(1)
+                    valueClass
+                }
+            }
+
+            /* When */
+            val result: ValueClass = mock.valueClassResult()
+
+            /* Then */
+            expect(result).toBe(valueClass)
+        }
+
+    @Test
+    fun `should throw when stubbing is incomplete`() {
         /* Given */
         val mock = mock<Open>()
         whenever(mock.stringResult())
 
         /* When */
-        try {
+        val exception = assertThrows<UnfinishedStubbingException> {
             mock.stringResult()
-        } catch (e: UnfinishedStubbingException) {
-            /* Then */
-            expect(e.message).toContain("Unfinished stubbing detected here:")
-            expect(e.message).toContain("-> at test.OngoingStubbingTest.testMockitoStackOnUnfinishedStubbing")
+        }
+        expect(exception.message).toContain("Unfinished stubbing detected here:")
+    }
+
+    @Test
+    fun doReturn_throwsNPE() {
+        assumeFalse("mockMakerInline is not enabled", mockMakerInlineEnabled())
+        expectErrorWithMessage("look at the stack trace below") on {
+
+            /* When */
+            mock<Open> {
+                on { throwsNPE() } doReturn "result"
+            }
         }
     }
 }

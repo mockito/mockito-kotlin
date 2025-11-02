@@ -28,7 +28,7 @@ package org.mockito.kotlin
 import org.mockito.invocation.InvocationOnMock
 
 class KInvocationOnMock(
-    private val invocationOnMock: InvocationOnMock
+    val invocationOnMock: InvocationOnMock
 ) : InvocationOnMock by invocationOnMock {
 
     operator fun <T> component1(): T = invocationOnMock.getArgument(0)
@@ -36,4 +36,58 @@ class KInvocationOnMock(
     operator fun <T> component3(): T = invocationOnMock.getArgument(2)
     operator fun <T> component4(): T = invocationOnMock.getArgument(3)
     operator fun <T> component5(): T = invocationOnMock.getArgument(4)
+
+    /**
+     * The first argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> first(): T = invocationOnMock.getArgument(0)
+
+    /**
+     * The second argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> second(): T = invocationOnMock.getArgument(1)
+
+    /**
+     * The third argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> third(): T = invocationOnMock.getArgument(2)
+
+    /**
+     * The fourth argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> fourth(): T = invocationOnMock.getArgument(3)
+
+    /**
+     * The fifth argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> fifth(): T = invocationOnMock.getArgument(4)
+
+    /**
+     * The last argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> last(): T {
+        val lastIndex  = invocationOnMock.arguments.size - 1
+        return invocationOnMock.getArgument(lastIndex)
+    }
+
+    /**
+     * The single argument.
+     * @throws IndexOutOfBoundsException if the argument is not available.
+     */
+    inline fun <reified T> single(): T {
+        val size  = invocationOnMock.arguments.size
+        require(size == 1) { "The invocation was expected to have exactly 1 argument but got $size." }
+        return first()
+    }
+
+    /**
+     * The all arguments.
+     */
+    fun all(): List<Any> = invocationOnMock.arguments.toList()
 }

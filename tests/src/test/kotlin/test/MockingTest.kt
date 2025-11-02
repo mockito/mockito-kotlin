@@ -110,7 +110,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withCustomDefaultAnswer_parameterName() {
         /* Given */
-        val mock = mock<Methods>(defaultAnswer = Mockito.RETURNS_SELF)
+        val mock = mock<SynchronousFunctions>(defaultAnswer = Mockito.RETURNS_SELF)
 
         /* When */
         val result = mock.builderMethod()
@@ -122,7 +122,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_extraInterfaces() {
         /* Given */
-        val mock = mock<Methods>(
+        val mock = mock<SynchronousFunctions>(
               extraInterfaces = arrayOf(ExtraInterface::class)
         )
 
@@ -133,7 +133,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_name() {
         /* Given */
-        val mock = mock<Methods>(name = "myName")
+        val mock = mock<SynchronousFunctions>(name = "myName")
 
         /* When */
         expectErrorWithMessage("myName.stringResult()") on {
@@ -144,7 +144,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_defaultAnswer() {
         /* Given */
-        val mock = mock<Methods>(defaultAnswer = Mockito.RETURNS_MOCKS)
+        val mock = mock<SynchronousFunctions>(defaultAnswer = Mockito.RETURNS_MOCKS)
 
         /* When */
         val result = mock.nonDefaultReturnType()
@@ -156,7 +156,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_serializable() {
         /* Given */
-        val mock = mock<Methods>(serializable = true)
+        val mock = mock<SynchronousFunctions>(serializable = true)
 
         /* Then */
         expect(mock).toBeInstanceOf<Serializable>()
@@ -165,7 +165,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_serializableMode() {
         /* Given */
-        val mock = mock<Methods>(serializableMode = BASIC)
+        val mock = mock<SynchronousFunctions>(serializableMode = BASIC)
 
         /* Then */
         expect(mock).toBeInstanceOf<Serializable>()
@@ -176,18 +176,16 @@ class MockingTest : TestBase() {
         /* Given */
         val out = mock<PrintStream>()
         System.setOut(out)
-        val mock = mock<Methods>(verboseLogging = true)
+        val mock = mock<SynchronousFunctions>(verboseLogging = true)
 
-        try {
-            /* When */
+
+        /* When, Then */
+        assertThrows<WantedButNotInvoked> {
             verify(mock).stringResult()
-            fail("Expected an exception")
-        } catch (e: WantedButNotInvoked) {
-            /* Then */
-            argumentCaptor<DescribedInvocation>().apply {
-                verify(out).println(capture())
-                expect(lastValue.toString()).toBe("methods.stringResult();")
-            }
+        }
+        argumentCaptor<DescribedInvocation>().apply {
+            verify(out).println(capture())
+            expect(lastValue.toString()).toBe("synchronousFunctions.stringResult();")
         }
     }
 
@@ -195,7 +193,7 @@ class MockingTest : TestBase() {
     fun mock_withSettingsAPI_invocationListeners() {
         /* Given */
         var bool = false
-        val mock = mock<Methods>(invocationListeners = arrayOf(InvocationListener { bool = true }))
+        val mock = mock<SynchronousFunctions>(invocationListeners = arrayOf(InvocationListener { bool = true }))
 
         /* When */
         mock.stringResult()
@@ -207,7 +205,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_stubOnly() {
         /* Given */
-        val mock = mock<Methods>(stubOnly = true)
+        val mock = mock<SynchronousFunctions>(stubOnly = true)
 
         /* Expect */
         expectErrorWithMessage("is a stubOnly() mock") on {
@@ -245,7 +243,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_extraInterfaces() {
         /* Given */
-        val mock = mock<Methods>(extraInterfaces = arrayOf(ExtraInterface::class)) {}
+        val mock = mock<SynchronousFunctions>(extraInterfaces = arrayOf(ExtraInterface::class)) {}
 
         /* Then */
         expect(mock).toBeInstanceOf<ExtraInterface>()
@@ -254,7 +252,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_name() {
         /* Given */
-        val mock = mock<Methods>(name = "myName") {}
+        val mock = mock<SynchronousFunctions>(name = "myName") {}
 
         /* When */
         expectErrorWithMessage("myName.stringResult()") on {
@@ -265,7 +263,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPIAndStubbing_name() {
         /* Given */
-        val mock = mock<Methods>(name = "myName") {
+        val mock = mock<SynchronousFunctions>(name = "myName") {
             on { nullableStringResult() } doReturn "foo"
         }
 
@@ -277,28 +275,28 @@ class MockingTest : TestBase() {
     }
 
     @Test
-    fun mockCoroutines_withClosedBooleanReturn_name() = runTest {
+    fun mockSuspendMethod_withClosedBooleanReturn_name() = runTest {
         /* Given */
-        val mock = mock<Methods>(name = "myName") {
-            onBlocking { coroutinesClosedBooleanResult(any()) } doReturn true
+        val mock = mock<SuspendFunctions>(name = "myName") {
+            onBlocking { closedBooleanResult(any()) } doReturn true
         }
 
         /* When */
-        val result = mock.coroutinesClosedBooleanResult(Closed())
+        val result = mock.closedBooleanResult(Closed())
 
         /* Then */
         expect(result).toBe(true)
     }
 
     @Test
-    fun mockCoroutines_withClassClosedBooleanReturn_name() = runTest {
+    fun mockSuspendMethod_withClassClosedBooleanReturn_name() = runTest {
         /* Given */
-        val mock = mock<Methods>(name = "myName") {
-            onBlocking { coroutinesClassClosedBooleanResult(any()) } doReturn true
+        val mock = mock<SuspendFunctions>(name = "myName") {
+            onBlocking { classClosedBooleanResult(any()) } doReturn true
         }
 
         /* When */
-        val result = mock.coroutinesClassClosedBooleanResult(Closed::class.java)
+        val result = mock.classClosedBooleanResult(Closed::class.java)
 
         /* Then */
         expect(result).toBe(true)
@@ -307,7 +305,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_defaultAnswer() {
         /* Given */
-        val mock = mock<Methods>(defaultAnswer = Mockito.RETURNS_MOCKS) {}
+        val mock = mock<SynchronousFunctions>(defaultAnswer = Mockito.RETURNS_MOCKS) {}
 
         /* When */
         val result = mock.nonDefaultReturnType()
@@ -319,7 +317,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_serializable() {
         /* Given */
-        val mock = mock<Methods>(serializable = true) {}
+        val mock = mock<SynchronousFunctions>(serializable = true) {}
 
         /* Then */
         expect(mock).toBeInstanceOf<Serializable>()
@@ -328,7 +326,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_serializableMode() {
         /* Given */
-        val mock = mock<Methods>(serializableMode = BASIC) {}
+        val mock = mock<SynchronousFunctions>(serializableMode = BASIC) {}
 
         /* Then */
         expect(mock).toBeInstanceOf<Serializable>()
@@ -339,17 +337,17 @@ class MockingTest : TestBase() {
         /* Given */
         val out = mock<PrintStream>()
         System.setOut(out)
-        val mock = mock<Methods>(verboseLogging = true) {}
+        val mock = mock<SynchronousFunctions>(verboseLogging = true) {}
 
         try {
             /* When */
             verify(mock).stringResult()
             fail("Expected an exception")
-        } catch (e: WantedButNotInvoked) {
+        } catch (_: WantedButNotInvoked) {
             /* Then */
             argumentCaptor<DescribedInvocation>().apply {
                 verify(out).println(capture())
-                expect(lastValue.toString()).toBe("methods.stringResult();")
+                expect(lastValue.toString()).toBe("synchronousFunctions.stringResult();")
             }
         }
     }
@@ -358,7 +356,7 @@ class MockingTest : TestBase() {
     fun mockStubbing_withSettingsAPI_invocationListeners() {
         /* Given */
         var bool = false
-        val mock = mock<Methods>(invocationListeners = arrayOf(InvocationListener { bool = true })) {}
+        val mock = mock<SynchronousFunctions>(invocationListeners = arrayOf(InvocationListener { bool = true })) {}
 
         /* When */
         mock.stringResult()
@@ -370,7 +368,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockStubbing_withSettingsAPI_stubOnly() {
         /* Given */
-        val mock = mock<Methods>(stubOnly = true) {}
+        val mock = mock<SynchronousFunctions>(stubOnly = true) {}
 
         /* Expect */
         expectErrorWithMessage("is a stubOnly() mock") on {

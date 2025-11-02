@@ -31,6 +31,30 @@
     <AndroidXmlCodeStyleSettings>
       <option name="USE_CUSTOM_SETTINGS" value="true" />
     </AndroidXmlCodeStyleSettings>
+    <DBN-PSQL>
+      <case-options enabled="true">
+        <option name="KEYWORD_CASE" value="lower" />
+        <option name="FUNCTION_CASE" value="lower" />
+        <option name="PARAMETER_CASE" value="lower" />
+        <option name="DATATYPE_CASE" value="lower" />
+        <option name="OBJECT_CASE" value="preserve" />
+      </case-options>
+      <formatting-settings enabled="false" />
+    </DBN-PSQL>
+    <DBN-SQL>
+      <case-options enabled="true">
+        <option name="KEYWORD_CASE" value="lower" />
+        <option name="FUNCTION_CASE" value="lower" />
+        <option name="PARAMETER_CASE" value="lower" />
+        <option name="DATATYPE_CASE" value="lower" />
+        <option name="OBJECT_CASE" value="preserve" />
+      </case-options>
+      <formatting-settings enabled="false">
+        <option name="STATEMENT_SPACING" value="one_line" />
+        <option name="CLAUSE_CHOP_DOWN" value="chop_down_if_statement_long" />
+        <option name="ITERATION_ELEMENTS_WRAPPING" value="chop_down_if_not_single" />
+      </formatting-settings>
+    </DBN-SQL>
     <JavaCodeStyleSettings>
       <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
       <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
@@ -61,10 +85,9 @@
       </option>
     </JavaCodeStyleSettings>
     <JetCodeStyleSettings>
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="2147483647" />
       <option name="IMPORT_NESTED_CLASSES" value="true" />
-      <option name="CONTINUATION_INDENT_IN_PARAMETER_LISTS" value="false" />
-      <option name="CONTINUATION_INDENT_FOR_EXPRESSION_BODIES" value="false" />
-      <option name="CONTINUATION_INDENT_FOR_CHAINED_CALLS" value="false" />
     </JetCodeStyleSettings>
     <Objective-C-extensions>
       <file>
@@ -95,7 +118,6 @@
       <option name="XML_KEEP_LINE_BREAKS" value="false" />
       <option name="XML_ALIGN_ATTRIBUTES" value="false" />
       <option name="XML_SPACE_INSIDE_EMPTY_TAG" value="true" />
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
     </XML>
     <codeStyleSettings language="JAVA">
       <indentOptions>
@@ -261,13 +283,6 @@
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
-      <option name="CALL_PARAMETERS_WRAP" value="5" />
-      <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
-      <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
-      <option name="METHOD_PARAMETERS_WRAP" value="5" />
-      <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
-      <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
-      <option name="EXTENDS_LIST_WRAP" value="1" />
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="6" />
       </indentOptions>

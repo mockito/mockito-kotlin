@@ -29,7 +29,6 @@ import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.internal.SuspendableAnswer
-import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
@@ -68,10 +67,19 @@ fun doThrow(vararg toBeThrown: Throwable): Stubber {
     return Mockito.doThrow(*toBeThrown)!!
 }
 
-fun <T> Stubber.whenever(mock: T) = `when`(mock)
+fun <T> Stubber.whenever(mock: T): T = `when`(mock)
 
 /**
- * Alias for when with suspending function
+ * Reverse stubber for suspending functions.
+ *
+ * Warning: Only one method call can be stubbed in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> Stubber.onBlocking(mock: T, f: suspend T.() -> Unit) =
+    wheneverBlocking(mock, f)
+
+/**
+ * Reverse stubber for suspending functions.
  *
  * Warning: Only one method call can be stubbed in the function.
  * Subsequent method calls are ignored!

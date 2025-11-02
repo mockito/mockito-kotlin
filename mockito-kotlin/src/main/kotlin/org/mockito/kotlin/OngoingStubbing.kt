@@ -25,34 +25,11 @@
 
 package org.mockito.kotlin
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
-import org.mockito.Mockito
 import org.mockito.kotlin.internal.KAnswer
 import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
-
-/**
- * Enables stubbing methods. Use it when you want the mock to return particular value when particular method is called.
- *
- * Alias for [Mockito.when].
- */
-@Suppress("NOTHING_TO_INLINE")
-inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
-    return Mockito.`when`(methodCall)!!
-}
-
-/**
- * Enables stubbing suspending methods. Use it when you want the mock to return particular value when particular suspending method is called.
- *
- * Warning: Only one method call can be stubbed in the function.
- * other method calls are ignored!
- */
-fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T> {
-    return runBlocking { Mockito.`when`(methodCall()) }
-}
 
 /**
  * Sets a return value to be returned when the method is called.
@@ -70,6 +47,13 @@ infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> {
  */
 fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> {
     return thenReturn(t, *ts)
+}
+
+/**
+ * Sets consecutive return values to be returned when the method is called.
+ */
+inline fun <reified T> OngoingStubbing<T>.doReturnConsecutively(vararg ts: T): OngoingStubbing<T> {
+    return doReturnConsecutively(listOf(*ts))
 }
 
 /**
@@ -136,6 +120,15 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): On
     return thenAnswer(KAnswer(answer))
 }
 
+/**
+ * Sets a generic Answer for a suspend function using a suspend lambda.
+ *
+ * Deprecated. Use wheneverBlocking() with doAnswer()/thenAnswer() instead.
+ */
+@Deprecated(
+    "Use wheneverBlocking() with doAnswer()/thenAnswer() instead.",
+    level = DeprecationLevel.WARNING
+)
 infix fun <T> OngoingStubbing<T>.doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): OngoingStubbing<T> {
     return thenAnswer(SuspendableAnswer(answer))
 }
