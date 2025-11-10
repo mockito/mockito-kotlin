@@ -27,6 +27,8 @@ package org.mockito.kotlin
 
 import org.mockito.Incubating
 import org.mockito.MockSettings
+import org.mockito.MockedConstruction
+import org.mockito.MockedStatic
 import org.mockito.Mockito
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
@@ -177,6 +179,34 @@ fun withSettings(
     useConstructor?.let { useConstructor(*it.args) }
     outerInstance?.let { outerInstance(it) }
     if (lenient) strictness(Strictness.LENIENT)
+}
+
+/**
+ * Creates a thread-local mock for static methods on [T].
+ *
+ * @see Mockito.mockStatic
+ */
+inline fun <reified T> mockStatic(): MockedStatic<T> {
+    return Mockito.mockStatic(T::class.java)
+}
+
+/**
+ * Creates a thread-local mock for constructions of [T].
+ *
+ * @see Mockito.mockConstruction
+ */
+inline fun <reified T> mockConstruction(): MockedConstruction<T> {
+    return Mockito.mockConstruction(T::class.java)
+}
+
+/**
+ * Creates a thread-local mock for constructions of [T].
+ *
+ * @param mockInitializer a callback to prepare the methods on a mock after its instantiation
+ * @see Mockito.mockConstruction
+ */
+inline fun <reified T> mockConstruction(mockInitializer: MockedConstruction.MockInitializer<T>): MockedConstruction<T> {
+    return Mockito.mockConstruction(T::class.java, mockInitializer)
 }
 
 class UseConstructor private constructor(val args: Array<Any>) {
