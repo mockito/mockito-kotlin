@@ -26,7 +26,11 @@
 package org.mockito.kotlin
 
 import org.mockito.MockedStatic
+import org.mockito.stubbing.OngoingStubbing
 import org.mockito.verification.VerificationMode
+
+fun <S, T> MockedStatic<T>.whenever(verification: () -> S): OngoingStubbing<S> =
+    `when` { verification() }
 
 /**
  * Syntax sugar to enable [SAM conversion syntax](https://kotlinlang.org/docs/java-interop.html#sam-conversions)

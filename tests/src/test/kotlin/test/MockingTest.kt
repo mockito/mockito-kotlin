@@ -16,6 +16,8 @@ import org.mockito.Mockito
 import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.invocation.DescribedInvocation
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.mockConstruction
+import org.mockito.kotlin.mockStatic
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
 import java.io.PrintStream
@@ -387,6 +389,39 @@ class MockingTest : TestBase() {
             mock<ThrowingConstructor>(useConstructor = parameterless()) {}
         }
     }
+
+    @Test
+    fun mockStatic_stubbing() {
+        mockStatic<SomeObject>().use { mockedStatic ->
+            mockedStatic.whenever { SomeObject.aStaticMethodReturningString() }.thenReturn("Hello")
+
+            expect(SomeObject.aStaticMethodReturningString()).toBe("Hello")
+
+            mockedStatic.verify { SomeObject.aStaticMethodReturningString() }
+        }
+    }
+
+    @Test
+    fun mockConstruction_basic() {
+        mockConstruction<Open>().use { mockedConstruction ->
+            val open = Open()
+
+            expect(mockedConstruction.constructed()).toHaveSize(1)
+            expect(mockedConstruction.constructed().first()).toBeTheSameAs(open)
+        }
+    }
+
+    @Test
+    fun mockConstruction_withInitializer() {
+        mockConstruction<Open> { mock, _ ->
+            whenever(mock.stringResult()).thenReturn("Hello")
+        }.use {
+            val open = Open()
+
+            expect(open.stringResult()).toBe("Hello")
+        }
+    }
+
 
     private interface MyInterface
     private open class MyClass
