@@ -29,6 +29,7 @@ import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 import org.mockito.MockSettings
 import org.mockito.MockedConstruction
+import org.mockito.MockedSingleton
 import org.mockito.MockedStatic
 import org.mockito.Mockito
 import org.mockito.listeners.InvocationListener
@@ -216,6 +217,64 @@ inline fun <reified T> mockStatic(defaultAnswer: Answer<Any>? = null): MockedSta
  */
 inline fun <reified T> mockConstruction(): MockedConstruction<T> {
     return Mockito.mockConstruction(T::class.java)
+}
+
+/**
+ * Creates a thread-local mock for an `object` or `companion object` singleton.
+ *
+ * NOTE: This returns a [MockedSingleton] which must be closed after test execution to prevent
+ * mocking state from leaking to other test cases. You can do this with a `.use {}` block or by
+ * calling [MockedSingleton.close] manually.
+ *
+ * Example usage:
+ * ```
+ * mockObject(MyObject).use {
+ *     whenever(MyObject.foo()).thenReturn("hello")
+ * }
+ * ```
+ *
+ * or with a `companion object` with method `bar()`:
+ * ```
+ * mockObject(MyClass.Companion).use {
+ *     whenever(MyClass.bar()).thenReturn("hello")
+ * }
+ * ```
+ *
+ * @see Mockito.mockSingleton
+ */
+fun <T : Any> mockObject(instance: T): MockedSingleton<T> {
+    if (instance::class.objectInstance == null && !instance::class.isCompanion) {
+        throw MockitoKotlinException("$instance is not an object or companion object")
+    }
+    return Mockito.mockSingleton(instance)
+}
+
+/**
+ * Creates a thread-local mock for an `object` or `companion object` singleton, allowing for
+ * immediate stubbing.
+ *
+ * NOTE: This returns a [MockedSingleton] which must be closed after test execution to prevent
+ * mocking state from leaking to other test cases. You can do this with a `.use {}` block or by
+ * calling [MockedSingleton.close] manually.
+ *
+ * Example usage:
+ * ```
+ * mockObject(MyObject) {
+ *     on { foo() } doReturn "hello"
+ * }.use { ... }
+ * ```
+ *
+ * or with a `companion object` with method `bar()`:
+ * ```
+ * mockObject(MyClass.Companion) {
+ *     on { bar() } doReturn "hello"
+ * }.use { ... }
+ * ```
+ *
+ * @see Mockito.mockSingleton
+ */
+fun <T : Any> mockObject(instance: T, stubbing: KStubbing<T>.(T) -> Unit): MockedSingleton<T> {
+    return mockObject(instance).apply { KStubbing(instance).stubbing(instance) }
 }
 
 /**

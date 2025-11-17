@@ -25,4 +25,5 @@
 
 package org.mockito.kotlin
 
-class MockitoKotlinException(message: String?, cause: Throwable?) : RuntimeException(message, cause)
+class MockitoKotlinException(message: String?, cause: Throwable? = null) :
+    RuntimeException(message, cause)
