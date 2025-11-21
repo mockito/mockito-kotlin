@@ -1,0 +1,261 @@
+package test
+
+import com.nhaarman.expect.expect
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
+import org.junit.Test
+import org.mockito.exceptions.misusing.NotAMockException
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.onBlocking
+import org.mockito.kotlin.stub
+import org.mockito.kotlin.stubbing
+import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
+
+
+class StubbingTest {
+    @Test
+    fun `should stub sync method call as part of mock creation`() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call in reverse manner as part of mock creation`() {
+        val mock = mock<SynchronousFunctions> {
+            doReturn("A").on { stringResult() }
+        }
+
+        expect(mock.stringResult()).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call with whenever`() {
+        /* Given */
+        val mock = mock<Open>()
+        whenever(mock.stringResult()).doReturn("A")
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call with whenever and lambda`() {
+        /* Given */
+        val mock = mock<Open>()
+        whenever { mock.stringResult() } doReturn "A"
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call with reverse whenever`() {
+        /* Given */
+        val mock = mock<Open>()
+        doReturn("A").whenever(mock).stringResult()
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call using stub extension method`() {
+        /* Given */
+        val mock = mock<Open>()
+        mock.stub{
+            on { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync method call using stubbing method`() {
+        /* Given */
+        val mock = mock<Open>()
+        stubbing(mock) {
+            on { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call with wheneverBlocking as part of mock creation`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> { mock ->
+            wheneverBlocking { mock.stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call in reverse manner with wheneverBlocking as part of mock creation`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> { mock ->
+            doReturn( "A").wheneverBlocking(mock) { mock.stringResult() }
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call in reverse manner with onBlocking as part of mock creation`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> { mock ->
+            doReturn( "A").onBlocking(mock) { mock.stringResult() }
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call in reverse manner with whenever as part of mock creation`() = runTest{
+        /* Given */
+        val mock = mock<SuspendFunctions> { mock ->
+            doReturn( "A").whenever(mock).stringResult()
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync function call within a suspendable lambda`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> {
+            onBlocking { stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub sync function call within a suspendable lambda of wheneverBlocking`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions>()
+        wheneverBlocking { mock.stringResult() } doReturn "A"
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspend function call with a call to the sync version of whenever`() = runTest {
+        /* Given */
+        val mock = mock<SuspendFunctions>()
+        whenever (mock.stringResult()) doReturn "A"
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should throw when stubbing other mock then being created`() {
+        /* Given */
+        val mock = mock<Open>()
+
+        /* When, Then */
+        val exception: IllegalArgumentException = assertThrows {
+            mock<Open> {
+                on(mock.stringResult()).doReturn("A")
+            }
+        }
+        expect(exception.message).toContain("Stubbing of another mock is not allowed")
+    }
+
+    @Test
+    fun `should throw when trying to stub a real object with stub extension method`() {
+        /* Given */
+        val notAMock = Open()
+
+        /* When, Then */
+        val exception: NotAMockException = assertThrows {
+            notAMock.stub {  }
+        }
+        expect(exception.message).toContain("Stubbing target is not a mock!")
+    }
+
+    @Test
+    fun `should throw when trying to stub a real object with stubbing method`() {
+        /* Given */
+        val notAMock = Open()
+
+        /* When, Then */
+        val exception: NotAMockException = assertThrows {
+            stubbing(notAMock) {  }
+        }
+        expect(exception.message).toContain("Stubbing target is not a mock!")
+    }
+
+    @Test
+    fun `should provide backwards support to stub suspendable function call with 'whenever' method`() = runTest {
+        /* Given */
+        val mock = mock<SuspendFunctions>()
+        whenever(mock.stringResult()).doSuspendableAnswer {
+            delay(0)
+            "A"
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+}

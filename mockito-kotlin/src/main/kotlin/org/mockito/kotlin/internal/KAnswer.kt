@@ -34,9 +34,9 @@ import org.mockito.stubbing.Answer
  */
 @Suppress("UNCHECKED_CAST")
 internal class KAnswer<T>(
-    private val body: (KInvocationOnMock) -> T?
+    private val block: (KInvocationOnMock) -> T?
 ) : Answer<T> {
     override fun answer(invocation: InvocationOnMock): T {
-        return body(KInvocationOnMock(invocation)) as T
+        return block.invoke(KInvocationOnMock(invocation)) as T
     }
 }

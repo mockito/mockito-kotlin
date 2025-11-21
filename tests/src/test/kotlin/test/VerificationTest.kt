@@ -10,7 +10,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun atLeastXInvocations() {
-        mock<Methods>().apply {
+        mock<SynchronousFunctions>().apply {
             string("")
             string("")
 
@@ -20,7 +20,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun testAtLeastOnce() {
-        mock<Methods>().apply {
+        mock<SynchronousFunctions>().apply {
             string("")
             string("")
 
@@ -30,7 +30,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun atMostXInvocations() {
-        mock<Methods>().apply {
+        mock<SynchronousFunctions>().apply {
             string("")
             string("")
 
@@ -40,7 +40,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun testCalls() {
-        mock<Methods>().apply {
+        mock<SynchronousFunctions>().apply {
             string("")
             string("")
 
@@ -68,7 +68,7 @@ class VerificationTest : TestBase() {
     @Test
     fun testInOrderWithReceiver() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         mock.string("")
@@ -84,7 +84,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun testClearInvocations() {
-        val mock = mock<Methods>().apply {
+        val mock = mock<SynchronousFunctions>().apply {
             string("")
         }
 
@@ -96,7 +96,7 @@ class VerificationTest : TestBase() {
     @Test
     fun testDescription() {
         try {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 verify(this, description("Test")).string(any())
             }
             throw AssertionError("Verify should throw Exception.")
@@ -107,7 +107,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun testAfter() {
-        mock<Methods>().apply {
+        mock<SynchronousFunctions>().apply {
             int(3)
             verify(this, after(10)).int(3)
         }
