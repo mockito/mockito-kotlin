@@ -10,7 +10,7 @@ class BDDMockitoTest {
     @Test
     fun given_will_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()) will Answer<String> { "Test" }
@@ -22,7 +22,7 @@ class BDDMockitoTest {
     @Test
     fun given_willReturn_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()).willReturn("Test")
@@ -34,7 +34,7 @@ class BDDMockitoTest {
     @Test
     fun givenLambda_willReturn_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given { mock.stringResult() }.willReturn("Test")
@@ -46,7 +46,7 @@ class BDDMockitoTest {
     @Test
     fun given_willReturnLambda_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()).willReturn { "Test" }
@@ -58,7 +58,7 @@ class BDDMockitoTest {
     @Test
     fun givenLambda_willReturnLambda_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given { mock.stringResult() } willReturn { "Test" }
@@ -70,7 +70,7 @@ class BDDMockitoTest {
     @Test
     fun given_willAnswer_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()).willAnswer { "Test" }
@@ -82,7 +82,7 @@ class BDDMockitoTest {
     @Test
     fun given_willAnswerInfix_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()) willAnswer { "Test" }
@@ -94,7 +94,7 @@ class BDDMockitoTest {
     @Test
     fun given_willAnswerInfix_withInvocationInfo_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult(any())) willAnswer { invocation ->
@@ -109,7 +109,7 @@ class BDDMockitoTest {
     @Test(expected = IllegalStateException::class)
     fun given_willThrowInfix_properlyStubs() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         given(mock.stringResult()) willThrow { IllegalStateException() }
@@ -119,13 +119,13 @@ class BDDMockitoTest {
     @Test
     fun then() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
         whenever(mock.stringResult()).thenReturn("Test")
 
         /* When */
         mock.stringResult()
 
         /* Then */
-        org.mockito.kotlin.then(mock).should().stringResult()
+        then(mock).should().stringResult()
     }
 }

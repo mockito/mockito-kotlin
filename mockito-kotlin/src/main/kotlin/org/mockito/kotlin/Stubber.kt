@@ -27,51 +27,65 @@ package org.mockito.kotlin
 
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
+import org.mockito.internal.stubbing.answers.CallsRealMethods
+import org.mockito.internal.stubbing.answers.DoesNothing
+import org.mockito.internal.stubbing.answers.Returns
+import org.mockito.internal.stubbing.answers.ThrowsException
+import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
 import org.mockito.invocation.InvocationOnMock
-import org.mockito.kotlin.internal.SuspendableAnswer
-import org.mockito.stubbing.OngoingStubbing
+import org.mockito.kotlin.internal.CoroutineAwareAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
+import org.mockito.stubbing.Answer
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
-fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer { answer(it) }!!
+fun <T> doAnswer(answer: (InvocationOnMock) -> T): Stubber {
+    return doAnswerInternal(Answer<T> { invocation -> answer(invocation) })
 }
 
 fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer(SuspendableAnswer(answer))
+    return doAnswerInternal(CoroutineAwareAnswer(answer))
 }
 
 fun doCallRealMethod(): Stubber {
-    return Mockito.doCallRealMethod()!!
+    return doAnswerInternal(CallsRealMethods())
 }
 
 fun doNothing(): Stubber {
-    return Mockito.doNothing()!!
+    return doAnswerInternal(DoesNothing.doesNothing())
 }
 
 fun doReturn(value: Any?): Stubber {
-    return Mockito.doReturn(value)!!
+    return doAnswerInternal(Returns(value))
 }
 
-fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber {
-    return Mockito.doReturn(
-          toBeReturned,
-          *toBeReturnedNext
-    )!!
+fun doReturn(value: Any?, vararg otherValues: Any?): Stubber {
+    return doAnswerInternal(
+        listOf(value, *otherValues).map { Returns(it) }
+    )
 }
 
-fun doThrow(toBeThrown: KClass<out Throwable>): Stubber {
-    return Mockito.doThrow(toBeThrown.java)!!
+fun doThrow(clazz: KClass<out Throwable>): Stubber {
+    return doAnswerInternal(ThrowsExceptionForClassType(clazz.java))
 }
 
-fun doThrow(vararg toBeThrown: Throwable): Stubber {
-    return Mockito.doThrow(*toBeThrown)!!
+fun doThrow(vararg throwables: Throwable): Stubber {
+    return doAnswerInternal(listOf(*throwables).map { ThrowsException(it) })
 }
 
-fun <T> Stubber.whenever(mock: T) = `when`(mock)
+fun <T> Stubber.whenever(mock: T): T = `when`(mock)
 
 /**
- * Alias for when with suspending function
+ * Reverse stubber for suspending functions.
+ *
+ * Warning: Only one method call can be stubbed in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> Stubber.onBlocking(mock: T, f: suspend T.() -> Unit) =
+    wheneverBlocking(mock, f)
+
+/**
+ * Reverse stubber for suspending functions.
  *
  * Warning: Only one method call can be stubbed in the function.
  * Subsequent method calls are ignored!
@@ -79,4 +93,21 @@ fun <T> Stubber.whenever(mock: T) = `when`(mock)
 fun <T> Stubber.wheneverBlocking(mock: T, f: suspend T.() -> Unit) {
     val m = whenever(mock)
     runBlocking { m.f() }
+}
+
+private fun doAnswerInternal(vararg answers: Answer<*>): Stubber {
+    return doAnswerInternal(listOf(*answers))
+}
+
+private fun doAnswerInternal(answers: List<Answer<*>>): Stubber {
+    return answers
+        .map { it.wrapAsCoroutineAwareAnswer() }
+        .let { wrappedAnswers ->
+            val stubber = Mockito.doAnswer(wrappedAnswers.first())
+            wrappedAnswers
+                .drop(1)
+                .fold(stubber) { stubber, answer ->
+                    stubber.doAnswer(answer)
+                }
+        }
 }

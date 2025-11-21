@@ -9,7 +9,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testDoAnswer() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         doAnswer { "Test" }
             .whenever(mock)
@@ -41,7 +41,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testDoReturnValue() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         doReturn("test").whenever(mock).stringResult()
 
@@ -50,7 +50,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testDoReturnNullValue() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         doReturn(null).whenever(mock).stringResult()
 
@@ -59,7 +59,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testDoReturnNullValues() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         doReturn(null, null).whenever(mock).stringResult()
 
@@ -69,7 +69,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testDoReturnValues() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         doReturn("test", "test2").whenever(mock).stringResult()
 
@@ -86,7 +86,7 @@ class StubberTest : TestBase() {
         try {
             mock.go()
             throw AssertionError("Call should have thrown.")
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
         }
     }
 
@@ -103,7 +103,7 @@ class StubberTest : TestBase() {
 
     @Test
     fun testStubberOnBlockExtension() {
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             doReturn("Test").on { stringResult() }
         }
 

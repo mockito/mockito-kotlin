@@ -28,8 +28,13 @@ package org.mockito.kotlin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
+import org.mockito.internal.stubbing.answers.CallsRealMethods
+import org.mockito.internal.stubbing.answers.Returns
+import org.mockito.internal.stubbing.answers.ThrowsException
+import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
+import org.mockito.kotlin.internal.CoroutineAwareAnswer
 import org.mockito.kotlin.internal.KAnswer
-import org.mockito.kotlin.internal.SuspendableAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
@@ -37,11 +42,19 @@ import kotlin.reflect.KClass
 /**
  * Enables stubbing methods. Use it when you want the mock to return particular value when particular method is called.
  *
- * Alias for [Mockito.when].
+ * Alias for [org.mockito.Mockito.when].
  */
-@Suppress("NOTHING_TO_INLINE")
-inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
-    return Mockito.`when`(methodCall)!!
+fun <T> whenever(methodCall: () -> T): OngoingStubbing<T> {
+    return whenever(methodCall())
+}
+
+/**
+ * Enables stubbing methods. Use it when you want the mock to return particular value when particular method is called.
+ *
+ * Alias for [org.mockito.Mockito.when].
+ */
+fun <T> whenever(methodCall: T): OngoingStubbing<T> {
+    return Mockito.`when`<T>(methodCall)
 }
 
 /**
@@ -51,16 +64,23 @@ inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
  * other method calls are ignored!
  */
 fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T> {
-    return runBlocking { Mockito.`when`(methodCall()) }
+    return runBlocking { whenever(methodCall()) }
 }
 
 /**
  * Sets a return value to be returned when the method is called.
  *
- * Alias for [OngoingStubbing.thenReturn].
+ * Alias for [thenReturn].
  */
-infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> {
-    return thenReturn(t)
+infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
+    return doAnswerInternal(Returns(value))
+}
+
+/**
+ * Sets a return value to be returned when the method is called.
+ */
+infix fun <T> OngoingStubbing<T>.thenReturn(value: T): OngoingStubbing<T> {
+    return doAnswerInternal(Returns(value))
 }
 
 /**
@@ -68,18 +88,22 @@ infix fun <T> OngoingStubbing<T>.doReturn(t: T): OngoingStubbing<T> {
  *
  * Alias for [OngoingStubbing.thenReturn].
  */
-fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> {
-    return thenReturn(t, *ts)
+fun <T> OngoingStubbing<T>.doReturn(value: T, vararg otherValues: T): OngoingStubbing<T> {
+    return doAnswerInternal(listOf(value, *otherValues).map { Returns(it) })
 }
 
 /**
  * Sets consecutive return values to be returned when the method is called.
  */
-inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(ts: List<T>): OngoingStubbing<T> {
-    return thenReturn(
-          ts[0],
-          *ts.drop(1).toTypedArray()
-    )
+fun <T> OngoingStubbing<T>.doReturnConsecutively(vararg values: T): OngoingStubbing<T> {
+    return doReturnConsecutively(listOf(*values))
+}
+
+/**
+ * Sets consecutive return values to be returned when the method is called.
+ */
+infix fun <T> OngoingStubbing<T>.doReturnConsecutively(values: List<T>): OngoingStubbing<T> {
+    return doAnswerInternal(values.map { Returns(it) })
 }
 
 /**
@@ -87,8 +111,8 @@ inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(ts: List<T
  *
  * Alias for [OngoingStubbing.thenThrow].
  */
-infix fun <T> OngoingStubbing<T>.doThrow(t: Throwable): OngoingStubbing<T> {
-    return thenThrow(t)
+infix fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable): OngoingStubbing<T> {
+    return doAnswerInternal(ThrowsException(throwable))
 }
 
 /**
@@ -96,28 +120,39 @@ infix fun <T> OngoingStubbing<T>.doThrow(t: Throwable): OngoingStubbing<T> {
  *
  * Alias for [OngoingStubbing.doThrow].
  */
-fun <T> OngoingStubbing<T>.doThrow(
-    t: Throwable,
-    vararg ts: Throwable
-): OngoingStubbing<T> {
-    return thenThrow(t, *ts)
+fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable, vararg otherThrowables: Throwable): OngoingStubbing<T> {
+    return doAnswerInternal(listOf(throwable, *otherThrowables).map { ThrowsException(it) })
 }
 
 /**
  * Sets a Throwable type to be thrown when the method is called.
  */
-infix fun <T> OngoingStubbing<T>.doThrow(t: KClass<out Throwable>): OngoingStubbing<T> {
-    return thenThrow(t.java)
+infix fun <T> OngoingStubbing<T>.doThrow(clazz: KClass<out Throwable>): OngoingStubbing<T> {
+    return doAnswerInternal(ThrowsExceptionForClassType(clazz.java))
 }
 
 /**
  * Sets Throwable classes to be thrown when the method is called.
  */
 fun <T> OngoingStubbing<T>.doThrow(
-    t: KClass<out Throwable>,
-    vararg ts: KClass<out Throwable>
+    clazz: KClass<out Throwable>,
+    vararg otherClasses: KClass<out Throwable>
 ): OngoingStubbing<T> {
-    return thenThrow(t.java, *ts.map { it.java }.toTypedArray())
+    return doAnswerInternal(listOf(clazz, *otherClasses).map { ThrowsExceptionForClassType(it.java) })
+}
+
+/**
+ * Calls the real method of the spy/mock when the method is called.
+ */
+fun <T> OngoingStubbing<T>.doCallRealMethod(): OngoingStubbing<T> {
+    return callRealMethod()
+}
+
+/**
+ * Calls the real method of the spy/mock when the method is called.
+ */
+fun <T> OngoingStubbing<T>.callRealMethod(): OngoingStubbing<T> {
+    return doAnswerInternal(CallsRealMethods())
 }
 
 /**
@@ -126,16 +161,29 @@ fun <T> OngoingStubbing<T>.doThrow(
  * Alias for [OngoingStubbing.thenAnswer].
  */
 infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<*>): OngoingStubbing<T> {
-    return thenAnswer(answer)
+    return doAnswerInternal(answer)
 }
 
 /**
  * Sets a generic Answer for the method using a lambda.
  */
 infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): OngoingStubbing<T> {
-    return thenAnswer(KAnswer(answer))
+    return doAnswerInternal(KAnswer(answer))
 }
 
+/**
+ * Sets a generic Answer for a suspend function using a suspend lambda.
+ */
 infix fun <T> OngoingStubbing<T>.doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): OngoingStubbing<T> {
-    return thenAnswer(SuspendableAnswer(answer))
+    return thenAnswer(CoroutineAwareAnswer(answer))
+}
+
+private fun <T> OngoingStubbing<T>.doAnswerInternal(vararg answers: Answer<*>): OngoingStubbing<T> {
+    return doAnswerInternal(listOf(*answers))
+}
+
+private fun <T> OngoingStubbing<T>.doAnswerInternal(answers: List<Answer<*>>): OngoingStubbing<T> {
+    return answers.fold(this){ ongoingStubbing, answer ->
+        ongoingStubbing.thenAnswer(answer.wrapAsCoroutineAwareAnswer())
+    }
 }
