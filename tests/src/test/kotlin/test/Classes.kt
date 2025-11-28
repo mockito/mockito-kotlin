@@ -1,5 +1,9 @@
 package test
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+
 /*
 * The MIT License
 *
@@ -34,6 +38,15 @@ open class Open {
             a[i] = a[i] + 1
         }
     }
+
+    suspend fun intResult(i: Int): Int =
+        withContext(Dispatchers.Default) { i }
+
+    suspend fun delayedIntResult(): Int =
+        withContext(Dispatchers.Default) {
+            delay(100)
+            42
+        }
 
     open fun stringResult() = "Default"
 
@@ -71,7 +84,7 @@ interface SynchronousFunctions {
     fun closedVararg(vararg c: Closed)
     fun throwableClass(t: ThrowableClass)
     fun nullableString(s: String?)
-
+    fun intResult(): Int
     fun stringResult(): String
     fun stringResult(s: String): String
     fun nullableStringResult(): String?
@@ -91,6 +104,10 @@ interface SuspendFunctions {
     suspend fun closed(c: Closed)
     suspend fun closedBooleanResult(c: Closed): Boolean
     suspend fun classClosedBooleanResult(c: Class<Closed>): Boolean
+    suspend fun intResult(): Int
+    suspend fun intResult(i: Int): Int
+    suspend fun stringResult(): String
+    suspend fun stringResult(s: String): String
 }
 
 @JvmInline
