@@ -31,7 +31,7 @@ class StubbingTest {
     @Test
     fun `should stub already existing mock, using stubbing function`() {
         /* Given */
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         /* When */
         stubbing(mock) {
@@ -44,7 +44,7 @@ class StubbingTest {
 
     @Test
     fun `should stub already existing mock, using stub extension function`() {
-        val mock = mock<Methods>()
+        val mock = mock<SynchronousFunctions>()
 
         //create stub after creation of mock
         mock.stub {
@@ -61,7 +61,7 @@ class StubbingTest {
     @Test
     fun `should override default stub of mock`() {
         /* Given mock with stub */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult() } doReturn "result1"
         }
 
@@ -80,7 +80,7 @@ class StubbingTest {
     @Test
     fun `should stub 2 method calls determined by ArgumentMatchers`() {
         /* When */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(argThat { this == "A" }) } doReturn "A"
             on { stringResult(argThat { this == "B" }) } doReturn "B"
         }
@@ -104,7 +104,7 @@ class StubbingTest {
     fun `should throw when check ArgumentMatcher is applied twice`() {
         /* Expect */
         expectErrorWithMessage("null").on {
-            mock<Methods> {
+            mock<SynchronousFunctions> {
                 on { stringResult(check { }) } doReturn "A"
                 on { stringResult(check { }) } doReturn "B"
             }
