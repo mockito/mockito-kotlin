@@ -108,10 +108,13 @@ interface SuspendFunctions {
     suspend fun intResult(i: Int): Int
     suspend fun stringResult(): String
     suspend fun stringResult(s: String): String
+    suspend fun stringResult(s1: String, s2: String): String
+    suspend fun nullableStringResult(): String?
+    suspend fun builderMethod(): SuspendFunctions
 }
 
 @JvmInline
-value class ValueClass(private val content: String)
+value class ValueClass(val content: String)
 
 @JvmInline
 value class NestedValueClass(val value: ValueClass)
