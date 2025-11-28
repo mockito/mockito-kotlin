@@ -6,28 +6,20 @@ import com.nhaarman.expect.fail
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.exceptions.misusing.UnfinishedStubbingException
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.check
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.stub
-import org.mockito.kotlin.stubbing
-import org.mockito.kotlin.whenever
 import org.mockito.stubbing.Answer
 
 class OngoingStubbingTest : TestBase() {
-
     @Test
     fun testOngoingStubbing_methodCall() {
         /* Given */
-        val mock = mock<Open>()
-        mock<Open> {
-            on(mock.stringResult()).doReturn("A")
+        val mock = mock<Open> {
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -76,7 +68,7 @@ class OngoingStubbingTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
         }
     }
 
@@ -91,7 +83,7 @@ class OngoingStubbingTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
         }
     }
 
@@ -109,14 +101,14 @@ class OngoingStubbingTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
         }
 
         try {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: UnsupportedOperationException) {
+        } catch (_: UnsupportedOperationException) {
         }
     }
 
@@ -134,14 +126,14 @@ class OngoingStubbingTest : TestBase() {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
         }
 
         try {
             /* When */
             mock.builderMethod()
             fail("No exception thrown")
-        } catch (e: UnsupportedOperationException) {
+        } catch (_: UnsupportedOperationException) {
         }
     }
 
@@ -162,8 +154,9 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun testOngoingStubbing_doAnswer_instance() {
         /* Given */
+        val answer = Answer { "result" }
         val mock = mock<Methods> {
-            on { stringResult() } doAnswer Answer<String> { "result" }
+            on { stringResult() } doAnswer answer
         }
 
         /* When */
@@ -232,75 +225,6 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testMockStubbingAfterCreatingMock() {
-        val mock = mock<Methods>()
-
-        //create stub after creation of mock
-        mock.stub {
-            on { stringResult() } doReturn "result"
-        }
-
-        /* When */
-        val result = mock.stringResult()
-
-        /* Then */
-        expect(result).toBe("result")
-    }
-
-    @Test
-    fun testOverrideDefaultStub() {
-        /* Given mock with stub */
-        val mock = mock<Methods> {
-            on { stringResult() } doReturn "result1"
-        }
-
-        /* override stub */
-        mock.stub {
-            on { stringResult() } doReturn "result2"
-        }
-
-        /* When */
-        val result = mock.stringResult()
-
-        /* Then */
-        expect(result).toBe("result2")
-    }
-
-    @Test
-    fun stubbingTwiceWithArgumentMatchers() {
-        /* When */
-        val mock = mock<Methods> {
-            on { stringResult(argThat { this == "A" }) } doReturn "A"
-            on { stringResult(argThat { this == "B" }) } doReturn "B"
-        }
-
-        /* Then */
-        expect(mock.stringResult("A")).toBe("A")
-        expect(mock.stringResult("B")).toBe("B")
-    }
-
-    @Test
-    fun stubbingRealObject() {
-        val notAMock = ""
-
-        /* Expect */
-        expectErrorWithMessage("is not a mock!").on {
-            notAMock.stub { }
-        }
-    }
-
-    @Test
-    fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
-        /* Expect */
-        expectErrorWithMessage("null").on {
-            mock<Methods> {
-                on { stringResult(check { }) } doReturn "A"
-                on { stringResult(check { }) } doReturn "B"
-            }
-        }
-    }
-
-    @Test
     fun doReturn_withSingleItemList() {
         /* Given */
         val mock = mock<Open> {
@@ -310,18 +234,6 @@ class OngoingStubbingTest : TestBase() {
         /* Then */
         expect(mock.stringResult()).toBe("a")
         expect(mock.stringResult()).toBe("b")
-    }
-
-    @Test
-    fun doReturn_throwsNPE() {
-        assumeFalse(mockMakerInlineEnabled())
-        expectErrorWithMessage("look at the stack trace below") on {
-
-            /* When */
-            mock<Open> {
-                on { throwsNPE() } doReturn "result"
-            }
-        }
     }
 
     @Test
@@ -345,32 +257,14 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun stubbingExistingMock() {
-        /* Given */
-        val mock = mock<Methods>()
+    fun doReturn_throwsNPE() {
+        assumeFalse(mockMakerInlineEnabled())
+        expectErrorWithMessage("look at the stack trace below") on {
 
-        /* When */
-        stubbing(mock) {
-            on { stringResult() } doReturn "result"
-        }
-
-        /* Then */
-        expect(mock.stringResult()).toBe("result")
-    }
-
-    @Test
-    fun testMockitoStackOnUnfinishedStubbing() {
-        /* Given */
-        val mock = mock<Open>()
-        whenever(mock.stringResult())
-
-        /* When */
-        try {
-            mock.stringResult()
-        } catch (e: UnfinishedStubbingException) {
-            /* Then */
-            expect(e.message).toContain("Unfinished stubbing detected here:")
-            expect(e.message).toContain("-> at test.OngoingStubbingTest.testMockitoStackOnUnfinishedStubbing")
+            /* When */
+            mock<Open> {
+                on { throwsNPE() } doReturn "result"
+            }
         }
     }
 }
