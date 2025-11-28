@@ -180,16 +180,14 @@ class MockingTest : TestBase() {
         System.setOut(out)
         val mock = mock<SynchronousFunctions>(verboseLogging = true)
 
-        try {
-            /* When */
+
+        /* When, Then */
+        assertThrows<WantedButNotInvoked> {
             verify(mock).stringResult()
-            fail("Expected an exception")
-        } catch (_: WantedButNotInvoked) {
-            /* Then */
-            argumentCaptor<DescribedInvocation>().apply {
-                verify(out).println(capture())
-                expect(lastValue.toString()).toBe("synchronousFunctions.stringResult();")
-            }
+        }
+        argumentCaptor<DescribedInvocation>().apply {
+            verify(out).println(capture())
+            expect(lastValue.toString()).toBe("synchronousFunctions.stringResult();")
         }
     }
 

@@ -2,7 +2,6 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
-import com.nhaarman.expect.fail
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
@@ -64,11 +63,9 @@ class OngoingStubbingTest : TestBase() {
             on { builderMethod() } doThrow IllegalArgumentException()
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: IllegalArgumentException) {
         }
     }
 
@@ -79,11 +76,9 @@ class OngoingStubbingTest : TestBase() {
             on { builderMethod() } doThrow IllegalArgumentException::class
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: IllegalArgumentException) {
         }
     }
 
@@ -97,18 +92,12 @@ class OngoingStubbingTest : TestBase() {
             )
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: IllegalArgumentException) {
         }
-
-        try {
-            /* When */
+        assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: UnsupportedOperationException) {
         }
     }
 
@@ -122,18 +111,12 @@ class OngoingStubbingTest : TestBase() {
             )
         }
 
-        try {
-            /* When */
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: IllegalArgumentException) {
         }
-
-        try {
-            /* When */
+        assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
-            fail("No exception thrown")
-        } catch (_: UnsupportedOperationException) {
         }
     }
 
