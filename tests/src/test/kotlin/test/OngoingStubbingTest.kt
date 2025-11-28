@@ -16,7 +16,7 @@ import org.mockito.stubbing.Answer
 
 class OngoingStubbingTest : TestBase() {
     @Test
-    fun testOngoingStubbing_methodCall() {
+    fun `should stub function call`() {
         /* Given */
         val mock = mock<Open> {
             on { stringResult() } doReturn "A"
@@ -30,7 +30,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_builder() {
+    fun `should stub builder method returning mock itself`() {
         /* Given */
         val mock = mock<Methods> { mock ->
             on { builderMethod() } doReturn mock
@@ -44,7 +44,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_nullable() {
+    fun `should stub function call with nullable result`() {
         /* Given */
         val mock = mock<Methods> {
             on { nullableStringResult() } doReturn "Test"
@@ -58,7 +58,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doThrow() {
+    fun `should throw exception instance on function call`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doThrow IllegalArgumentException()
@@ -73,7 +73,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doThrowClass() {
+    fun `should throw exception class on function call`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doThrow IllegalArgumentException::class
@@ -88,7 +88,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doThrowVarargs() {
+    fun `should throw exception instances on consecutive function calls`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() }.doThrow(
@@ -113,7 +113,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doThrowClassVarargs() {
+    fun `should throw exception classes on consecutive function calls`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() }.doThrow(
@@ -138,7 +138,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_lambda() {
+    fun `should stub function call with result from lambda`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult() } doAnswer { "result" }
@@ -152,7 +152,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_instance() {
+    fun `should stub function call with result from an answer instance`() {        /* Given */
         /* Given */
         val answer = Answer { "result" }
         val mock = mock<Methods> {
@@ -167,7 +167,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_returnsSelf() {
+    fun `should stub builder method returning mock itself via answer`() {
         /* Given */
         val mock = mock<Methods> {
             on { builderMethod() } doAnswer Mockito.RETURNS_SELF
@@ -181,7 +181,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_withArgument() {
+    fun `should stub function call with result from lambda with argument`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
@@ -195,7 +195,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_withDestructuredArgument() {
+    fun `should stub function call with result from lambda with deconstructed argument`() {
         /* Given */
         val mock = mock<Methods> {
             on { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
@@ -209,7 +209,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun testOngoingStubbing_doAnswer_withDestructuredArguments() {
+    fun `should stub function call with result from lambda with deconstructed arguments`() {
         /* Given */
         val mock = mock<Methods> {
             on { varargBooleanResult(any(), any()) } doAnswer { (a: String, b: String) ->
@@ -225,7 +225,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun doReturn_withSingleItemList() {
+    fun `should stub consecutive function calls by a list of answers`() {
         /* Given */
         val mock = mock<Open> {
             on { stringResult() } doReturnConsecutively listOf("a", "b")
@@ -237,7 +237,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun doReturn_withGenericIntReturnType_onGeneric() {
+    fun `should stub function call with integer result`() {
         /* Given */
         val mock = mock<GenericMethods<Int>> {
             onGeneric { genericMethod() } doReturn 2
@@ -248,7 +248,7 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun doReturn_withGenericNullableReturnType_onGeneric() {
+    fun `should stub nullable function call with string result`() {
         val m = mock<GenericMethods<String>> {
             onGeneric { nullableReturnType() } doReturn "Test"
         }

@@ -15,7 +15,7 @@ import org.mockito.kotlin.whenever
 
 class StubbingTest {
     @Test
-    fun testOngoingStubbing_methodCall() {
+    fun `should stub function call`() {
         /* Given */
         val mock = mock<Open> {
             on { stringResult() } doReturn "A"
@@ -29,7 +29,7 @@ class StubbingTest {
     }
 
     @Test
-    fun stubbingExistingMock() {
+    fun `should stub already existing mock, using stubbing function`() {
         /* Given */
         val mock = mock<Methods>()
 
@@ -43,7 +43,7 @@ class StubbingTest {
     }
 
     @Test
-    fun testMockStubbingAfterCreatingMock() {
+    fun `should stub already existing mock, using stub extension function`() {
         val mock = mock<Methods>()
 
         //create stub after creation of mock
@@ -59,7 +59,7 @@ class StubbingTest {
     }
 
     @Test
-    fun testOverrideDefaultStub() {
+    fun `should override default stub of mock`() {
         /* Given mock with stub */
         val mock = mock<Methods> {
             on { stringResult() } doReturn "result1"
@@ -78,7 +78,7 @@ class StubbingTest {
     }
 
     @Test
-    fun stubbingTwiceWithArgumentMatchers() {
+    fun `should stub 2 method calls determined by ArgumentMatchers`() {
         /* When */
         val mock = mock<Methods> {
             on { stringResult(argThat { this == "A" }) } doReturn "A"
@@ -91,7 +91,7 @@ class StubbingTest {
     }
 
     @Test
-    fun stubbingRealObject() {
+    fun `should throw when trying to stub a real object with stub extension method`() {
         val notAMock = ""
 
         /* Expect */
@@ -101,7 +101,7 @@ class StubbingTest {
     }
 
     @Test
-    fun stubbingTwiceWithCheckArgumentMatchers_throwsException() {
+    fun `should throw when check ArgumentMatcher is applied twice`() {
         /* Expect */
         expectErrorWithMessage("null").on {
             mock<Methods> {
@@ -112,7 +112,7 @@ class StubbingTest {
     }
 
     @Test
-    fun testMockitoStackOnUnfinishedStubbing() {
+    fun `should throw when stubbing is incomplete`() {
         /* Given */
         val mock = mock<Open>()
         whenever(mock.stringResult())
@@ -123,7 +123,7 @@ class StubbingTest {
         } catch (e: UnfinishedStubbingException) {
             /* Then */
             expect(e.message).toContain("Unfinished stubbing detected here:")
-            expect(e.message).toContain("-> at test.StubbingTest.testMockitoStackOnUnfinishedStubbing")
+            expect(e.message).toContain("-> at test.StubbingTest.should throw when stubbing is incomplete")
         }
     }
 }
