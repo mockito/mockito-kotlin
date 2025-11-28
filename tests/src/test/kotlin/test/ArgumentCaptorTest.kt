@@ -101,7 +101,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_withNullValue_usingNonNullable() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.nullableString(null)
@@ -115,7 +115,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_withNullValue_usingNullable() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.nullableString(null)
@@ -173,7 +173,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_multipleValuesIncludingNull() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.nullableString("test")
@@ -188,7 +188,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_callProperties() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.int(1)
@@ -211,7 +211,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test(expected = IndexOutOfBoundsException::class)
     fun argumentCaptor_callPropertyNotAvailable() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.int(1)
@@ -259,7 +259,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_vararg() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.varargBooleanResult("a", "b", "c")
@@ -273,7 +273,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_empty_vararg() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.varargBooleanResult()
@@ -287,7 +287,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_arg_vararg() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.argAndVararg("first", "a", "b", "c")
@@ -301,7 +301,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_intarray() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.intArray(intArrayOf(1, 2, 3))
@@ -315,7 +315,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_array() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.stringArray(arrayOf("a", "b", "c"))
@@ -329,7 +329,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_empty_array() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.stringArray(arrayOf())
@@ -343,7 +343,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_value_class() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
         val valueClass = ValueClass("Content")
 
         /* When */
@@ -358,7 +358,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_value_class_withNullValue_usingNonNullable() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.nullableValueClass(null)
@@ -372,7 +372,7 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_value_class_withNullValue_usingNullable() {
         /* Given */
-        val m: Methods = mock()
+        val m: SynchronousFunctions = mock()
 
         /* When */
         m.nullableValueClass(null)

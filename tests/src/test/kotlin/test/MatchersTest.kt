@@ -17,7 +17,7 @@ class MatchersTest : TestBase() {
     class AnyMatchersTest {
         @Test
         fun anyString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 string("")
                 verify(this).string(any())
             }
@@ -25,7 +25,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyNullableString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString("")
                 verify(this).nullableString(any())
             }
@@ -33,7 +33,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyBoolean() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 boolean(true)
                 verify(this).boolean(any())
             }
@@ -41,7 +41,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyBooleanArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 booleanArray(booleanArrayOf(true, false, false))
                 verify(this).booleanArray(any())
             }
@@ -49,7 +49,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyChar() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 char('3')
                 verify(this).char(any())
             }
@@ -57,7 +57,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyCharArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 charArray(charArrayOf('3', '4', '5'))
                 verify(this).charArray(any())
             }
@@ -65,7 +65,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyByte() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 byte(3)
                 verify(this).byte(any())
             }
@@ -73,7 +73,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyByteArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 byteArray(byteArrayOf(3, 4, 5))
                 verify(this).byteArray(any())
             }
@@ -81,7 +81,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyShort() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 short(3)
                 verify(this).short(any())
             }
@@ -89,7 +89,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyShortArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 shortArray(shortArrayOf(3, 4, 5))
                 verify(this).shortArray(any())
             }
@@ -97,7 +97,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyInt() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 int(3)
                 verify(this).int(any())
             }
@@ -105,7 +105,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyIntArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 intArray(intArrayOf(3, 4, 5))
                 verify(this).intArray(any())
             }
@@ -113,7 +113,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyLong() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 long(3)
                 verify(this).long(any())
             }
@@ -121,7 +121,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyLongArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 longArray(longArrayOf(3L, 4L, 5L))
                 verify(this).longArray(any())
             }
@@ -129,7 +129,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyFloat() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 float(3f)
                 verify(this).float(any())
             }
@@ -137,7 +137,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyFloatArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 floatArray(floatArrayOf(3f, 4f, 5f))
                 verify(this).floatArray(any())
             }
@@ -145,7 +145,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyDouble() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 double(3.0)
                 verify(this).double(any())
             }
@@ -153,7 +153,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyDoubleArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 doubleArray(doubleArrayOf(3.0, 4.0, 5.0))
                 verify(this).doubleArray(any())
             }
@@ -161,7 +161,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyClosedClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closed(Closed())
                 verify(this).closed(any())
             }
@@ -169,26 +169,25 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyClassClosedClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 classClosed(Closed::class.java)
                 verify(this).classClosed(any())
             }
         }
 
         @Test
-        fun anyCoroutinesClosedClass() {
-            mock<Methods>().apply {
-                runTest {
-                    coroutinesClosed(Closed())
-                    verify(this@apply).coroutinesClosed(any())
-                }
-            }
+        fun anySuspendFunctionsClosedClass() = runTest {
+            val mock = mock<SuspendFunctions>()
+
+            mock.closed(Closed())
+
+            verify(mock).closed(any())
         }
 
         /** https://github.com/nhaarman/mockito-kotlin/issues/27 */
         @Test
         fun anyThrowableWithSingleThrowableConstructor() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 throwableClass(ThrowableClass(IOException()))
                 verify(this).throwableClass(any())
             }
@@ -196,7 +195,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyValueClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 valueClass(ValueClass("Content"))
                 verify(this).valueClass(any())
             }
@@ -204,7 +203,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyNeverVerifiesForNullValue() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString(null)
                 verify(this, never()).nullableString(any())
             }
@@ -214,7 +213,7 @@ class MatchersTest : TestBase() {
     class SpecialAnyMatchersTest {
         @Test
         fun anyClassArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedArray(arrayOf(Closed()))
                 verify(this).closedArray(anyArray())
             }
@@ -222,7 +221,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyNullableClassArray() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedNullableArray(arrayOf(Closed(), null))
                 verify(this).closedNullableArray(anyArray())
             }
@@ -230,7 +229,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyStringVararg() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedVararg(Closed(), Closed())
                 verify(this).closedVararg(anyVararg())
             }
@@ -238,7 +237,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyVarargMatching() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 whenever(varargBooleanResult(anyVararg())).thenReturn(true)
                 expect(varargBooleanResult()).toBe(true)
             }
@@ -246,7 +245,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyValueClass_withValueClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 valueClass(ValueClass("Content"))
                 verify(this).valueClass(anyValueClass())
             }
@@ -255,7 +254,7 @@ class MatchersTest : TestBase() {
         @Test
         fun anyValueClass_withNonValueClass() {
             expectErrorWithMessage("kotlin.Float is not a value class.") on {
-                mock<Methods>().apply {
+                mock<SynchronousFunctions>().apply {
                     float(10f)
                     // Should throw an error because Float is not a value class
                     float(anyValueClass())
@@ -265,7 +264,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyValueClass_withNestedValueClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nestedValueClass(NestedValueClass(ValueClass("Content")))
                 verify(this).nestedValueClass(anyValueClass())
             }
@@ -275,7 +274,7 @@ class MatchersTest : TestBase() {
     class AnyOrNullMatchersTest {
         @Test
         fun anyOrNullString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 string("")
                 verify(this).string(anyOrNull())
             }
@@ -283,7 +282,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullNullableString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString("")
                 verify(this).nullableString(anyOrNull())
             }
@@ -291,7 +290,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullNullableStringNullValue() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString(null)
                 verify(this).nullableString(anyOrNull())
             }
@@ -299,7 +298,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullBoolean() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 boolean(false)
                 verify(this).boolean(anyOrNull())
             }
@@ -307,7 +306,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullByte() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 byte(3)
                 verify(this).byte(anyOrNull())
             }
@@ -315,7 +314,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullChar() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 char('a')
                 verify(this).char(anyOrNull())
             }
@@ -323,7 +322,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullShort() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 short(3)
                 verify(this).short(anyOrNull())
             }
@@ -331,7 +330,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullInt() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 int(3)
                 verify(this).int(anyOrNull())
             }
@@ -339,7 +338,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullLong() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 long(3)
                 verify(this).long(anyOrNull())
             }
@@ -347,7 +346,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullFloat() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 float(3f)
                 verify(this).float(anyOrNull())
             }
@@ -355,7 +354,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullDouble() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 double(3.0)
                 verify(this).double(anyOrNull())
             }
@@ -363,7 +362,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullValueClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 valueClass(ValueClass("Content"))
                 verify(this).valueClass(anyOrNull())
             }
@@ -371,7 +370,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullNullableValueClass() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableValueClass(ValueClass("Content"))
                 verify(this).nullableValueClass(anyOrNull())
             }
@@ -379,7 +378,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyOrNullNullableValueClassNullValue() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableValueClass(null)
                 verify(this).nullableValueClass(anyOrNull())
             }
@@ -390,7 +389,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqString() {
             val value = "Value"
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 string(value)
                 verify(this).string(eq(value))
             }
@@ -399,7 +398,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqBoolean() {
             val value = true
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 boolean(value)
                 verify(this).boolean(eq(value))
             }
@@ -408,7 +407,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqBooleanArray() {
             val value = booleanArrayOf(true, false, false)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 booleanArray(value)
                 verify(this).booleanArray(eq(value))
             }
@@ -417,7 +416,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqChar() {
             val value = '3'
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 char(value)
                 verify(this).char(eq(value))
             }
@@ -426,7 +425,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqCharArray() {
             val value = charArrayOf('3', '4', '5')
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 charArray(value)
                 verify(this).charArray(eq(value))
             }
@@ -435,7 +434,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqByte() {
             val value: Byte = 3
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 byte(value)
                 verify(this).byte(eq(value))
             }
@@ -444,7 +443,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqByteArray() {
             val value = byteArrayOf(3, 4, 5)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 byteArray(value)
                 verify(this).byteArray(eq(value))
             }
@@ -453,7 +452,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqShort() {
             val value: Short = 3
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 short(value)
                 verify(this).short(eq(value))
             }
@@ -462,7 +461,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqShortArray() {
             val value = shortArrayOf(3, 4, 5)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 shortArray(value)
                 verify(this).shortArray(eq(value))
             }
@@ -471,7 +470,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqInt() {
             val value = 3
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 int(value)
                 verify(this).int(eq(value))
             }
@@ -480,7 +479,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqIntArray() {
             val value = intArrayOf(3, 4, 5)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 intArray(value)
                 verify(this).intArray(eq(value))
             }
@@ -489,7 +488,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqLong() {
             val value = 3L
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 long(value)
                 verify(this).long(eq(value))
             }
@@ -498,7 +497,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqLongArray() {
             val value = longArrayOf(3L, 4L, 5L)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 longArray(value)
                 verify(this).longArray(eq(value))
             }
@@ -507,7 +506,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqFloat() {
             val value = 3f
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 float(value)
                 verify(this).float(eq(value))
             }
@@ -516,7 +515,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqFloatArray() {
             val value = floatArrayOf(3f, 4f, 5f)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 floatArray(value)
                 verify(this).floatArray(eq(value))
             }
@@ -525,7 +524,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqDouble() {
             val value = 3.0
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 double(value)
                 verify(this).double(eq(value))
             }
@@ -534,7 +533,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqDoubleArray() {
             val value = doubleArrayOf(3.0, 4.0, 5.0)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 doubleArray(value)
                 verify(this).doubleArray(eq(value))
             }
@@ -543,7 +542,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqClosedClass() {
             val value = Closed()
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closed(value)
                 verify(this).closed(eq(value))
             }
@@ -552,27 +551,26 @@ class MatchersTest : TestBase() {
         @Test
         fun eqClassClosedClass() {
             val clazz = Closed::class.java
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 classClosed(clazz)
                 verify(this).classClosed(eq(clazz))
             }
         }
 
         @Test
-        fun eqCoroutinesClosedClass() {
+        fun eqSuspendFunctionsClosedClass() = runTest {
+            val mock = mock<SuspendFunctions>()
             val value = Closed()
-            mock<Methods>().apply {
-                runTest {
-                    coroutinesClosed(value)
-                    verify(this@apply).coroutinesClosed(eq(value))
-                }
-            }
+
+            mock.closed(value)
+
+            verify(mock).closed(eq(value))
         }
 
         @Test
         fun eqClassArray() {
             val value = arrayOf(Closed())
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedArray(value)
                 verify(this).closedArray(eq(value))
             }
@@ -581,7 +579,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqNullableClassArray() {
             val value = arrayOf(Closed(), null)
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedNullableArray(value)
                 verify(this).closedNullableArray(eq(value))
             }
@@ -590,7 +588,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqValueClass() {
             val valueClass = ValueClass("Content")
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 valueClass(valueClass)
                 verify(this).valueClass(eq(valueClass))
             }
@@ -599,7 +597,7 @@ class MatchersTest : TestBase() {
         @Test
         fun eqNestedValueClass() {
             val nestedValueClass = NestedValueClass(ValueClass("Content"))
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nestedValueClass(nestedValueClass)
                 verify(this).nestedValueClass(eq(nestedValueClass))
             }
@@ -609,7 +607,7 @@ class MatchersTest : TestBase() {
     class OtherMatchersTest {
         @Test
         fun listArgThat() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
                 verify(this).closedList(
                     argThat {
@@ -621,7 +619,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun listArgForWhich() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
                 verify(this).closedList(
                     argForWhich {
@@ -633,7 +631,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun listArgWhere() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
                 verify(this).closedList(
                     argWhere {
@@ -645,7 +643,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun listArgCheck() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
                 verify(this).closedList(
                     check {
@@ -657,7 +655,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun checkProperlyFails() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
 
                 expectErrorWithMessage("Argument(s) are different!") on {
@@ -672,7 +670,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun checkWithNullArgument_throwsError() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString(null)
 
                 expectErrorWithMessage("null").on {
@@ -683,7 +681,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun isA_withNonNullableString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 string("")
                 verify(this).string(isA<String>())
             }
@@ -691,7 +689,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun isA_withNullableString() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString("")
                 verify(this).nullableString(isA<String>())
             }
@@ -699,7 +697,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun same_withNonNullArgument() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 string("")
                 verify(this).string(same(""))
             }
@@ -707,7 +705,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun same_withNullableNonNullArgument() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString("")
                 verify(this).nullableString(same(""))
             }
@@ -715,7 +713,7 @@ class MatchersTest : TestBase() {
 
         @Test
         fun same_withNullArgument() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 nullableString(null)
                 verify(this).nullableString(same(null))
             }
@@ -724,7 +722,7 @@ class MatchersTest : TestBase() {
         @Test
         fun testVarargAnySuccess() {
             /* Given */
-            val t = mock<Methods>()
+            val t = mock<SynchronousFunctions>()
             // a matcher to check if any of the varargs was equals to "b"
             val matcher = VarargAnyMatcher({ "b" == it }, String::class.java, true, false)
 
@@ -738,7 +736,7 @@ class MatchersTest : TestBase() {
         @Test
         fun testVarargAnyFail() {
             /* Given */
-            val t = mock<Methods>()
+            val t = mock<SynchronousFunctions>()
             // a matcher to check if any of the varargs was equals to "d"
             val matcher = VarargAnyMatcher({ "d" == it }, String::class.java, true, false)
 
@@ -752,7 +750,7 @@ class MatchersTest : TestBase() {
         /** https://github.com/nhaarman/mockito-kotlin/issues/328 */
         @Test
         fun testRefEqForNonNullableParameter() {
-            mock<Methods>().apply {
+            mock<SynchronousFunctions>().apply {
                 /* When */
                 val array = intArrayOf(2, 3)
                 intArray(array)

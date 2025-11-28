@@ -42,11 +42,9 @@ open class Open {
 
 class Closed
 
-interface Methods {
-
+interface SynchronousFunctions {
     fun closed(c: Closed)
     fun classClosed(c: Class<Closed>)
-    suspend fun coroutinesClosed(c: Closed)
     fun closedArray(a: Array<Closed>)
     fun closedNullableArray(a: Array<Closed?>)
     fun closedCollection(c: Collection<Closed>)
@@ -77,10 +75,8 @@ interface Methods {
     fun stringResult(): String
     fun stringResult(s: String): String
     fun nullableStringResult(): String?
-    fun builderMethod(): Methods
+    fun builderMethod(): SynchronousFunctions
     fun varargBooleanResult(vararg values: String): Boolean
-    suspend fun coroutinesClosedBooleanResult(c: Closed): Boolean
-    suspend fun coroutinesClassClosedBooleanResult(c: Class<Closed>): Boolean
     fun stringArray(a: Array<String>)
     fun argAndVararg(s: String, vararg a: String)
 
@@ -89,6 +85,12 @@ interface Methods {
     fun valueClass(v: ValueClass)
     fun nullableValueClass(v: ValueClass?)
     fun nestedValueClass(v: NestedValueClass)
+}
+
+interface SuspendFunctions {
+    suspend fun closed(c: Closed)
+    suspend fun closedBooleanResult(c: Closed): Boolean
+    suspend fun classClosedBooleanResult(c: Class<Closed>): Boolean
 }
 
 @JvmInline

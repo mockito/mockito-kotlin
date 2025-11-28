@@ -32,7 +32,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub builder method returning mock itself`() {
         /* Given */
-        val mock = mock<Methods> { mock ->
+        val mock = mock<SynchronousFunctions> { mock ->
             on { builderMethod() } doReturn mock
         }
 
@@ -46,7 +46,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub function call with nullable result`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { nullableStringResult() } doReturn "Test"
         }
 
@@ -60,7 +60,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should throw exception instance on function call`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() } doThrow IllegalArgumentException()
         }
 
@@ -75,7 +75,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should throw exception class on function call`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() } doThrow IllegalArgumentException::class
         }
 
@@ -90,7 +90,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should throw exception instances on consecutive function calls`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() }.doThrow(
                   IllegalArgumentException(),
                   UnsupportedOperationException()
@@ -115,7 +115,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should throw exception classes on consecutive function calls`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() }.doThrow(
                   IllegalArgumentException::class,
                   UnsupportedOperationException::class
@@ -140,7 +140,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub function call with result from lambda`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult() } doAnswer { "result" }
         }
 
@@ -155,7 +155,7 @@ class OngoingStubbingTest : TestBase() {
     fun `should stub function call with result from an answer instance`() {        /* Given */
         /* Given */
         val answer = Answer { "result" }
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult() } doAnswer answer
         }
 
@@ -169,7 +169,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub builder method returning mock itself via answer`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { builderMethod() } doAnswer Mockito.RETURNS_SELF
         }
 
@@ -183,7 +183,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub function call with result from lambda with argument`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
         }
 
@@ -197,7 +197,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub function call with result from lambda with deconstructed argument`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
         }
 
@@ -211,7 +211,7 @@ class OngoingStubbingTest : TestBase() {
     @Test
     fun `should stub function call with result from lambda with deconstructed arguments`() {
         /* Given */
-        val mock = mock<Methods> {
+        val mock = mock<SynchronousFunctions> {
             on { varargBooleanResult(any(), any()) } doAnswer { (a: String, b: String) ->
                 a == b.trim()
             }
