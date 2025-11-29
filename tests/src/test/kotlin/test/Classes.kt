@@ -98,6 +98,9 @@ interface SynchronousFunctions {
     fun valueClass(v: ValueClass)
     fun nullableValueClass(v: ValueClass?)
     fun nestedValueClass(v: NestedValueClass)
+    fun valueClassResult(): ValueClass
+    fun nullableValueClassResult(): ValueClass?
+    fun nestedValueClassResult(): NestedValueClass
 }
 
 interface SuspendFunctions {
@@ -110,6 +113,9 @@ interface SuspendFunctions {
     suspend fun stringResult(s: String): String
     suspend fun stringResult(s1: String, s2: String): String
     suspend fun nullableStringResult(): String?
+    suspend fun valueClassResult(): ValueClass
+    suspend fun nullableValueClassResult(): ValueClass?
+    suspend fun nestedValueClassResult(): NestedValueClass
     suspend fun builderMethod(): SuspendFunctions
 }
 

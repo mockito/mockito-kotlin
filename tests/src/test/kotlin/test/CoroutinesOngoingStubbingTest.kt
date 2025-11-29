@@ -1,6 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Ignore
@@ -10,6 +11,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.stubbing.Answer
@@ -279,5 +281,60 @@ class CoroutinesOngoingStubbingTest {
 
         /* Then */
         expect(result).toBe("apple + banana")
+    }
+
+    @Test
+    fun `should stub suspendable function call with value class result`() = runTest {
+        /* Given */
+        val valueClass = ValueClass("A")
+        val mock = mock<SuspendFunctions> {
+            on(mock.valueClassResult()) doSuspendableAnswer {
+                delay(1)
+                valueClass
+            }
+        }
+
+        /* When */
+        val result: ValueClass = mock.valueClassResult()
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
+    @Test
+    fun `should stub suspendable function call with nullable value class result`() = runTest {
+        /* Given */
+        val valueClass = ValueClass("A")
+        val mock = mock<SuspendFunctions> {
+            on (mock.nullableValueClassResult()) doSuspendableAnswer {
+                delay(1)
+                valueClass
+            }
+        }
+
+        /* When */
+        val result: ValueClass? = mock.nullableValueClassResult()
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
+    @Test
+    fun `should stub suspendable function call with nested value class result`() = runTest {
+        /* Given */
+        val nestedValueClass = NestedValueClass(ValueClass("A"))
+        val mock = mock<SuspendFunctions> {
+            on (mock.nestedValueClassResult()) doSuspendableAnswer {
+                delay(1)
+                nestedValueClass
+            }
+        }
+
+        /* When */
+        val result: NestedValueClass = mock.nestedValueClassResult()
+
+        /* Then */
+        expect(result).toBe(nestedValueClass)
+        expect(result.value).toBe(nestedValueClass.value)
     }
 }

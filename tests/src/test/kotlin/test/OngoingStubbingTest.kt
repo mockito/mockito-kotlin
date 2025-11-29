@@ -272,6 +272,70 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub function call with value class result`() {
+        /* Given */
+        val valueClass = ValueClass("A")
+        val mock = mock<SynchronousFunctions> {
+            on { valueClassResult() } doReturn valueClass
+        }
+
+        /* When */
+        val result: ValueClass = mock.valueClassResult()
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable value class result`() {
+        /* Given */
+        val valueClass = ValueClass("A")
+        val mock = mock<SynchronousFunctions> {
+            on { nullableValueClassResult() } doReturn valueClass
+        }
+
+        /* When */
+        val result: ValueClass? = mock.nullableValueClassResult()
+
+        /* Then */
+        expect(result).toBe(valueClass)
+    }
+
+    @Test
+    fun `should stub function call with nested value class result`() {
+        /* Given */
+        val nestedValueClass = NestedValueClass(ValueClass("A"))
+        val mock = mock<SynchronousFunctions> {
+            on { nestedValueClassResult() } doReturn nestedValueClass
+        }
+
+        /* When */
+        val result: NestedValueClass = mock.nestedValueClassResult()
+
+        /* Then */
+        expect(result).toBe(nestedValueClass)
+        expect(result.value).toBe(nestedValueClass.value)
+    }
+
+    @Test
+    fun `should stub consecutive function calls with value class results`() {
+        /* Given */
+        val valueClassA = ValueClass("A")
+        val valueClassB = ValueClass("B")
+        val mock = mock<SynchronousFunctions> {
+            on { valueClassResult() }.doReturnConsecutively(listOf(valueClassA, valueClassB))
+        }
+
+        /* When */
+        val result1 = mock.valueClassResult()
+        val result2 = mock.valueClassResult()
+
+        /* Then */
+        expect(result1).toBe(valueClassA)
+        expect(result2).toBe(valueClassB)
+    }
+
+    @Test
     fun doReturn_throwsNPE() {
         assumeFalse(mockMakerInlineEnabled())
         expectErrorWithMessage("look at the stack trace below") on {
