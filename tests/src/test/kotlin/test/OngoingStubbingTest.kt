@@ -29,6 +29,64 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub consecutive function calls`() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() }.doReturn ("A", "B", "C")
+        }
+
+        /* When */
+        val result =(1..3).map { _ ->
+            mock.stringResult()
+        }
+
+        /* Then */
+        expect(result).toBe(listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `should stub consecutive function calls by a list of answers`() {
+        /* Given */
+        val mock = mock<Open> {
+            on { stringResult() } doReturnConsecutively listOf("A", "B", "C")
+        }
+
+        /* When */
+        val result =(1..3).map { _ ->
+            mock.stringResult()
+        }
+
+        /* Then */
+        expect(result).toBe(listOf("A", "B", "C"))
+    }
+
+    @Test
+    fun `should stub builder method returning mock itself via answer`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> {
+            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
+        }
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBe(mock)
+    }
+
+    @Test
+    fun `should stub builder method returning mock itself via defaultAnswer`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions>(defaultAnswer = Mockito.RETURNS_SELF)
+
+        /* When */
+        val result = mock.builderMethod()
+
+        /* Then */
+        expect(result).toBeTheSameAs(mock)
+    }
+
+    @Test
     fun `should stub builder method returning mock itself`() {
         /* Given */
         val mock = mock<SynchronousFunctions> { mock ->
@@ -150,20 +208,6 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun `should stub builder method returning mock itself via answer`() {
-        /* Given */
-        val mock = mock<SynchronousFunctions> {
-            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
-        }
-
-        /* When */
-        val result = mock.builderMethod()
-
-        /* Then */
-        expect(result).toBe(mock)
-    }
-
-    @Test
     fun `should stub function call with result from lambda with argument`() {
         /* Given */
         val mock = mock<SynchronousFunctions> {
@@ -205,18 +249,6 @@ class OngoingStubbingTest : TestBase() {
 
         /* Then */
         expect(result).toBe(true)
-    }
-
-    @Test
-    fun `should stub consecutive function calls by a list of answers`() {
-        /* Given */
-        val mock = mock<Open> {
-            on { stringResult() } doReturnConsecutively listOf("a", "b")
-        }
-
-        /* Then */
-        expect(mock.stringResult()).toBe("a")
-        expect(mock.stringResult()).toBe("b")
     }
 
     @Test
