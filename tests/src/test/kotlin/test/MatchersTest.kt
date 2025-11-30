@@ -238,7 +238,7 @@ class MatchersTest : TestBase() {
         @Test
         fun anyVarargMatching() {
             mock<SynchronousFunctions>().apply {
-                whenever(varargBooleanResult(anyVararg())).thenReturn(true)
+                whenever { varargBooleanResult(anyVararg()) }.thenReturn(true)
                 expect(varargBooleanResult()).toBe(true)
             }
         }
@@ -727,7 +727,7 @@ class MatchersTest : TestBase() {
             val matcher = VarargAnyMatcher({ "b" == it }, String::class.java, true, false)
 
             /* When */
-            whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
+            whenever { t.varargBooleanResult(argThat(matcher)) }.thenAnswer(matcher)
 
             /* Then */
             expect(t.varargBooleanResult("a", "b", "c")).toBe(true)
@@ -741,7 +741,7 @@ class MatchersTest : TestBase() {
             val matcher = VarargAnyMatcher({ "d" == it }, String::class.java, true, false)
 
             /* When */
-            whenever(t.varargBooleanResult(argThat(matcher))).thenAnswer(matcher)
+            whenever { t.varargBooleanResult(argThat(matcher)) }.thenAnswer(matcher)
 
             /* Then */
             expect(t.varargBooleanResult("a", "b", "c")).toBe(false)

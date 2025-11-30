@@ -40,7 +40,7 @@ internal class SuspendableAnswer<T>(
     private val body: suspend (KInvocationOnMock) -> T?
 ) : Answer<T> {
     override fun answer(invocation: InvocationOnMock?): T {
-        //all suspend functions/lambdas has Continuation as the last argument.
+        //all suspendable functions/lambdas have Continuation as the last argument.
         //InvocationOnMock does not see last argument
         val rawInvocation = invocation as InterceptedInvocation
         val continuation = rawInvocation.rawArguments.last() as Continuation<T?>
