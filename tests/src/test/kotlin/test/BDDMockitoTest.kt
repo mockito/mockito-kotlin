@@ -120,7 +120,7 @@ class BDDMockitoTest {
     fun then() {
         /* Given */
         val mock = mock<SynchronousFunctions>()
-        whenever(mock.stringResult()).thenReturn("Test")
+        whenever { mock.stringResult() }.thenReturn("Test")
 
         /* When */
         mock.stringResult()
