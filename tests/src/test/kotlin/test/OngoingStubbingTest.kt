@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import kotlinx.coroutines.runBlocking
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
@@ -125,16 +126,7 @@ class OngoingStubbingTest : TestBase() {
         assertThrows<IllegalArgumentException> {
             mock.builderMethod()
         }
-    }
-
-    @Test
-    fun `should throw exception class on function call`() {
-        /* Given */
-        val mock = mock<SynchronousFunctions> {
-            on { builderMethod() } doThrow IllegalArgumentException::class
-        }
-
-        /* When, Then */
+        // any consecutive call should throw the last specified exception
         assertThrows<IllegalArgumentException> {
             mock.builderMethod()
         }
@@ -157,6 +149,27 @@ class OngoingStubbingTest : TestBase() {
         assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
         }
+        // any consecutive call should throw the last specified exception
+        assertThrows<UnsupportedOperationException> {
+            mock.builderMethod()
+        }
+    }
+
+    @Test
+    fun `should throw exception class on function call`() {
+        /* Given */
+        val mock = mock<SynchronousFunctions> {
+            on { builderMethod() } doThrow IllegalArgumentException::class
+        }
+
+        /* When, Then */
+        assertThrows<IllegalArgumentException> {
+            mock.builderMethod()
+        }
+        // any consecutive call should throw the last specified exception
+        assertThrows<IllegalArgumentException> {
+            mock.builderMethod()
+        }
     }
 
     @Test
@@ -173,6 +186,10 @@ class OngoingStubbingTest : TestBase() {
         assertThrows<IllegalArgumentException> {
             mock.builderMethod()
         }
+        assertThrows<UnsupportedOperationException> {
+            mock.builderMethod()
+        }
+        // any consecutive call should throw the last specified exception
         assertThrows<UnsupportedOperationException> {
             mock.builderMethod()
         }
@@ -252,10 +269,10 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun `should stub function call with integer result`() {
+    fun `should stub generics function call with explicit generics type`() {
         /* Given */
         val mock = mock<GenericMethods<Int>> {
-            onGeneric { genericMethod() } doReturn 2
+            onGeneric({ genericMethod() }, Int::class) doReturn 2
         }
 
         /* Then */
@@ -263,12 +280,31 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun `should stub nullable function call with string result`() {
-        val m = mock<GenericMethods<String>> {
-            onGeneric { nullableReturnType() } doReturn "Test"
+    fun `should stub nullable generics function call with string result`() {
+        /* Given */
+        val mock = mock<GenericMethods<String>> {
+            on { nullableReturnType() } doReturn "Test"
         }
 
-        expect(m.nullableReturnType()).toBe("Test")
+        /* When */
+        val result = mock.nullableReturnType()
+
+        /* Then */
+        expect(result).toBe("Test")
+    }
+
+    @Test
+    fun `should stub suspendable generics function call with integer result`() {
+        /* Given */
+        val mock = mock<GenericMethods<Int>> {
+            on { suspendableGenericMethod() } doReturn 2
+        }
+
+        /* When */
+        val result = runBlocking { mock.suspendableGenericMethod() }
+
+        /* Then */
+        expect(result).toBe(2)
     }
 
     @Test
@@ -353,7 +389,7 @@ class OngoingStubbingTest : TestBase() {
         val valueClassA = ValueClass("A")
         val valueClassB = ValueClass("B")
         val mock = mock<SynchronousFunctions> {
-            on { valueClassResult() }.doReturnConsecutively(listOf(valueClassA, valueClassB))
+            on { valueClassResult() } doReturnConsecutively listOf(valueClassA, valueClassB)
         }
 
         /* When */

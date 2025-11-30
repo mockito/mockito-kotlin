@@ -27,56 +27,345 @@ package org.mockito.kotlin
 
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
-import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.internal.SuspendableAnswer
-import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 import kotlin.reflect.KClass
 
-fun <T> doAnswer(answer: (InvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer { answer(it) }!!
+/**
+ * Sets a generic answer, specified with a lambda, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doAnswer { "result" }.whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doAnswer].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param answer to answer to apply when the stubbed method/function is called.
+ * @return Stubber object used to stub fluently.
+ */
+fun <T> doAnswer(answer: (KInvocationOnMock) -> T?): Stubber {
+    return Mockito.doAnswer { answer.invoke(KInvocationOnMock(it)) }
 }
 
+/**
+ * Sets a generic answer, specified with a suspendable lambda, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doSuspendableAnswer {
+ *          delay(1)
+ *          "result"
+ *      }.whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doAnswer], this function will also wrap
+ * the answer lambda in a SuspendableAnswer object, to wire the suspendable lambda properly
+ * into the Kotlin's coroutine context on invocation of the stubbed suspendable function.
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param answer to answer to apply when the stubbed method/function is called.
+ * @return Stubber object used to stub fluently.
+ */
 fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): Stubber {
     return Mockito.doAnswer(SuspendableAnswer(answer))
 }
 
+/**
+ * Sets to call the real implementation of a method in a mock, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doCallRealMethod().whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doCallRealMethod].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @return Stubber object used to stub fluently.
+ */
 fun doCallRealMethod(): Stubber {
     return Mockito.doCallRealMethod()!!
 }
 
+/**
+ * Sets to do nothing, to be applied in reverse stubbing.
+ * This comes handy is some rare cases, like:
+ *  - stubbing consecutive calls with different behavior
+ *  - when spying a real object, suppress the real implementation of the spied object
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doNothing().whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doNothing].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @return Stubber object used to stub fluently.
+ */
 fun doNothing(): Stubber {
-    return Mockito.doNothing()!!
+    return Mockito.doNothing()
 }
-
-fun doReturn(value: Any?): Stubber {
-    return Mockito.doReturn(value)!!
-}
-
-fun doReturn(toBeReturned: Any?, vararg toBeReturnedNext: Any?): Stubber {
-    return Mockito.doReturn(
-          toBeReturned,
-          *toBeReturnedNext
-    )!!
-}
-
-fun doThrow(toBeThrown: KClass<out Throwable>): Stubber {
-    return Mockito.doThrow(toBeThrown.java)!!
-}
-
-fun doThrow(vararg toBeThrown: Throwable): Stubber {
-    return Mockito.doThrow(*toBeThrown)!!
-}
-
-fun <T> Stubber.whenever(mock: T) = `when`(mock)
 
 /**
- * Alias for when with suspending function
+ * Sets to return the given value, to be applied in reverse stubbing.
  *
- * Warning: Only one method call can be stubbed in the function.
- * Subsequent method calls are ignored!
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doReturn(10).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doReturn].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param value return value for the method/function invocation.
+ * @return Stubber object used to stub fluently.
  */
-fun <T> Stubber.wheneverBlocking(mock: T, f: suspend T.() -> Unit) {
-    val m = whenever(mock)
-    runBlocking { m.f() }
+fun doReturn(value: Any?): Stubber {
+    return Mockito.doReturn(value)
+}
+
+/**
+ * Sets to return the given values on consecutive invocations, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doReturn(10, 20).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doReturn].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param value return value for the first method/function invocation.
+ * @param values return values for the next method/function invocations.
+ * @return Stubber object used to stub fluently.
+ */
+fun doReturn(value: Any?, vararg values: Any?): Stubber {
+    return Mockito.doReturn(value, *values)
+}
+
+/**
+ * Sets a Throwable to be thrown, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doThrow(IllegalArgumentException()).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doThrow].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param throwable to be thrown on the method/function invocation.
+ * @return Stubber object used to stub fluently.
+ */
+fun doThrow(throwable: Throwable): Stubber {
+    return Mockito.doThrow(throwable)
+}
+
+/**
+ * Sets Throwables to be thrown consecutively, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doThrow(RuntimeException(), IOException()).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doThrow].
+ *
+ * You can specify [throwables] to be thrown for consecutive invocations.
+ * In that case the last throwable determines the behavior of further consecutive invocations.
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param throwable to be thrown on the first method/function invocation.
+ * @param throwables to be thrown on the next method/function invocations.
+ * @return Stubber object used to stub fluently.
+ */
+fun doThrow(throwable: Throwable, vararg throwables: Throwable): Stubber {
+    return Mockito.doThrow(throwable, *throwables)
+}
+
+/**
+ * Sets a Throwable types to be thrown, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doThrow(IllegalArgumentException::class).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doThrow].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param throwableType to be thrown on the method/function invocation.
+ * @return Stubber object used to stub fluently.
+ */
+fun doThrow(throwableType: KClass<out Throwable>): Stubber {
+    return Mockito.doThrow(throwableType.java)
+}
+
+/**
+ * Sets a Throwable types to be thrown consecutively, to be applied in reverse stubbing.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doThrow(IllegalArgumentException::class, NullPointerException::class)
+ *          .whenever(mock)
+ *          .someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doThrow].
+ *
+ * You can specify [throwableTypes] to be thrown for consecutive invocations.
+ * In that case the last throwable type determines the behavior of further consecutive invocations.
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param throwableType to be thrown on the first method/function invocation.
+ * @param throwableTypes to be thrown on the next method/function invocations.
+ * @return Stubber object used to stub fluently.
+ */
+fun doThrow(throwableType: KClass<out Throwable>, vararg throwableTypes: KClass<out Throwable>): Stubber {
+    return Mockito.doThrow(
+        throwableType.java,
+        *throwableTypes.map { it.java }.toTypedArray()
+    )
+}
+
+/**
+ * Sets the mock to apply the reverse stubbing on.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doReturn(10).whenever(mock).someMethod()
+ * ```
+ *
+ * This function acts as an alias for Mockito's [Mockito.doReturn].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param mock the mock to stub the method/function call on.
+ * @return the mock used to stub the method/function call fluently.
+ */
+fun <T> Stubber.whenever(mock: T) = `when`(mock)!!
+
+/**
+ * Sets the mock and the method call to be stubbed.
+ * With this version of whenever you can reverse stub either synchronous as well as suspendable
+ * function calls.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doReturn(10).whenever(mock) { someMethod() }
+ * ```
+ * Warning: Only one method call can be stubbed in the function. Subsequent method calls are ignored!
+ *
+ * This function acts as an alias for Mockito's [Mockito.`when`].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param mock the mock to stub the method/function call on.
+ * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
+ */
+fun <T> Stubber.whenever(mock: T, methodCall: suspend T.() -> Unit) {
+    whenever(mock).let {
+        runBlocking { it.methodCall() }
+    }
+}
+
+/**
+ * Sets the mock and the method call to be stubbed.
+ * With this version of whenever you can reverse stub either synchronous as well as suspendable
+ * function calls.
+ *
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
+ * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
+ * problems in case of void methods (or Unit functions): the java compiler does not like void
+ * methods inside brackets...
+ *
+ * Example:
+ * ```kotlin
+ *      doReturn(10).wheneverBlocking(mock) { someMethod() }
+ * ```
+ * Warning: Only one method call can be stubbed in the function. Subsequent method calls are ignored!
+ *
+ * This function is an alias for [whenever].
+ *
+ * See examples in javadoc for [Mockito] class
+ *
+ * @param mock the mock to stub the method/function call on.
+ * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
+ */
+@Deprecated("Use whenever(mock) { methodCall() } instead")
+fun <T> Stubber.wheneverBlocking(mock: T, methodCall: suspend T.() -> Unit) {
+    whenever(mock, methodCall)
 }

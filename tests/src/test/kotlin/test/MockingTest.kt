@@ -78,7 +78,7 @@ class MockingTest : TestBase() {
     @Test
     fun deepStubs() {
         val cal: Calendar = mock(defaultAnswer = Mockito.RETURNS_DEEP_STUBS)
-        whenever(cal.time.time).thenReturn(123L)
+        whenever { cal.time.time }.thenReturn(123L)
         expect(cal.time.time).toBe(123L)
     }
 
@@ -99,10 +99,10 @@ class MockingTest : TestBase() {
     @Test
     fun testMockStubbing_normalOverridesLambda() {
         /* Given */
-        val mock = mock<Open>() {
-            on { stringResult() }.doReturn("A")
+        val mock = mock<Open> {
+            on { stringResult() } doReturn "A"
         }
-        whenever(mock.stringResult()).thenReturn("B")
+        whenever { mock.stringResult() }.thenReturn("B")
 
         /* When */
         val result = mock.stringResult()
@@ -325,7 +325,7 @@ class MockingTest : TestBase() {
     fun mockSuspendFunction_withClosedBooleanReturn_name() = runTest {
         /* Given */
         val mock = mock<SuspendFunctions>(name = "myName") {
-            onBlocking { closedBooleanResult(any()) } doReturn true
+            on { closedBooleanResult(any()) } doReturn true
         }
 
         /* When */
@@ -339,7 +339,7 @@ class MockingTest : TestBase() {
     fun mockSuspendFunction_withClassClosedBooleanReturn_name() = runTest {
         /* Given */
         val mock = mock<SuspendFunctions>(name = "myName") {
-            onBlocking { classClosedBooleanResult(any()) } doReturn true
+            on { classClosedBooleanResult(any()) } doReturn true
         }
 
         /* When */
@@ -464,7 +464,7 @@ class MockingTest : TestBase() {
     @Test
     fun mockConstruction_withInitializer() {
         mockConstruction<Open> { mock, _ ->
-            whenever(mock.stringResult()).thenReturn("Hello")
+            whenever { mock.stringResult() }.thenReturn("Hello")
         }.use {
             val open = Open()
 

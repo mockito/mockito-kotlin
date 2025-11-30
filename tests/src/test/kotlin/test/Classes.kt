@@ -166,6 +166,7 @@ abstract class NonThrowingConstructorWithArgument {
 interface GenericMethods<T> {
     fun genericMethod(): T
     fun nullableReturnType(): T?
+    suspend fun suspendableGenericMethod(): T
 }
 
 class ThrowableClass(cause: Throwable) : Throwable(cause)
