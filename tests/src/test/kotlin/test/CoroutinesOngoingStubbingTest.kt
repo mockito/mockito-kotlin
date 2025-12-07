@@ -9,6 +9,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doCallRealMethod
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doSuspendableAnswer
@@ -288,7 +289,8 @@ class CoroutinesOngoingStubbingTest {
         /* Given */
         val valueClass = ValueClass("A")
         val mock = mock<SuspendFunctions> {
-            on(mock.valueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on (mock.valueClassResult()) doReturn valueClass"
+            on (mock.valueClassResult()) doSuspendableAnswer {
                 delay(1)
                 valueClass
             }
@@ -302,36 +304,38 @@ class CoroutinesOngoingStubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call with nullable value class result`() = runTest {
+    fun `should stub suspendable function call with nullable value class result`() {
         /* Given */
         val valueClass = ValueClass("A")
         val mock = mock<SuspendFunctions> {
-            on (mock.nullableValueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on { nullableValueClassResult() } doReturn valueClass"
+            on { nullableValueClassResult() } doSuspendableAnswer {
                 delay(1)
                 valueClass
             }
         }
 
         /* When */
-        val result: ValueClass? = mock.nullableValueClassResult()
+        val result: ValueClass? = runBlocking { mock.nullableValueClassResult() }
 
         /* Then */
         expect(result).toBe(valueClass)
     }
 
     @Test
-    fun `should stub suspendable function call with nested value class result`() = runTest {
+    fun `should stub suspendable function call with nested value class result`() {
         /* Given */
         val nestedValueClass = NestedValueClass(ValueClass("A"))
         val mock = mock<SuspendFunctions> {
-            on (mock.nestedValueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on { nestedValueClassResult() } doReturn nestedValueClass"
+            on { nestedValueClassResult() } doSuspendableAnswer {
                 delay(1)
                 nestedValueClass
             }
         }
 
         /* When */
-        val result: NestedValueClass = mock.nestedValueClassResult()
+        val result: NestedValueClass = runBlocking { mock.nestedValueClassResult() }
 
         /* Then */
         expect(result).toBe(nestedValueClass)
@@ -372,5 +376,31 @@ class CoroutinesOngoingStubbingTest {
 
         /* Then */
         expect(result).toBe(primitiveValueClass)
+    }
+
+    @Test
+    fun `should stub consecutive suspendable function call with value class results`() {
+        /* Given */
+        val valueClassA = ValueClass("A")
+        val valueClassB = ValueClass("B")
+        val mock = mock<SuspendFunctions> {
+            // TODO: simplify to "on { valueClassResult() }.doReturnConsecutively(valueClassA, valueClassB)"
+            on { valueClassResult() } doSuspendableAnswer {
+                delay(1)
+                valueClassA
+            } doSuspendableAnswer {
+                delay(1)
+                valueClassB
+            }
+        }
+
+        /* When */
+        val (result1, result2) = runBlocking {
+            mock.valueClassResult() to mock.valueClassResult()
+        }
+
+        /* Then */
+        expect(result1).toBe(valueClassA)
+        expect(result2).toBe(valueClassB)
     }
 }
