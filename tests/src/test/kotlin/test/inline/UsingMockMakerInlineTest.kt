@@ -74,7 +74,7 @@ class UsingMockMakerInlineTest {
     fun mockClosedFunction_mockStubbing() {
         /* Given */
         val mock = mock<ClassToBeMocked> {
-            on { doSomethingElse(any()) } doReturn (BigInteger.ONE)
+            on { doSomethingElse(any()) } doReturn BigInteger.ONE
         }
 
         /* When */
@@ -88,7 +88,7 @@ class UsingMockMakerInlineTest {
     fun mockClosedFunction_whenever() {
         /* Given */
         val mock = mock<ClassToBeMocked>()
-        whenever(mock.doSomethingElse(any())).doReturn(BigInteger.ONE)
+        whenever { mock.doSomethingElse(any()) } doReturn BigInteger.ONE
 
         /* When */
         val result = mock.doSomethingElse(BigInteger.TEN)
