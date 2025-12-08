@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.kotlin.*
 import java.util.*
@@ -381,5 +382,37 @@ class ArgumentCaptorTest : TestBase() {
         val captor = nullableArgumentCaptor<ValueClass>()
         verify(m).nullableValueClass(captor.capture())
         expect(captor.firstValue).toBeNull()
+    }
+
+    @Test
+    @Ignore("See issue #555")
+    fun argumentCaptor_primitive_value_class() {
+        /* Given */
+        val m: SynchronousFunctions = mock()
+        val valueClass = PrimitiveValueClass(123)
+
+        /* When */
+        m.primitiveValueClass(valueClass)
+
+        /* Then */
+        val captor = argumentCaptor<PrimitiveValueClass>()
+        verify(m).primitiveValueClass(captor.capture())
+        expect(captor.firstValue).toBe(valueClass)
+    }
+
+    @Test
+    @Ignore("See issue #555")
+    fun argumentCaptor_nullable_primitive_value_class() {
+        /* Given */
+        val m: SynchronousFunctions = mock()
+        val valueClass = PrimitiveValueClass(123)
+
+        /* When */
+        m.nullablePrimitiveValueClass(valueClass)
+
+        /* Then */
+        val captor = argumentCaptor<PrimitiveValueClass>()
+        verify(m).nullablePrimitiveValueClass(captor.capture())
+        expect(captor.firstValue).toBe(valueClass)
     }
 }

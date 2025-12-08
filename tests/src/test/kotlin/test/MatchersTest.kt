@@ -3,6 +3,7 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import kotlinx.coroutines.test.runTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
@@ -615,6 +616,25 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 valueClass(valueClass)
                 verify(this).valueClass(eq(valueClass))
+            }
+        }
+
+        @Test
+        fun eqNullableValueClass() {
+            val valueClass = ValueClass("Content")
+            mock<SynchronousFunctions>().apply {
+                nullableValueClass(valueClass)
+                verify(this).nullableValueClass(eq(valueClass))
+            }
+        }
+
+        @Test
+        @Ignore("See issue #555")
+        fun eqNullablePrimitiveValueClass() {
+            val valueClass = PrimitiveValueClass(123)
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(valueClass)
+                verify(this).nullablePrimitiveValueClass(eq(valueClass))
             }
         }
 
