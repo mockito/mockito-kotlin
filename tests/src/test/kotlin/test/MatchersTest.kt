@@ -202,6 +202,14 @@ class MatchersTest : TestBase() {
         }
 
         @Test
+        fun anyPrimitiveValueClass() {
+            mock<SynchronousFunctions>().apply {
+                primitiveValueClass(PrimitiveValueClass(123))
+                verify(this).primitiveValueClass(any())
+            }
+        }
+
+        @Test
         fun anyNeverVerifiesForNullValue() {
             mock<SynchronousFunctions>().apply {
                 nullableString(null)
@@ -381,6 +389,22 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 nullableValueClass(null)
                 verify(this).nullableValueClass(anyOrNull())
+            }
+        }
+
+        @Test
+        fun anyOrNullNullablePrimitiveValueClass() {
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(PrimitiveValueClass(123))
+                verify(this).nullablePrimitiveValueClass(anyOrNull())
+            }
+        }
+
+        @Test
+        fun anyOrNullNullablePrimitiveValueClassNullValue() {
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(null)
+                verify(this).nullablePrimitiveValueClass(anyOrNull())
             }
         }
     }
