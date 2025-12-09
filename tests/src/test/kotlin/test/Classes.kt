@@ -101,6 +101,8 @@ interface SynchronousFunctions {
     fun valueClassResult(): ValueClass
     fun nullableValueClassResult(): ValueClass?
     fun nestedValueClassResult(): NestedValueClass
+    fun primitiveValueClass(v: PrimitiveValueClass)
+    fun nullablePrimitiveValueClass(v: PrimitiveValueClass?)
 }
 
 interface SuspendFunctions {
@@ -124,6 +126,9 @@ value class ValueClass(val content: String)
 
 @JvmInline
 value class NestedValueClass(val value: ValueClass)
+
+@JvmInline
+value class PrimitiveValueClass(val value: Long)
 
 interface ExtraInterface
 

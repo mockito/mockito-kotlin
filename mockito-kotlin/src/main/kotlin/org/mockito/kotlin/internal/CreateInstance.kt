@@ -26,9 +26,16 @@
 package org.mockito.kotlin.internal
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.primaryConstructor
 
 inline fun <reified T : Any> createInstance(): T {
-    return when (T::class) {
+    return createInstance(T::class)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> createInstance(kClass: KClass<T>): T {
+    return when (kClass) {
         Boolean::class -> false as T
         Byte::class -> 0.toByte() as T
         Char::class -> 0.toChar() as T
@@ -37,16 +44,17 @@ inline fun <reified T : Any> createInstance(): T {
         Long::class -> 0L as T
         Float::class -> 0f as T
         Double::class -> 0.0 as T
-        else -> createInstance(T::class)
+        else -> createInstanceNonPrimitive(kClass)
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> createInstance(@Suppress("UNUSED_PARAMETER") kClass: KClass<T>): T {
-    return if(kClass.isValue) {
-                val boxImpl =
-                    kClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
-                boxImpl.invoke(null, castNull()) as T
+private fun <T : Any> createInstanceNonPrimitive(kClass: KClass<T>): T {
+    return if (kClass.isValue) {
+        val boxImpl =
+            kClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
+        val wrappedType = getValueClassWrappedType(kClass)
+        boxImpl.invoke(null, createInstance(wrappedType)) as T
     } else {
         castNull()
     }
@@ -60,3 +68,11 @@ fun <T : Any> createInstance(@Suppress("UNUSED_PARAMETER") kClass: KClass<T>): T
  */
 @Suppress("UNCHECKED_CAST")
 private fun <T> castNull(): T = null as T
+
+private fun getValueClassWrappedType(kClass: KClass<*>): KClass<*> {
+    require(kClass.isValue)
+
+    val primaryConstructor = checkNotNull(kClass.primaryConstructor)
+    val wrappedType = primaryConstructor.parameters.single().type
+    return wrappedType.classifier as KClass<*>
+}

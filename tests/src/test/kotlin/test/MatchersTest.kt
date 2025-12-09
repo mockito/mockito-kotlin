@@ -3,6 +3,7 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import kotlinx.coroutines.test.runTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
@@ -202,6 +203,14 @@ class MatchersTest : TestBase() {
         }
 
         @Test
+        fun anyPrimitiveValueClass() {
+            mock<SynchronousFunctions>().apply {
+                primitiveValueClass(PrimitiveValueClass(123))
+                verify(this).primitiveValueClass(any())
+            }
+        }
+
+        @Test
         fun anyNeverVerifiesForNullValue() {
             mock<SynchronousFunctions>().apply {
                 nullableString(null)
@@ -381,6 +390,22 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 nullableValueClass(null)
                 verify(this).nullableValueClass(anyOrNull())
+            }
+        }
+
+        @Test
+        fun anyOrNullNullablePrimitiveValueClass() {
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(PrimitiveValueClass(123))
+                verify(this).nullablePrimitiveValueClass(anyOrNull())
+            }
+        }
+
+        @Test
+        fun anyOrNullNullablePrimitiveValueClassNullValue() {
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(null)
+                verify(this).nullablePrimitiveValueClass(anyOrNull())
             }
         }
     }
@@ -591,6 +616,25 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 valueClass(valueClass)
                 verify(this).valueClass(eq(valueClass))
+            }
+        }
+
+        @Test
+        fun eqNullableValueClass() {
+            val valueClass = ValueClass("Content")
+            mock<SynchronousFunctions>().apply {
+                nullableValueClass(valueClass)
+                verify(this).nullableValueClass(eq(valueClass))
+            }
+        }
+
+        @Test
+        @Ignore("See issue #555")
+        fun eqNullablePrimitiveValueClass() {
+            val valueClass = PrimitiveValueClass(123)
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(valueClass)
+                verify(this).nullablePrimitiveValueClass(eq(valueClass))
             }
         }
 
