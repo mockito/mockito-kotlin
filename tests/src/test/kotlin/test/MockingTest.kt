@@ -400,6 +400,13 @@ class MockingTest : TestBase() {
     }
 
     @Test
+    fun mockStatic_defaultAnswer_stubbing() {
+        mockStatic<SomeObject>(defaultAnswer = Mockito.CALLS_REAL_METHODS).use {
+            expect(SomeObject.aStaticMethodReturningString()).toBe("Some Value")
+        }
+    }
+
+    @Test
     fun mockConstruction_basic() {
         mockConstruction<Open>().use { mockedConstruction ->
             val open = Open()

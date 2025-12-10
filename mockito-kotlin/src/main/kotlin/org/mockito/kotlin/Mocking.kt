@@ -183,10 +183,13 @@ fun withSettings(
 /**
  * Creates a thread-local mock for static methods on [T].
  *
+ * @param defaultAnswer the default answer when invoking static methods.
  * @see Mockito.mockStatic
  */
-inline fun <reified T> mockStatic(): MockedStatic<T> {
-    return Mockito.mockStatic(T::class.java)
+inline fun <reified T> mockStatic(
+    defaultAnswer: Answer<Any>? = null,
+): MockedStatic<T> {
+    return Mockito.mockStatic(T::class.java, withSettings(defaultAnswer = defaultAnswer))
 }
 
 /**
