@@ -63,8 +63,8 @@ inline fun <reified T : Any> mock(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: UseConstructor? = null,
-    @Incubating outerInstance: Any? = null,
+    useConstructor: UseConstructor? = null,
+    outerInstance: Any? = null,
     @Incubating lenient: Boolean = false
 ): T {
     return Mockito.mock(
@@ -112,8 +112,8 @@ inline fun <reified T : Any> mock(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: UseConstructor? = null,
-    @Incubating outerInstance: Any? = null,
+    useConstructor: UseConstructor? = null,
+    outerInstance: Any? = null,
     @Incubating lenient: Boolean = false,
     stubbing: KStubbing<T>.(T) -> Unit
 ): T {
@@ -163,8 +163,8 @@ fun withSettings(
     verboseLogging: Boolean = false,
     invocationListeners: Array<InvocationListener>? = null,
     stubOnly: Boolean = false,
-    @Incubating useConstructor: UseConstructor? = null,
-    @Incubating outerInstance: Any? = null,
+    useConstructor: UseConstructor? = null,
+    outerInstance: Any? = null,
     @Incubating lenient: Boolean = false
 ): MockSettings = Mockito.withSettings().apply {
     extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
