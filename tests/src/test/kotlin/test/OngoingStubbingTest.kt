@@ -318,6 +318,36 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub function call with primitive value class result`() {
+        /* Given */
+        val primitiveValueClass = PrimitiveValueClass(42)
+        val mock = mock<SynchronousFunctions> {
+            on { primitiveValueClassResult() } doReturn primitiveValueClass
+        }
+
+        /* When */
+        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+
+        /* Then */
+        expect(result).toBe(primitiveValueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable primitive value class result`() {
+        /* Given */
+        val primitiveValueClass = PrimitiveValueClass(42)
+        val mock = mock<SynchronousFunctions> {
+            on { nullablePrimitiveValueClassResult() } doReturn primitiveValueClass
+        }
+
+        /* When */
+        val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+
+        /* Then */
+        expect(result).toBe(primitiveValueClass)
+    }
+
+    @Test
     fun `should stub consecutive function calls with value class results`() {
         /* Given */
         val valueClassA = ValueClass("A")

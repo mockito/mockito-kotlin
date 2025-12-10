@@ -29,6 +29,7 @@ import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
 import org.mockito.kotlin.internal.createInstance
 import kotlin.reflect.KClass
+import kotlin.reflect.typeOf
 
 /** Object argument that is equal to the given value. */
 inline fun <reified T : Any?> eq(value: T): T {
@@ -91,9 +92,15 @@ inline fun <reified T > anyValueClass(): T {
     return boxImpl.invoke(null, ArgumentMatchers.any(boxedType)) as T
 }
 
-inline fun <reified T > eqValueClass(value: T): T {
+inline fun <reified T> eqValueClass(value: T): T {
     require(T::class.isValue) {
         "${T::class.qualifiedName} is not a value class."
+    }
+
+    if (typeOf<T>().isMarkedNullable) {
+        // if the value is both value class and nullable, then Kotlin passes the value class boxed
+        // towards Mockito java code.
+        return ArgumentMatchers.eq(value)
     }
 
     val unboxImpl =

@@ -25,28 +25,30 @@
 
 package org.mockito.kotlin
 
-import org.mockito.kotlin.internal.createInstance
 import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.internal.createInstance
 import java.lang.reflect.Array
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * Creates a [KArgumentCaptor] for given type.
  */
-inline fun <reified T : Any> argumentCaptor(): KArgumentCaptor<T> {
-    return KArgumentCaptor(T::class)
+inline fun <reified T : Any?> argumentCaptor(): KArgumentCaptor<T> {
+    return KArgumentCaptor(typeOf<T>())
 }
 
 /**
  * Creates 2 [KArgumentCaptor]s for given types.
  */
 inline fun <reified A : Any, reified B : Any> argumentCaptor(
-    a: KClass<A> = A::class,
-    b: KClass<B> = B::class
+    @Suppress("unused") a: KClass<A> = A::class,
+    @Suppress("unused") b: KClass<B> = B::class
 ): Pair<KArgumentCaptor<A>, KArgumentCaptor<B>> {
     return Pair(
-        KArgumentCaptor(a),
-        KArgumentCaptor(b)
+        KArgumentCaptor(typeOf<A>()),
+        KArgumentCaptor(typeOf<B>())
     )
 }
 
@@ -54,14 +56,14 @@ inline fun <reified A : Any, reified B : Any> argumentCaptor(
  * Creates 3 [KArgumentCaptor]s for given types.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any> argumentCaptor(
-    a: KClass<A> = A::class,
-    b: KClass<B> = B::class,
-    c: KClass<C> = C::class
+    @Suppress("unused") a: KClass<A> = A::class,
+    @Suppress("unused") b: KClass<B> = B::class,
+    @Suppress("unused") c: KClass<C> = C::class
 ): Triple<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>> {
     return Triple(
-        KArgumentCaptor(a),
-        KArgumentCaptor(b),
-        KArgumentCaptor(c)
+        KArgumentCaptor(typeOf<A>()),
+        KArgumentCaptor(typeOf<B>()),
+        KArgumentCaptor(typeOf<C>())
     )
 }
 
@@ -97,16 +99,16 @@ class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
  * Creates 4 [KArgumentCaptor]s for given types.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> argumentCaptor(
-    a: KClass<A> = A::class,
-    b: KClass<B> = B::class,
-    c: KClass<C> = C::class,
-    d: KClass<D> = D::class
+    @Suppress("unused") a: KClass<A> = A::class,
+    @Suppress("unused") b: KClass<B> = B::class,
+    @Suppress("unused") c: KClass<C> = C::class,
+    @Suppress("unused") d: KClass<D> = D::class
 ): ArgumentCaptorHolder4<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>> {
     return ArgumentCaptorHolder4(
-        KArgumentCaptor(a),
-        KArgumentCaptor(b),
-        KArgumentCaptor(c),
-        KArgumentCaptor(d)
+        KArgumentCaptor(typeOf<A>()),
+        KArgumentCaptor(typeOf<B>()),
+        KArgumentCaptor(typeOf<C>()),
+        KArgumentCaptor(typeOf<D>())
     )
 }
 
@@ -114,18 +116,18 @@ inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> 
  * Creates 4 [KArgumentCaptor]s for given types.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any, reified E : Any> argumentCaptor(
-    a: KClass<A> = A::class,
-    b: KClass<B> = B::class,
-    c: KClass<C> = C::class,
-    d: KClass<D> = D::class,
-    e: KClass<E> = E::class
+    @Suppress("unused") a: KClass<A> = A::class,
+    @Suppress("unused") b: KClass<B> = B::class,
+    @Suppress("unused") c: KClass<C> = C::class,
+    @Suppress("unused") d: KClass<D> = D::class,
+    @Suppress("unused") e: KClass<E> = E::class
 ): ArgumentCaptorHolder5<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>, KArgumentCaptor<E>> {
     return ArgumentCaptorHolder5(
-        KArgumentCaptor(a),
-        KArgumentCaptor(b),
-        KArgumentCaptor(c),
-        KArgumentCaptor(d),
-        KArgumentCaptor(e)
+        KArgumentCaptor(typeOf<A>()),
+        KArgumentCaptor(typeOf<B>()),
+        KArgumentCaptor(typeOf<C>()),
+        KArgumentCaptor(typeOf<D>()),
+        KArgumentCaptor(typeOf<E>())
     )
 }
 
@@ -140,7 +142,7 @@ inline fun <reified T : Any> argumentCaptor(f: KArgumentCaptor<T>.() -> Unit): K
  * Creates a [KArgumentCaptor] for given nullable type.
  */
 inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> {
-    return KArgumentCaptor(T::class)
+    return KArgumentCaptor(typeOf<T>())
 }
 
 /**
@@ -157,17 +159,17 @@ inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
     return captor.capture() ?: createInstance()
 }
 
-class KArgumentCaptor<out T : Any?> (
-    private val tClass: KClass<*>
-) {
+class KArgumentCaptor<out T : Any?>(private val kType: KType) {
+    private val clazz = kType.classifier as KClass<*>
+
     private val captor: ArgumentCaptor<Any?> =
-        if (tClass.isValue) {
+        if (clazz.isValue && !kType.isMarkedNullable) {
             val boxImpl =
-                tClass.java.declaredMethods
+                clazz.java.declaredMethods
                     .single { it.name == "box-impl" && it.parameterCount == 1 }
             boxImpl.parameters[0].type // is the boxed type of the value type
         } else {
-            tClass.java
+            clazz.java
         }.let {
             ArgumentCaptor.forClass(it)
         }
@@ -219,27 +221,29 @@ class KArgumentCaptor<out T : Any?> (
         // In Java, `captor.capture` returns null and so the method is called with `[null]`
         // In Kotlin, we have to create `[null]` explicitly.
         // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
-        return captor.capture() as T ?: if (tClass.java.isArray) {
+        return toKotlinType(captor.capture()) ?: if (clazz.java.isArray) {
             singleElementArray()
         } else {
-            createInstance(tClass)
+            createInstance(clazz)
         } as T
     }
 
-    private fun singleElementArray(): Any? = Array.newInstance(tClass.java.componentType, 1)
+    private fun singleElementArray(): Any? = Array.newInstance(clazz.java.componentType, 1)
 
     @Suppress("UNCHECKED_CAST")
-    private fun toKotlinType(rawCapturedValue: Any?) : T {
-        return if(tClass.isValue) {
-            rawCapturedValue
-                ?.let {
+    private fun toKotlinType(rawCapturedValue: Any?): T {
+        if (rawCapturedValue == null) return null as T
+
+        if (clazz.isValue && rawCapturedValue::class != clazz) {
+            return rawCapturedValue
+                .let {
                     val boxImpl =
-                        tClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
+                        clazz.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
                     boxImpl.invoke(null, it)
                 } as T
-        } else {
-            rawCapturedValue as T
         }
+
+        return rawCapturedValue as T
     }
 }
 

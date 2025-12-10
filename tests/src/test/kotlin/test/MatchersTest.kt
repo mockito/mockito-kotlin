@@ -3,7 +3,6 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import kotlinx.coroutines.test.runTest
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
@@ -629,12 +628,20 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        @Ignore("See issue #555")
-        fun eqNullablePrimitiveValueClass() {
-            val valueClass = PrimitiveValueClass(123)
+        fun eqPrimitiveValueClass() {
+            val primitiveValueClass = PrimitiveValueClass(123)
             mock<SynchronousFunctions>().apply {
-                nullablePrimitiveValueClass(valueClass)
-                verify(this).nullablePrimitiveValueClass(eq(valueClass))
+                primitiveValueClass(primitiveValueClass)
+                verify(this).primitiveValueClass(eq(primitiveValueClass))
+            }
+        }
+
+        @Test
+        fun eqNullablePrimitiveValueClass() {
+            val primitiveValueClass = PrimitiveValueClass(123) as PrimitiveValueClass?
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(primitiveValueClass)
+                verify(this).nullablePrimitiveValueClass(eq(primitiveValueClass))
             }
         }
 
