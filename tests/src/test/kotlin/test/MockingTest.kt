@@ -13,6 +13,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.kotlin.any
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.MockitoSession
 import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.invocation.DescribedInvocation
 import org.mockito.kotlin.argumentCaptor
@@ -20,6 +21,7 @@ import org.mockito.kotlin.mockConstruction
 import org.mockito.kotlin.mockStatic
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
+import org.mockito.quality.Strictness
 import java.io.PrintStream
 import java.io.Serializable
 import java.util.*
@@ -240,6 +242,35 @@ class MockingTest : TestBase() {
 
         /* Then */
         expect(result).toNotBeNull()
+    }
+
+    @Test
+    fun mock_strictness_default() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>()
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        expectErrorWithMessage("Unnecessary stubbings detected") on {
+            session.finishMocking()
+        }
+    }
+
+    @Test
+    fun mock_withSettingsAPI_strictness_lenient() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>(strictness = Strictness.LENIENT)
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        // Verify no "Unnecessary stubbings detected" exception
+        session.finishMocking()
     }
 
     @Test
