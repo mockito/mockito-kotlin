@@ -13,6 +13,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.kotlin.any
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.MockitoSession
 import org.mockito.exceptions.verification.WantedButNotInvoked
 import org.mockito.invocation.DescribedInvocation
 import org.mockito.kotlin.argumentCaptor
@@ -20,6 +21,7 @@ import org.mockito.kotlin.mockConstruction
 import org.mockito.kotlin.mockStatic
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode.BASIC
+import org.mockito.quality.Strictness
 import java.io.PrintStream
 import java.io.Serializable
 import java.util.*
@@ -243,6 +245,49 @@ class MockingTest : TestBase() {
     }
 
     @Test
+    fun mock_strictness_default() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>()
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        expectErrorWithMessage("Unnecessary stubbings detected") on {
+            session.finishMocking()
+        }
+    }
+
+    @Test
+    fun mock_withSettingsAPI_lenient() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>(lenient = true)
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        // Verify no "Unnecessary stubbings detected" exception
+        session.finishMocking()
+    }
+
+    @Test
+    fun mock_withSettingsAPI_strictness_lenient() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>(strictness = Strictness.LENIENT)
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        // Verify no "Unnecessary stubbings detected" exception
+        session.finishMocking()
+    }
+
+    @Test
     fun mockStubbing_withSettingsAPI_extraInterfaces() {
         /* Given */
         val mock = mock<SynchronousFunctions>(extraInterfaces = arrayOf(ExtraInterface::class)) {}
@@ -396,6 +441,13 @@ class MockingTest : TestBase() {
             expect(SomeObject.aStaticMethodReturningString()).toBe("Hello")
 
             mockedStatic.verify { SomeObject.aStaticMethodReturningString() }
+        }
+    }
+
+    @Test
+    fun mockStatic_defaultAnswer_stubbing() {
+        mockStatic<SomeObject>(defaultAnswer = Mockito.CALLS_REAL_METHODS).use {
+            expect(SomeObject.aStaticMethodReturningString()).toBe("Some Value")
         }
     }
 
