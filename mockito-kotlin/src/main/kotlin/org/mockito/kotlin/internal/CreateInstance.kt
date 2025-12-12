@@ -26,8 +26,6 @@
 package org.mockito.kotlin.internal
 
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.primaryConstructor
 
 inline fun <reified T : Any> createInstance(): T {
     return createInstance(T::class)
@@ -48,13 +46,10 @@ fun <T : Any> createInstance(kClass: KClass<T>): T {
     }
 }
 
-@Suppress("UNCHECKED_CAST")
 private fun <T : Any> createInstanceNonPrimitive(kClass: KClass<T>): T {
     return if (kClass.isValue) {
-        val boxImpl =
-            kClass.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
-        val wrappedType = getValueClassWrappedType(kClass)
-        boxImpl.invoke(null, createInstance(wrappedType)) as T
+        createInstance(kClass.valueClassInnerClass())
+            .boxAsValueClass(kClass)
     } else {
         castNull()
     }
@@ -68,11 +63,3 @@ private fun <T : Any> createInstanceNonPrimitive(kClass: KClass<T>): T {
  */
 @Suppress("UNCHECKED_CAST")
 private fun <T> castNull(): T = null as T
-
-private fun getValueClassWrappedType(kClass: KClass<*>): KClass<*> {
-    require(kClass.isValue)
-
-    val primaryConstructor = checkNotNull(kClass.primaryConstructor)
-    val wrappedType = primaryConstructor.parameters.single().type
-    return wrappedType.classifier as KClass<*>
-}

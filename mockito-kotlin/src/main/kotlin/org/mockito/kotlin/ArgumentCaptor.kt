@@ -26,7 +26,9 @@
 package org.mockito.kotlin
 
 import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.internal.toKotlinType
 import org.mockito.kotlin.internal.createInstance
+import org.mockito.kotlin.internal.valueClassInnerClass
 import java.lang.reflect.Array
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -164,14 +166,11 @@ class KArgumentCaptor<out T : Any?>(private val kType: KType) {
 
     private val captor: ArgumentCaptor<Any?> =
         if (clazz.isValue && !kType.isMarkedNullable) {
-            val boxImpl =
-                clazz.java.declaredMethods
-                    .single { it.name == "box-impl" && it.parameterCount == 1 }
-            boxImpl.parameters[0].type // is the boxed type of the value type
+            clazz.valueClassInnerClass()
         } else {
-            clazz.java
+            clazz
         }.let {
-            ArgumentCaptor.forClass(it)
+            ArgumentCaptor.forClass(it.java)
         }
 
     /**
@@ -179,38 +178,38 @@ class KArgumentCaptor<out T : Any?>(private val kType: KType) {
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val firstValue: T
-        get() = toKotlinType(captor.firstValue)
+        get() = captor.firstValue.toKotlinType(clazz)
 
     /**
      * The second captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val secondValue: T
-        get() = toKotlinType(captor.secondValue)
+        get() = captor.secondValue.toKotlinType(clazz)
 
     /**
      * The third captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val thirdValue: T
-        get() = toKotlinType(captor.thirdValue)
+        get() = captor.thirdValue.toKotlinType(clazz)
 
     /**
      * The last captured value of the argument.
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val lastValue: T
-        get() = toKotlinType(captor.lastValue)
+        get() = captor.lastValue.toKotlinType(clazz)
 
     /**
      * The *only* captured value of the argument,
      * or throws an exception if no value or more than one value was captured.
      */
     val singleValue: T
-        get() = toKotlinType(captor.singleValue)
+        get() = captor.singleValue.toKotlinType(clazz)
 
     val allValues: List<T>
-        get() = captor.allValues.map(::toKotlinType)
+        get() = captor.allValues.map { it.toKotlinType(clazz) }
 
     @Suppress("UNCHECKED_CAST")
     fun capture(): T {
@@ -221,7 +220,7 @@ class KArgumentCaptor<out T : Any?>(private val kType: KType) {
         // In Java, `captor.capture` returns null and so the method is called with `[null]`
         // In Kotlin, we have to create `[null]` explicitly.
         // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
-        return toKotlinType(captor.capture()) ?: if (clazz.java.isArray) {
+        return captor.capture().toKotlinType(clazz) ?: if (clazz.java.isArray) {
             singleElementArray()
         } else {
             createInstance(clazz)
@@ -229,22 +228,6 @@ class KArgumentCaptor<out T : Any?>(private val kType: KType) {
     }
 
     private fun singleElementArray(): Any? = Array.newInstance(clazz.java.componentType, 1)
-
-    @Suppress("UNCHECKED_CAST")
-    private fun toKotlinType(rawCapturedValue: Any?): T {
-        if (rawCapturedValue == null) return null as T
-
-        if (clazz.isValue && rawCapturedValue::class != clazz) {
-            return rawCapturedValue
-                .let {
-                    val boxImpl =
-                        clazz.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
-                    boxImpl.invoke(null, it)
-                } as T
-        }
-
-        return rawCapturedValue as T
-    }
 }
 
 val <T> ArgumentCaptor<T>.firstValue: T
