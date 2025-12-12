@@ -27,7 +27,6 @@ package org.mockito.kotlin.internal
 
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
-import kotlin.reflect.typeOf
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Any?> Any?.toKotlinType(clazz: KClass<*>): T {
@@ -37,18 +36,6 @@ fun <T : Any?> Any?.toKotlinType(clazz: KClass<*>): T {
         this.boxAsValueClass(clazz) as T
     } else {
         this as T
-    }
-}
-
-inline fun <reified T> T.toJavaType(): Any? {
-    if (this == null) return null
-
-    return if (this::class.isValue && !typeOf<T>().isMarkedNullable) {
-        this.unboxValueClass()
-    } else {
-        // if the value is both value class and nullable, then Kotlin passes the value class boxed
-        // towards Mockito java code.
-        this
     }
 }
 

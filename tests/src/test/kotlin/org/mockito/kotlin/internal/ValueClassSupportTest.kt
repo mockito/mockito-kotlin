@@ -2,7 +2,6 @@ package org.mockito.kotlin.internal
 
 import com.nhaarman.expect.expect
 import org.junit.Test
-import test.PrimitiveValueClass
 import test.ValueClass
 import test.assertThrows
 import kotlin.reflect.KClass
@@ -56,60 +55,6 @@ class ValueClassSupportTest {
         /* Then */
         expect(result).toNotBeNull()
         expect(result).toBe(value)
-    }
-
-    @Test
-    fun `toJavaType should pass through null value`() {
-        /* Given */
-        val value: String? = null
-
-        /* When */
-        val result: Any? = value.toJavaType()
-
-        /* Then */
-        expect(result).toBeNull()
-    }
-
-    @Test
-    fun `toJavaType should unbox a value class type`() {
-        /* Given */
-        val value = ValueClass("test")
-
-        /* When */
-        val result: Any? = value.toJavaType()
-
-        /* Then */
-        expect(result).toNotBeNull()
-        expect(result).toBeInstanceOf<String>()
-        expect(result).toBe(value.content)
-    }
-
-    @Test
-    fun `toJavaType should unbox a primitive value class type`() {
-        /* Given */
-        val value = PrimitiveValueClass(123)
-
-        /* When */
-        val result: Any? = value.toJavaType()
-
-        /* Then */
-        expect(result).toNotBeNull()
-        expect(result).toBeInstanceOf<Long>()
-        expect(result).toBe(value.value)
-    }
-
-    @Test
-    fun `toJavaType should not unbox a nullable value class type`() {
-        /* Given */
-        val value = ValueClass("test") as ValueClass?
-
-        /* When */
-        val result: Any? = value.toJavaType()
-
-        /* Then */
-        expect(result).toNotBeNull()
-        expect(result).toBeInstanceOf<ValueClass>()
-        expect((result as ValueClass).content).toBe(value!!.content)
     }
 
     @Test

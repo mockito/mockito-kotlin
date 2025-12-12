@@ -619,7 +619,16 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        fun eqNullableValueClass() {
+        fun eqNullableValueClass_nullableArgument() {
+            val valueClass = ValueClass("Content") as ValueClass?
+            mock<SynchronousFunctions>().apply {
+                nullableValueClass(valueClass)
+                verify(this).nullableValueClass(eq(valueClass))
+            }
+        }
+
+        @Test
+        fun eqNullableValueClass_nonNullableArgument() {
             val valueClass = ValueClass("Content")
             mock<SynchronousFunctions>().apply {
                 nullableValueClass(valueClass)
@@ -637,8 +646,17 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        fun eqNullablePrimitiveValueClass() {
+        fun eqNullablePrimitiveValueClass_nullableArgument() {
             val primitiveValueClass = PrimitiveValueClass(123) as PrimitiveValueClass?
+            mock<SynchronousFunctions>().apply {
+                nullablePrimitiveValueClass(primitiveValueClass)
+                verify(this).nullablePrimitiveValueClass(eq(primitiveValueClass))
+            }
+        }
+
+        @Test
+        fun eqNullablePrimitiveValueClass_nonNullableArgument() {
+            val primitiveValueClass = PrimitiveValueClass(123)
             mock<SynchronousFunctions>().apply {
                 nullablePrimitiveValueClass(primitiveValueClass)
                 verify(this).nullablePrimitiveValueClass(eq(primitiveValueClass))
