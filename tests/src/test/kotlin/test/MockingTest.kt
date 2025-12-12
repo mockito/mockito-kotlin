@@ -260,6 +260,20 @@ class MockingTest : TestBase() {
     }
 
     @Test
+    fun mock_withSettingsAPI_lenient() {
+        /* Given */
+        val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()
+
+        /* When */
+        val result = mock<SynchronousFunctions>(lenient = true)
+        whenever(result.intResult()).thenReturn(42)
+
+        /* Then */
+        // Verify no "Unnecessary stubbings detected" exception
+        session.finishMocking()
+    }
+
+    @Test
     fun mock_withSettingsAPI_strictness_lenient() {
         /* Given */
         val session = Mockito.mockitoSession().strictness(Strictness.STRICT_STUBS).startMocking()

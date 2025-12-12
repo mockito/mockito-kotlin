@@ -50,6 +50,7 @@ import kotlin.reflect.KClass
  * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
  * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
 inline fun <reified T : Any> mock(
@@ -64,7 +65,8 @@ inline fun <reified T : Any> mock(
     stubOnly: Boolean = false,
     useConstructor: UseConstructor? = null,
     outerInstance: Any? = null,
-    strictness: Strictness? = null,
+    lenient: Boolean = false,
+    strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
 ): T {
     return Mockito.mock(
           T::class.java,
@@ -99,6 +101,7 @@ inline fun <reified T : Any> mock(
  * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
  * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
 inline fun <reified T : Any> mock(
@@ -113,7 +116,8 @@ inline fun <reified T : Any> mock(
     stubOnly: Boolean = false,
     useConstructor: UseConstructor? = null,
     outerInstance: Any? = null,
-    strictness: Strictness? = null,
+    lenient: Boolean = false,
+    strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
     stubbing: KStubbing<T>.(T) -> Unit
 ): T {
     return Mockito.mock(
@@ -150,6 +154,7 @@ inline fun <reified T : Any> mock(
  * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
  * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
 fun withSettings(
@@ -164,7 +169,8 @@ fun withSettings(
     stubOnly: Boolean = false,
     useConstructor: UseConstructor? = null,
     outerInstance: Any? = null,
-    strictness: Strictness? = null,
+    lenient: Boolean = false,
+    strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
 ): MockSettings = Mockito.withSettings().apply {
     extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
     name?.let { name(it) }
