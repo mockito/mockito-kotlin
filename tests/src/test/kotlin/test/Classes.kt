@@ -105,6 +105,9 @@ interface SynchronousFunctions {
     fun nestedValueClassResult(): NestedValueClass
     fun primitiveValueClassResult(): PrimitiveValueClass
     fun nullablePrimitiveValueClassResult(): PrimitiveValueClass?
+
+    fun functionArgument(function: () -> Unit)
+    fun suspendFunctionArgument(function: suspend () -> Unit)
 }
 
 interface SuspendFunctions {

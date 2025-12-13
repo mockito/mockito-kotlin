@@ -36,13 +36,40 @@ import kotlin.reflect.typeOf
 
 /**
  * Creates a [KArgumentCaptor] for given type.
+ *
+ * Caution: this factory method cannot be used to create a captor for a suspend
+ * function, please refer to [suspendFunctionArgumentCaptor] for that.
+ * This incompatibility is caused by the use of `typeOf<T>()` which is the way
+ * to determine runtime nullability of T, but this function is yet incompatible with
+ * suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been
+ * delivered ever since.
+ * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * for more details.
  */
 inline fun <reified T : Any?> argumentCaptor(): KArgumentCaptor<T> {
     return KArgumentCaptor(typeOf<T>())
 }
 
 /**
+ * Creates a [KArgumentCaptor] for given (suspend function).
+ */
+inline fun <reified T : Function<*>> suspendFunctionArgumentCaptor(): KArgumentCaptor<T> {
+    return KArgumentCaptor(T::class)
+}
+
+/**
  * Creates 2 [KArgumentCaptor]s for given types.
+ *
+ * Caution: this factory method cannot be used to create a captor for a suspend
+ * function, please refer to [suspendFunctionArgumentCaptor] for that.
+ * This incompatibility is caused by the use of `typeOf<T>()` which is the way
+ * to determine runtime nullability of T, but this function is yet incompatible with
+ * suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been
+ * delivered ever since.
+ * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * for more details.
  */
 inline fun <reified A : Any, reified B : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
@@ -56,6 +83,16 @@ inline fun <reified A : Any, reified B : Any> argumentCaptor(
 
 /**
  * Creates 3 [KArgumentCaptor]s for given types.
+ *
+ * Caution: this factory method cannot be used to create a captor for a suspend
+ * function, please refer to [suspendFunctionArgumentCaptor] for that.
+ * This incompatibility is caused by the use of `typeOf<T>()` which is the way
+ * to determine runtime nullability of T, but this function is yet incompatible with
+ * suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been
+ * delivered ever since.
+ * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * for more details.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
@@ -75,30 +112,24 @@ class ArgumentCaptorHolder4<out A, out B, out C, out D>(
     val third: C,
     val fourth: D
 ) {
-
     operator fun component1() = first
     operator fun component2() = second
     operator fun component3() = third
     operator fun component4() = fourth
-}
-
-class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-    val fifth: E
-) {
-
-    operator fun component1() = first
-    operator fun component2() = second
-    operator fun component3() = third
-    operator fun component4() = fourth
-    operator fun component5() = fifth
 }
 
 /**
  * Creates 4 [KArgumentCaptor]s for given types.
+ *
+ * Caution: this factory method cannot be used to create a captor for a suspend
+ * function, please refer to [suspendFunctionArgumentCaptor] for that.
+ * This incompatibility is caused by the use of `typeOf<T>()` which is the way
+ * to determine runtime nullability of T, but this function is yet incompatible with
+ * suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been
+ * delivered ever since.
+ * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * for more details.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
@@ -114,8 +145,32 @@ inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> 
     )
 }
 
+class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D,
+    val fifth: E
+) {
+    operator fun component1() = first
+    operator fun component2() = second
+    operator fun component3() = third
+    operator fun component4() = fourth
+    operator fun component5() = fifth
+}
+
 /**
- * Creates 4 [KArgumentCaptor]s for given types.
+ * Creates 5 [KArgumentCaptor]s for given types.
+ *
+ * Caution: this factory method cannot be used to create a captor for a suspend
+ * function, please refer to [suspendFunctionArgumentCaptor] for that.
+ * This incompatibility is caused by the use of `typeOf<T>()` which is the way
+ * to determine runtime nullability of T, but this function is yet incompatible with
+ * suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been
+ * delivered ever since.
+ * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * for more details.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any, reified E : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
@@ -161,11 +216,17 @@ inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
     return captor.capture() ?: createInstance()
 }
 
-class KArgumentCaptor<out T : Any?>(private val kType: KType) {
-    private val clazz = kType.classifier as KClass<*>
+class KArgumentCaptor<out T : Any?>(
+    private val clazz: KClass<*>,
+    private val isMarkedNullable: Boolean = false
+) {
+    constructor(kType: KType):this(
+        kType.classifier as KClass<*>,
+        kType.isMarkedNullable
+    )
 
     private val captor: ArgumentCaptor<Any?> =
-        if (clazz.isValue && !kType.isMarkedNullable) {
+        if (clazz.isValue && !isMarkedNullable) {
             clazz.valueClassInnerClass()
         } else {
             clazz

@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.kotlin.any
@@ -9,6 +10,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.nullableArgumentCaptor
+import org.mockito.kotlin.suspendFunctionArgumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -419,5 +421,43 @@ class ArgumentCaptorTest : TestBase() {
         val captor = argumentCaptor<PrimitiveValueClass?>()
         verify(m).nullablePrimitiveValueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
+    }
+
+    @Test
+    fun argumentCaptor_function() {
+        /* Given */
+        var counter = 0
+        val m: SynchronousFunctions = mock()
+        val function: () -> Unit = {
+            counter++
+        }
+
+        /* When */
+        m.functionArgument(function)
+
+        /* Then */
+        val captor = argumentCaptor<() -> Unit>()
+        verify(m).functionArgument(captor.capture())
+        captor.firstValue.invoke()
+        expect(counter).toBe(1)
+    }
+
+    @Test
+    fun argumentCaptor_suspend_function() {
+        /* Given */
+        var counter = 0
+        val m: SynchronousFunctions = mock()
+        val function: suspend () -> Unit = suspend {
+            counter++
+        }
+
+        /* When */
+        m.suspendFunctionArgument(function)
+
+        /* Then */
+        val captor = suspendFunctionArgumentCaptor<suspend () -> Unit>()
+        verify(m).suspendFunctionArgument(captor.capture())
+        runBlocking {  captor.firstValue.invoke() }
+        expect(counter).toBe(1)
     }
 }
