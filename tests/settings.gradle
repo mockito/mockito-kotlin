@@ -1,1 +1,5 @@
+pluginManagement {
+    includeBuild '../build-logic'
+}
+
 includeBuild '..'

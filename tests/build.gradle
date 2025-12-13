@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id "org.gradle.java"
     id "org.jetbrains.kotlin.jvm" version "${testKotlinVersion}"
+    id "mockito-kotlin.library-conventions"
 }
 
 logger.lifecycle "${project} uses Kotlin ${testKotlinVersion}"

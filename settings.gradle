@@ -1,3 +1,7 @@
+pluginManagement {
+    includeBuild 'build-logic'
+}
+
 rootProject.name = 'mockito-kotlin-root'
 
 include 'mockito-kotlin'

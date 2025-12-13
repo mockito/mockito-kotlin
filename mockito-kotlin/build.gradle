@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id "org.jetbrains.kotlin.jvm"
     id "org.jetbrains.dokka"
+    id "mockito-kotlin.library-conventions"
 }
 apply from: '../gradle/publishing.gradle'
 
