@@ -25,14 +25,19 @@
 
 package org.mockito.kotlin
 
+import org.mockito.AdditionalMatchers
 import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
+import org.mockito.kotlin.internal.boxAsValueClass
 import org.mockito.kotlin.internal.createInstance
+import org.mockito.kotlin.internal.toKotlinType
+import org.mockito.kotlin.internal.unboxValueClass
+import org.mockito.kotlin.internal.valueClassInnerClass
 import kotlin.reflect.KClass
 
 /** Object argument that is equal to the given value. */
 inline fun <reified T : Any?> eq(value: T): T {
-    if(T::class.isValue)
+    if (T::class.isValue)
         return eqValueClass(value)
 
     return ArgumentMatchers.eq(value) ?: value
@@ -45,7 +50,7 @@ fun <T> same(value: T): T {
 
 /** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any(): T {
-    if(T::class.isValue)
+    if (T::class.isValue)
         return anyValueClass()
 
     return ArgumentMatchers.any(T::class.java) ?: createInstance()
@@ -78,33 +83,21 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
 }
 
 /** Matches any Kotlin value class with the same boxed type by taking its boxed type. */
-inline fun <reified T > anyValueClass(): T {
-    require(T::class.isValue) {
-        "${T::class.qualifiedName} is not a value class."
-    }
-
-    val boxImpl =
-        T::class.java.declaredMethods
-            .single { it.name == "box-impl" && it.parameterCount == 1 }
-    val boxedType = boxImpl.parameters[0].type
-
-    return boxImpl.invoke(null, ArgumentMatchers.any(boxedType)) as T
+inline fun <reified T> anyValueClass(): T {
+    val clazz = T::class
+    return ArgumentMatchers.any(clazz.valueClassInnerClass().java).boxAsValueClass(clazz)
 }
 
-inline fun <reified T > eqValueClass(value: T): T {
-    require(T::class.isValue) {
-        "${T::class.qualifiedName} is not a value class."
-    }
+inline fun <reified T> eqValueClass(value: T): T {
+    require(value::class.isValue) { "${value::class.qualifiedName} is not a value class." }
 
-    val unboxImpl =
-        T::class.java.declaredMethods
-            .single { it.name == "unbox-impl" && it.parameterCount == 0 }
-    val unboxed = unboxImpl.invoke(value)
+    val unboxed = value?.unboxValueClass()
+    val matcher = AdditionalMatchers.or(
+        ArgumentMatchers.eq(value),
+        ArgumentMatchers.eq(unboxed)
+    )
 
-    val boxImpl =
-        T::class.java.declaredMethods.single { it.name == "box-impl" && it.parameterCount == 1 }
-
-    return boxImpl.invoke(null, ArgumentMatchers.eq(unboxed) ?: unboxed) as T
+    return (matcher ?: unboxed).toKotlinType(T::class)
 }
 
 /**
@@ -115,7 +108,7 @@ inline fun <reified T > eqValueClass(value: T): T {
  */
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
     return ArgumentMatchers.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
-          T::class
+        T::class
     )
 }
 

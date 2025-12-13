@@ -337,4 +337,40 @@ class CoroutinesOngoingStubbingTest {
         expect(result).toBe(nestedValueClass)
         expect(result.value).toBe(nestedValueClass.value)
     }
+
+    @Test
+    fun `should stub suspendable function call with primitive value class result`() = runTest {
+        /* Given */
+        val primitiveValueClass = PrimitiveValueClass(42)
+        val mock = mock<SuspendFunctions> {
+            on(mock.primitiveValueClassResult()) doSuspendableAnswer {
+                delay(1)
+                primitiveValueClass
+            }
+        }
+
+        /* When */
+        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+
+        /* Then */
+        expect(result).toBe(primitiveValueClass)
+    }
+
+    @Test
+    fun `should stub suspendable function call with nullable primitive value class result`() = runTest {
+        /* Given */
+        val primitiveValueClass = PrimitiveValueClass(42)
+        val mock = mock<SuspendFunctions> {
+            on (mock.nullablePrimitiveValueClassResult()) doSuspendableAnswer {
+                delay(1)
+                primitiveValueClass
+            }
+        }
+
+        /* When */
+        val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+
+        /* Then */
+        expect(result).toBe(primitiveValueClass)
+    }
 }
