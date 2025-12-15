@@ -35,7 +35,7 @@ import org.mockito.kotlin.internal.unboxValueClass
 import org.mockito.kotlin.internal.valueClassInnerClass
 import kotlin.reflect.KClass
 
-/** Object argument that is equal to the given value. */
+/** Matches an argument that is equal to the given value. */
 inline fun <reified T : Any?> eq(value: T): T {
     if (T::class.isValue)
         return eqValueClass(value)
@@ -43,7 +43,7 @@ inline fun <reified T : Any?> eq(value: T): T {
     return ArgumentMatchers.eq(value) ?: value
 }
 
-/**  Object argument that is the same as the given value. */
+/**  Matches an argument that is the same as the given value. */
 fun <T> same(value: T): T {
     return ArgumentMatchers.same(value) ?: value
 }
@@ -61,7 +61,7 @@ inline fun <reified T : Any> anyOrNull(): T {
     return ArgumentMatchers.any<T>() ?: createInstance()
 }
 
-/** Matches any vararg object, including nulls. */
+/** Matches any vararg argument, including nulls. */
 inline fun <reified T : Any> anyVararg(): T {
     return anyVararg(T::class)
 }
@@ -88,6 +88,7 @@ inline fun <reified T> anyValueClass(): T {
     return ArgumentMatchers.any(clazz.valueClassInnerClass().java).boxAsValueClass(clazz)
 }
 
+/** Matches an argument that is equal to the given Kotlin value class value. */
 inline fun <reified T> eqValueClass(value: T): T {
     require(value::class.isValue) { "${value::class.qualifiedName} is not a value class." }
 
@@ -101,7 +102,7 @@ inline fun <reified T> eqValueClass(value: T): T {
 }
 
 /**
- * Creates a custom argument matcher.
+ * Matches an argument that is matching the given predicate.
  * `null` values will never evaluate to `true`.
  *
  * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
@@ -113,6 +114,8 @@ inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
 }
 
 /**
+ * Matches an argument that is matching the given [ArgumentMatcher].
+ *
  * Registers a custom ArgumentMatcher. The original Mockito function registers the matcher and returns null,
  * here the required type is returned.
  *
@@ -123,6 +126,8 @@ inline fun <reified T : Any> argThat(matcher: ArgumentMatcher<T>): T {
 }
 
 /**
+ * Matches an argument that is matching the given [ArgumentMatcher].
+ *
  * Alias for [argThat].
  *
  * Creates a custom argument matcher.
@@ -135,7 +140,7 @@ inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean): T
 }
 
 /**
- * Creates a custom argument matcher.
+ * Matches an argument that is matching the given predicate.
  * `null` values will never evaluate to `true`.
  *
  * @param predicate A function that returns `true` when given [T] matches the predicate.
@@ -145,33 +150,33 @@ inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean): T {
 }
 
 /**
- * Argument that implements the given class.
+ * Matches an argument that is instance of the given class.
  */
 inline fun <reified T : Any> isA(): T {
     return ArgumentMatchers.isA(T::class.java) ?: createInstance()
 }
 
 /**
- * `null` argument.
+ * Matches an argument that is `null`.
  */
 fun <T : Any> isNull(): T? = ArgumentMatchers.isNull()
 
 /**
- * Not `null` argument.
+ * Matches an argument that is not `null`.
  */
 fun <T : Any> isNotNull(): T? {
     return ArgumentMatchers.isNotNull()
 }
 
 /**
- * Not `null` argument.
+ * Matches an argument that is not `null`.
  */
 fun <T : Any> notNull(): T? {
     return ArgumentMatchers.notNull()
 }
 
 /**
- * Object argument that is reflection-equal to the given value with support for excluding
+ * Matches an argument that is reflection-equal to the given value with support for excluding
  * selected fields from a class.
  */
 inline fun <reified T : Any> refEq(value: T, vararg excludeFields: String): T {
