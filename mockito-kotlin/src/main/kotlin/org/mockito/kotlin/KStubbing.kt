@@ -63,9 +63,8 @@ class KStubbing<out T : Any>(val mock: T) {
     }
 
     /**
-     * Enables stubbing java methods or kotlin functions. Use it when you want the mock to return
-     * a particular value when particular method/function is being called.
-     * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+     * Enables stubbing methods/function calls.
+     * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
      *
      * Simply put: "**on a call to** the x function **then** return y".
      *
@@ -77,12 +76,8 @@ class KStubbing<out T : Any>(val mock: T) {
      *      }
      * ```
      *
-     * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
-     * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
-     * To reduce the noise of backticks in your code, you can use this the function [whenever] instead.
-     *
-     * For more detail documentation, please refer to the Javadoc in the [Mockito] class.
-     *
+     * This function is an alias for [Mockito.when]. So, for more detailed documentation,
+     * please refer to the Javadoc of that method in the [Mockito] class.
      * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
      *
      * @param methodCall method call to be stubbed.
@@ -92,9 +87,8 @@ class KStubbing<out T : Any>(val mock: T) {
     inline fun <reified R> on(methodCall: R): OngoingStubbing<R> = whenever(methodCall)
 
     /**
-     * Enables stubbing java methods or kotlin functions. Use it when you want the mock to return
-     * a particular value when particular method/function is being called.
-     * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+     * Enables stubbing methods/function calls.
+     * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
      *
      * Simply put: "**on a call to** the x function **then** return y".
      *
@@ -106,12 +100,8 @@ class KStubbing<out T : Any>(val mock: T) {
      *      }
      * ```
      *
-     * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
-     * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
-     * To reduce the noise of backticks in your code, you can use this the function [whenever] instead.
-     *
-     * For more detail documentation, please refer to the Javadoc in the [Mockito] class.
-     *
+     * This function is an alias for [Mockito.when]. So, for more detailed documentation,
+     * please refer to the Javadoc of that method in the [Mockito] class.
      * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
      *
      * @param methodCall method call to be stubbed.
@@ -130,10 +120,8 @@ class KStubbing<out T : Any>(val mock: T) {
     }
 
     /**
-     * Enables stubbing java methods or kotlin functions with a generics return type [R].
-     * Use it when you want the mock to return a particular value when particular method/function
-     * is being called.
-     * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+     * Enables stubbing methods/function calls with a generics return type [R].
+     * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
      *
      * Simply put: "**on a call to** the x function **then** return y".
      *
@@ -149,12 +137,8 @@ class KStubbing<out T : Any>(val mock: T) {
      *      }
      * ```
      *
-     * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
-     * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
-     * To reduce the noise of backticks in your code, you can use this the function [whenever] instead.
-     *
-     * For more detail documentation, please refer to the Javadoc in the [Mockito] class.
-     *
+     * This function is an alias for [Mockito.when]. So, for more detailed documentation,
+     * please refer to the Javadoc of that method in the [Mockito] class.
      * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
      *
      * @param methodCall method call to be stubbed.
@@ -178,10 +162,8 @@ class KStubbing<out T : Any>(val mock: T) {
     }
 
     /**
-     * Enables stubbing java methods or kotlin functions with a generics return type [R].
-     * Use it when you want the mock to return a particular value when particular method/function
-     * is being called.
-     * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+     * Enables stubbing methods/function calls with a generics return type [R].
+     * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
      *
      * Simply put: "**on a call to** the x function **then** return y".
      *
@@ -199,8 +181,6 @@ class KStubbing<out T : Any>(val mock: T) {
      *
      * This is a deprecated alias for [on]. Please use [on] instead.
      *
-     * For more detailed documentation, please refer to [on].
-     *
      * @param methodCall method call to be stubbed.
      * @return OngoingStubbing object used to stub fluently.
      *         ***Do not*** create a reference to this returned object.
@@ -211,9 +191,8 @@ class KStubbing<out T : Any>(val mock: T) {
     }
 
     /**
-     * Enables stubbing a (suspendable) kotlin functions. Use it when you want the mock to return
-     * a particular value when particular function is being called.
-     * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+     * Enables stubbing methods/function calls.
+     * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
      *
      * Simply put: "**on a call to** the x function **then** return y".
      *
@@ -224,14 +203,6 @@ class KStubbing<out T : Any>(val mock: T) {
      *          onBlocking { mock.someFunction() } doReturn 10
      *      }
      * ```
-     *
-     * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
-     * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
-     * To reduce the noise of backticks in your code, you can use this function [on] instead.
-     *
-     * For more detail documentation, please refer to the Javadoc in the [Mockito] class.
-     *
-     * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
      *
      * This is a deprecated alias for [on]. Please use [on] instead.
      *
@@ -245,7 +216,7 @@ class KStubbing<out T : Any>(val mock: T) {
     }
 
     /**
-     * Sets the method call to be stubbed in a reverse manner, as part of a mock being created.
+     * Stubs a method/function call in a reverse manner, as part of a mock being created.
      * You can reverse stub either synchronous as well as suspendable function calls.
      *
      * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
@@ -261,8 +232,7 @@ class KStubbing<out T : Any>(val mock: T) {
      * ```
      * Warning: Only one method call can be stubbed in the function. Subsequent method calls are ignored!
      *
-     * This function acts as an alias for [whenever].
-     * For more detailed documentation, please refer to [whenever].
+     * This function is an alias for [whenever]. Please use [whenever] instead.
      *
      * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
      */

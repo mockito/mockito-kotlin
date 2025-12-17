@@ -36,9 +36,8 @@ import org.mockito.stubbing.OngoingStubbing
 import kotlin.reflect.KClass
 
 /**
- * Enables stubbing java methods or kotlin functions. Use it when you want the mock to return
- * a particular value when particular method/function is being called.
- * The kotlin function call to be stubbed can be either a synchronous or suspendable function.
+ * Enables stubbing methods/function calls.
+ * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
  *
  * Simply put: "**Whenever** the x function is being called **then** return y".
  *
@@ -51,12 +50,8 @@ import kotlin.reflect.KClass
  *      whenever(mock.someFunction(anyString())) doReturn 10
  * ```
  *
- * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
- * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
- * To reduce the noise of backticks in your code, you can use this the function [whenever] instead.
- *
- * For more detail documentation, please refer to the Javadoc in the [Mockito] class.
- *
+ * This function is an alias for [Mockito.when]. So, for more detailed documentation,
+ * please refer to the Javadoc of that method in the [Mockito] class.
  * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
  *
  * @param methodCall method call to be stubbed.
@@ -68,10 +63,8 @@ fun <T> whenever(methodCall: T): OngoingStubbing<T> {
 }
 
 /**
- * Enables stubbing java methods or kotlin functions. Use it when you want the mock to return
- * a particular value when particular method/function is being called.
- * The lambda with the method/function call to be stubbed can be either a synchronous (regular)
- * or suspend lambda.
+ * Enables stubbing methods/function calls.
+ * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
  *
  * **Warning**: Only the first method/function call in the lambda will be stubbed, other methods/functions calls are ignored!
  *
@@ -86,15 +79,9 @@ fun <T> whenever(methodCall: T): OngoingStubbing<T> {
  *      whenever { mock.someFunction(anyString()) } doReturn 10
  * ```
  *
- * This function acts as an alias for [Mockito.when], as `when` is a keyword in kotlin and as such
- * the Mockito method can only be called by wrapping the method name in backticks, e.g. `` `when` ``.
- * To reduce the noise of backticks in your code, you can use this the function [whenever] instead.
- * Next to that, this function will take care of handling with suspend lambda, to ease the stubbing
- * of a suspendable function call.
- *
- * For more detailed documentation, please refer to the Javadoc in the [Mockito] class.
- *
- * For stubbing Unit functions (or Java void methods), see: [Mockito.doThrow].
+ * This function is an alias for [Mockito.when]. So, for more detailed documentation,
+ * please refer to the Javadoc of that method in the [Mockito] class.
+ * For stubbing Unit functions (or Java void methods) with throwables, see: [Mockito.doThrow].
  *
  * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
  * @return OngoingStubbing object used to stub fluently.
@@ -105,14 +92,10 @@ fun <T> whenever(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T>
 }
 
 /**
- * Enables stubbing a (suspendable) kotlin functions. Use it when you want the mock to return
- * a particular value when particular function is being called.
- * The lambda with the function call to be stubbed can be either a synchronous (regular)
- * or suspend lambda.
+ * Enables stubbing methods/function calls.
+ * In case of Kotlin function calls, these can be either synchronous or suspendable function calls.
  *
  * This is a deprecated alias for [whenever]. Please use [whenever] instead.
- *
- * For more detailed documentation, please refer to [whenever].
  *
  * @param methodCall (regular or suspendable) lambda, wrapping the function call to be stubbed.
  * @return OngoingStubbing object used to stub fluently.
@@ -124,14 +107,13 @@ fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStu
 }
 
 /**
- * Sets a return value to be returned when the method/function is called. E.g:
+ * Sets a value to be returned when the stubbed method/function is being called. E.g:
  *
  * ```kotlin
  *      whenever { mock.someMethod() } doReturn 10
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenReturn], adding the infix
- * functionality and extended type inference to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenReturn].
  *
  * @param value return value for the method/function invocation.
  * @return OngoingStubbing object used to stub fluently.
@@ -142,7 +124,8 @@ infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
 }
 
 /**
- * Sets a return values to be returned when the method/function is called consecutively. E.g:
+ * Sets values to be returned when the stubbed method/function is being called
+ * consecutively. E.g:
  *
  * ```kotlin
  *      whenever { mock.someMethod() }.doReturn(10, 20)
@@ -150,8 +133,7 @@ infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
  * You can specify [values] to be returned on consecutive invocations.
  * In that case the last value determines the behavior of further consecutive invocations.
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenReturn], adding extended
- * type inference to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenReturn].
  *
  * @param value return value for the first method/function invocation.
  * @param values return values for the next method/function invocations.
@@ -163,7 +145,8 @@ inline fun <reified T> OngoingStubbing<T>.doReturn(value: T, vararg values: T): 
 }
 
 /**
- * Sets a return values to be returned when the method/function is called consecutively. E.g:
+ * Sets values to be returned when the stubbed method/function is being called
+ * consecutively. E.g:
  *
  * ```kotlin
  *      whenever { mock.someMethod() }.doReturnConsecutively(10, 20)
@@ -171,8 +154,7 @@ inline fun <reified T> OngoingStubbing<T>.doReturn(value: T, vararg values: T): 
  * You can specify [values] to be returned on consecutive invocations.
  * In that case the last value determines the behavior of further consecutive invocations.
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenReturn], adding extended
- * type inference to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenReturn].
  *
  * @param value return value for the first method/function invocation.
  * @param values return values for the next method/function invocations.
@@ -184,7 +166,8 @@ inline fun <reified T> OngoingStubbing<T>.doReturnConsecutively(value: T, vararg
 }
 
 /**
- * Sets a return values to be returned when the method/function is called consecutively. E.g:
+ * Sets values to be returned when the stubbed method/function is being called
+ * consecutively. E.g:
  *
  * ```kotlin
  *      whenever { mock.someMethod() } doReturnConsecutively listOf(10, 20)
@@ -192,8 +175,7 @@ inline fun <reified T> OngoingStubbing<T>.doReturnConsecutively(value: T, vararg
  *
  * The last value in [values] determines the behavior of further consecutive invocations.
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenReturn], adding the infix
- * functionality and extended type inference to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenReturn].
  *
  * @param values return values for the consecutive method/function invocations.
  * @return OngoingStubbing object used to stub fluently.
@@ -204,14 +186,13 @@ inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(values: Li
 }
 
 /**
- * Sets Throwable instance to be thrown when the method/function is called. E.g:
+ * Sets throwable to be thrown when the stubbed method/function is being called. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() } doThrow RuntimeException()
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenThrow], adding the
- * infix functionality to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenThrow].
  *
  * @param throwable to be thrown on method/function invocations.
  * @return OngoingStubbing object used to stub fluently.
@@ -222,7 +203,8 @@ infix fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable): OngoingStubbing<
 }
 
 /**
- * Sets Throwable instance(s) to be thrown when the method/function is called consecutively. E.g:
+ * Sets throwables to be thrown when the stubbed method/function is being called
+ * consecutively. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() }.doThrow(RuntimeException(), IOException())
@@ -231,7 +213,7 @@ infix fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable): OngoingStubbing<
  * You can specify [throwables] to be thrown for consecutive invocations.
  * In that case the last throwable determines the behavior of further consecutive invocations.
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenThrow].
+ * This function is an alias for Mockito's [OngoingStubbing.thenThrow].
  *
  * @param throwable to be thrown on the first method/function invocation.
  * @param throwables to be thrown on the next method/function invocations.
@@ -243,14 +225,13 @@ fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable, vararg throwables: Thro
 }
 
 /**
- * Sets a Throwable type to be thrown when the method/function is called. E.g:
+ * Sets a throwable type to be thrown when the stubbed method/function is being called. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() } doThrow IllegalArgumentException::class
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenThrow], accepting the
- * throwable type as [KClass] and adding the infix functionality to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenThrow].
  *
  * @param throwableType to be thrown on the method/function invocation.
  * @return OngoingStubbing object used to stub fluently.
@@ -261,7 +242,7 @@ infix fun <T> OngoingStubbing<T>.doThrow(throwableType: KClass<out Throwable>): 
 }
 
 /**
- * Sets a Throwable type to be thrown when the method is called consecutively. E.g:
+ * Sets throwable types to be thrown when the stubbed method is called consecutively. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() }.doThrow(IllegalArgumentException::class, NullPointerException::class)
@@ -270,8 +251,7 @@ infix fun <T> OngoingStubbing<T>.doThrow(throwableType: KClass<out Throwable>): 
  * You can specify [throwableTypes] to be thrown for consecutive invocations.
  * In that case the last throwable type determines the behavior of further consecutive invocations.
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenThrow], accepting the
- * throwable types as [KClass].
+ * This function is an alias for Mockito's [OngoingStubbing.thenThrow].
  *
  * @param throwableType to be thrown on the first method/function invocation.
  * @param throwableTypes to be thrown on the next method/function invocations.
@@ -283,15 +263,14 @@ fun <T> OngoingStubbing<T>.doThrow(throwableType: KClass<out Throwable>, vararg 
 }
 
 /**
- * Sets a generic answer for when the method/function is called. E.g:
+ * Sets a generic answer to be applied when the stubbed method/function is being called. E.g:
  *
  * ```kotlin
  *      val answer = Answer { "result" }
  *      whenever { mock.someFunction() } doAnswer answer
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenAnswer], adding the infix
- * functionality to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenAnswer].
  *
  * @param answer to be applied on the method/function invocation.
  * @return OngoingStubbing object used to stub fluently.
@@ -302,14 +281,14 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<*>): OngoingStubbing<T>
 }
 
 /**
- * Sets an answer for when the method/function is called, specified by a lambda. E.g:
+ * Sets an answer to be applied when the stubbed method/function is being called,
+ * specified by a lambda. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() } doAnswer { "result" }
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenAnswer], adding the infix
- * functionality to it.
+ * This function is an alias for Mockito's [OngoingStubbing.thenAnswer].
  *
  * @param answer to be applied on the method/function invocation.
  * @return OngoingStubbing object used to stub fluently.
@@ -320,20 +299,19 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): On
 }
 
 /**
- * Sets an answer for when the suspendable function is called, specified by  a suspendable lambda. E.g:
+ * Sets an answer to be applied when the stubbed suspendable function is being called,
+ * specified by  a suspendable lambda. E.g:
  *
  * ```kotlin
- *      whenever { mock.someFunction() } doAnswer {
+ *      whenever { mock.someFunction() } doSuspendableAnswer {
  *          delay(1)
  *          "result"
  *      }
  * ```
  *
- * This function acts as an alias for Mockito's [OngoingStubbing.thenAnswer], adding the infix
- * functionality to it.
- * Also, this function will wrap the answer lambda in a SuspendableAnswer object, to wire the
- * suspendable lambda properly into the Kotlin's coroutine context on invocation of the stubbed
- * suspendable function.
+ * This function is an alias for Mockito's [OngoingStubbing.thenAnswer], but also taking
+ * extra steps to wire the suspendable lambda answer properly into the Kotlin's coroutine
+ * context of the stubbed suspendable function call.
  *
  * @param answer to be applied on the suspendable function invocation.
  * @return OngoingStubbing object used to stub fluently.
