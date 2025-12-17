@@ -63,7 +63,7 @@ import kotlin.reflect.KClass
  * @return OngoingStubbing object used to stub fluently.
  *         ***Do not*** create a reference to this returned object.
  */
-inline fun <reified T> whenever(methodCall: T): OngoingStubbing<T> {
+fun <T> whenever(methodCall: T): OngoingStubbing<T> {
     return `when`<T>(methodCall)!!
 }
 
@@ -137,7 +137,7 @@ fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStu
  * @return OngoingStubbing object used to stub fluently.
  *         ***Do not*** create a reference to this returned object.
  */
-inline infix fun <reified T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
+infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
     return thenReturn(value)
 }
 
