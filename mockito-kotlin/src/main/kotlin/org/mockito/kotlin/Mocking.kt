@@ -25,6 +25,8 @@
 
 package org.mockito.kotlin
 
+import kotlin.DeprecationLevel.ERROR
+import kotlin.reflect.KClass
 import org.mockito.MockSettings
 import org.mockito.MockedConstruction
 import org.mockito.MockedStatic
@@ -33,23 +35,25 @@ import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
 import org.mockito.quality.Strictness
 import org.mockito.stubbing.Answer
-import kotlin.DeprecationLevel.ERROR
-import kotlin.reflect.KClass
 
 /**
  * Creates a mock for [T].
  *
  * @param extraInterfaces Specifies extra interfaces the mock should implement.
- * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in all verification errors.
+ * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in
+ *   all verification errors.
  * @param spiedInstance Specifies the instance to spy on. Makes sense only for spies/partial mocks.
  * @param defaultAnswer Specifies default answers to interactions.
  * @param serializable Configures the mock to be serializable.
  * @param serializableMode Configures the mock to be serializable with a specific serializable mode.
  * @param verboseLogging Enables real-time logging of method invocations on this mock.
- * @param invocationListeners Registers a listener for method invocations on this mock. The listener is notified every time a method on this mock is called.
- * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
+ * @param invocationListeners Registers a listener for method invocations on this mock. The listener
+ *   is notified every time a method on this mock is called.
+ * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but
+ *   disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
- * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with
+ *   [useConstructor].
  * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
@@ -69,21 +73,21 @@ inline fun <reified T : Any> mock(
     strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
 ): T {
     return Mockito.mock(
-          T::class.java,
-          withSettings(
-                extraInterfaces = extraInterfaces,
-                name = name,
-                spiedInstance = spiedInstance,
-                defaultAnswer = defaultAnswer,
-                serializable = serializable,
-                serializableMode = serializableMode,
-                verboseLogging = verboseLogging,
-                invocationListeners = invocationListeners,
-                stubOnly = stubOnly,
-                useConstructor = useConstructor,
-                outerInstance = outerInstance,
-                strictness = strictness
-          )
+        T::class.java,
+        withSettings(
+            extraInterfaces = extraInterfaces,
+            name = name,
+            spiedInstance = spiedInstance,
+            defaultAnswer = defaultAnswer,
+            serializable = serializable,
+            serializableMode = serializableMode,
+            verboseLogging = verboseLogging,
+            invocationListeners = invocationListeners,
+            stubOnly = stubOnly,
+            useConstructor = useConstructor,
+            outerInstance = outerInstance,
+            strictness = strictness,
+        ),
     )!!
 }
 
@@ -91,16 +95,20 @@ inline fun <reified T : Any> mock(
  * Creates a mock for [T], allowing for immediate stubbing.
  *
  * @param extraInterfaces Specifies extra interfaces the mock should implement.
- * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in all verification errors.
+ * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in
+ *   all verification errors.
  * @param spiedInstance Specifies the instance to spy on. Makes sense only for spies/partial mocks.
  * @param defaultAnswer Specifies default answers to interactions.
  * @param serializable Configures the mock to be serializable.
  * @param serializableMode Configures the mock to be serializable with a specific serializable mode.
  * @param verboseLogging Enables real-time logging of method invocations on this mock.
- * @param invocationListeners Registers a listener for method invocations on this mock. The listener is notified every time a method on this mock is called.
- * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
+ * @param invocationListeners Registers a listener for method invocations on this mock. The listener
+ *   is notified every time a method on this mock is called.
+ * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but
+ *   disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
- * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with
+ *   [useConstructor].
  * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
@@ -118,11 +126,11 @@ inline fun <reified T : Any> mock(
     outerInstance: Any? = null,
     lenient: Boolean = false,
     strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
-    stubbing: KStubbing<T>.(T) -> Unit
+    stubbing: KStubbing<T>.(T) -> Unit,
 ): T {
     return Mockito.mock(
-          T::class.java,
-          withSettings(
+            T::class.java,
+            withSettings(
                 extraInterfaces = extraInterfaces,
                 name = name,
                 spiedInstance = spiedInstance,
@@ -135,25 +143,29 @@ inline fun <reified T : Any> mock(
                 useConstructor = useConstructor,
                 outerInstance = outerInstance,
                 strictness = strictness,
-          )
-    ).apply { KStubbing(this).stubbing(this) }!!
+            ),
+        )
+        .apply { KStubbing(this).stubbing(this) }!!
 }
 
 /**
- * Allows mock creation with additional mock settings.
- * See [MockSettings].
+ * Allows mock creation with additional mock settings. See [MockSettings].
  *
  * @param extraInterfaces Specifies extra interfaces the mock should implement.
- * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in all verification errors.
+ * @param name Specifies mock name. Naming mocks can be helpful for debugging - the name is used in
+ *   all verification errors.
  * @param spiedInstance Specifies the instance to spy on. Makes sense only for spies/partial mocks.
  * @param defaultAnswer Specifies default answers to interactions.
  * @param serializable Configures the mock to be serializable.
  * @param serializableMode Configures the mock to be serializable with a specific serializable mode.
  * @param verboseLogging Enables real-time logging of method invocations on this mock.
- * @param invocationListeners Registers a listener for method invocations on this mock. The listener is notified every time a method on this mock is called.
- * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but disallowing verification of invocations.
+ * @param invocationListeners Registers a listener for method invocations on this mock. The listener
+ *   is notified every time a method on this mock is called.
+ * @param stubOnly A stub-only mock does not record method invocations, thus saving memory but
+ *   disallowing verification of invocations.
  * @param useConstructor Mockito attempts to use constructor when creating instance of the mock.
- * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with [useConstructor].
+ * @param outerInstance Makes it possible to mock non-static inner classes in conjunction with
+ *   [useConstructor].
  * @param lenient (DEPRECATED) Lenient mocks bypass "strict stubbing" validation.
  * @param strictness Specifies strictness level for the mock.
  */
@@ -171,20 +183,21 @@ fun withSettings(
     outerInstance: Any? = null,
     lenient: Boolean = false,
     strictness: Strictness? = if (lenient) Strictness.LENIENT else null,
-): MockSettings = Mockito.withSettings().apply {
-    extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
-    name?.let { name(it) }
-    spiedInstance?.let { spiedInstance(it) }
-    defaultAnswer?.let { defaultAnswer(it) }
-    if (serializable) serializable()
-    serializableMode?.let { serializable(it) }
-    if (verboseLogging) verboseLogging()
-    invocationListeners?.let { invocationListeners(*it) }
-    if (stubOnly) stubOnly()
-    useConstructor?.let { useConstructor(*it.args) }
-    outerInstance?.let { outerInstance(it) }
-    strictness?.let { strictness(it) }
-}
+): MockSettings =
+    Mockito.withSettings().apply {
+        extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
+        name?.let { name(it) }
+        spiedInstance?.let { spiedInstance(it) }
+        defaultAnswer?.let { defaultAnswer(it) }
+        if (serializable) serializable()
+        serializableMode?.let { serializable(it) }
+        if (verboseLogging) verboseLogging()
+        invocationListeners?.let { invocationListeners(*it) }
+        if (stubOnly) stubOnly()
+        useConstructor?.let { useConstructor(*it.args) }
+        outerInstance?.let { outerInstance(it) }
+        strictness?.let { strictness(it) }
+    }
 
 /**
  * Creates a thread-local mock for static methods on [T].
@@ -192,9 +205,7 @@ fun withSettings(
  * @param defaultAnswer the default answer when invoking static methods.
  * @see Mockito.mockStatic
  */
-inline fun <reified T> mockStatic(
-    defaultAnswer: Answer<Any>? = null,
-): MockedStatic<T> {
+inline fun <reified T> mockStatic(defaultAnswer: Answer<Any>? = null): MockedStatic<T> {
     return Mockito.mockStatic(T::class.java, withSettings(defaultAnswer = defaultAnswer))
 }
 
@@ -213,7 +224,9 @@ inline fun <reified T> mockConstruction(): MockedConstruction<T> {
  * @param mockInitializer a callback to prepare the methods on a mock after its instantiation
  * @see Mockito.mockConstruction
  */
-inline fun <reified T> mockConstruction(mockInitializer: MockedConstruction.MockInitializer<T>): MockedConstruction<T> {
+inline fun <reified T> mockConstruction(
+    mockInitializer: MockedConstruction.MockInitializer<T>
+): MockedConstruction<T> {
     return Mockito.mockConstruction(T::class.java, mockInitializer)
 }
 
@@ -232,16 +245,16 @@ class UseConstructor private constructor(val args: Array<Any>) {
 }
 
 @Deprecated(
-      "Use mock() with optional arguments instead.",
-      ReplaceWith("mock<T>(defaultAnswer = a)"),
-      level = ERROR
+    "Use mock() with optional arguments instead.",
+    ReplaceWith("mock<T>(defaultAnswer = a)"),
+    level = ERROR,
 )
 inline fun <reified T : Any> mock(a: Answer<Any>): T = mock(defaultAnswer = a)
 
 @Deprecated(
-      "Use mock() with optional arguments instead.",
-      ReplaceWith("mock<T>(name = s)"),
-      level = ERROR
+    "Use mock() with optional arguments instead.",
+    ReplaceWith("mock<T>(name = s)"),
+    level = ERROR,
 )
 inline fun <reified T : Any> mock(s: String): T = mock(name = s)
 

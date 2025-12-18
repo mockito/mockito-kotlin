@@ -25,35 +25,32 @@
 
 package org.mockito.kotlin
 
-import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.internal.toKotlinType
-import org.mockito.kotlin.internal.createInstance
-import org.mockito.kotlin.internal.valueClassInnerClass
 import java.lang.reflect.Array
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
+import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.internal.createInstance
+import org.mockito.kotlin.internal.toKotlinType
+import org.mockito.kotlin.internal.valueClassInnerClass
 
 /**
  * Creates a [KArgumentCaptor] for given type.
  *
- * Caution: this factory method cannot be used to create a captor for a suspend
- * function, please refer to [suspendFunctionArgumentCaptor] for that.
- * This incompatibility is caused by the use of `typeOf<T>()` which is the way
- * to determine runtime nullability of T, but this function is yet incompatible with
- * suspend functions at compile time. That incompatibility has been declared since
- * Kotlin 1.6, and the promised proper support for suspend functions has not been
- * delivered ever since.
- * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * Caution: this factory method cannot be used to create a captor for a suspend function, please
+ * refer to [suspendFunctionArgumentCaptor] for that. This incompatibility is caused by the use of
+ * `typeOf<T>()` which is the way to determine runtime nullability of T, but this function is yet
+ * incompatible with suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been delivered ever
+ * since. See
+ * [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
  * for more details.
  */
 inline fun <reified T : Any?> argumentCaptor(): KArgumentCaptor<T> {
     return KArgumentCaptor(typeOf<T>())
 }
 
-/**
- * Creates a [KArgumentCaptor] for given (suspend function).
- */
+/** Creates a [KArgumentCaptor] for given (suspend function). */
 inline fun <reified T : Function<*>> suspendFunctionArgumentCaptor(): KArgumentCaptor<T> {
     return KArgumentCaptor(T::class)
 }
@@ -61,48 +58,43 @@ inline fun <reified T : Function<*>> suspendFunctionArgumentCaptor(): KArgumentC
 /**
  * Creates 2 [KArgumentCaptor]s for given types.
  *
- * Caution: this factory method cannot be used to create a captor for a suspend
- * function, please refer to [suspendFunctionArgumentCaptor] for that.
- * This incompatibility is caused by the use of `typeOf<T>()` which is the way
- * to determine runtime nullability of T, but this function is yet incompatible with
- * suspend functions at compile time. That incompatibility has been declared since
- * Kotlin 1.6, and the promised proper support for suspend functions has not been
- * delivered ever since.
- * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * Caution: this factory method cannot be used to create a captor for a suspend function, please
+ * refer to [suspendFunctionArgumentCaptor] for that. This incompatibility is caused by the use of
+ * `typeOf<T>()` which is the way to determine runtime nullability of T, but this function is yet
+ * incompatible with suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been delivered ever
+ * since. See
+ * [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
  * for more details.
  */
 inline fun <reified A : Any, reified B : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
-    @Suppress("unused") b: KClass<B> = B::class
+    @Suppress("unused") b: KClass<B> = B::class,
 ): Pair<KArgumentCaptor<A>, KArgumentCaptor<B>> {
-    return Pair(
-        KArgumentCaptor(typeOf<A>()),
-        KArgumentCaptor(typeOf<B>())
-    )
+    return Pair(KArgumentCaptor(typeOf<A>()), KArgumentCaptor(typeOf<B>()))
 }
 
 /**
  * Creates 3 [KArgumentCaptor]s for given types.
  *
- * Caution: this factory method cannot be used to create a captor for a suspend
- * function, please refer to [suspendFunctionArgumentCaptor] for that.
- * This incompatibility is caused by the use of `typeOf<T>()` which is the way
- * to determine runtime nullability of T, but this function is yet incompatible with
- * suspend functions at compile time. That incompatibility has been declared since
- * Kotlin 1.6, and the promised proper support for suspend functions has not been
- * delivered ever since.
- * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * Caution: this factory method cannot be used to create a captor for a suspend function, please
+ * refer to [suspendFunctionArgumentCaptor] for that. This incompatibility is caused by the use of
+ * `typeOf<T>()` which is the way to determine runtime nullability of T, but this function is yet
+ * incompatible with suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been delivered ever
+ * since. See
+ * [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
  * for more details.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
     @Suppress("unused") b: KClass<B> = B::class,
-    @Suppress("unused") c: KClass<C> = C::class
+    @Suppress("unused") c: KClass<C> = C::class,
 ): Triple<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>> {
     return Triple(
         KArgumentCaptor(typeOf<A>()),
         KArgumentCaptor(typeOf<B>()),
-        KArgumentCaptor(typeOf<C>())
+        KArgumentCaptor(typeOf<C>()),
     )
 }
 
@@ -110,38 +102,45 @@ class ArgumentCaptorHolder4<out A, out B, out C, out D>(
     val first: A,
     val second: B,
     val third: C,
-    val fourth: D
+    val fourth: D,
 ) {
     operator fun component1() = first
+
     operator fun component2() = second
+
     operator fun component3() = third
+
     operator fun component4() = fourth
 }
 
 /**
  * Creates 4 [KArgumentCaptor]s for given types.
  *
- * Caution: this factory method cannot be used to create a captor for a suspend
- * function, please refer to [suspendFunctionArgumentCaptor] for that.
- * This incompatibility is caused by the use of `typeOf<T>()` which is the way
- * to determine runtime nullability of T, but this function is yet incompatible with
- * suspend functions at compile time. That incompatibility has been declared since
- * Kotlin 1.6, and the promised proper support for suspend functions has not been
- * delivered ever since.
- * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * Caution: this factory method cannot be used to create a captor for a suspend function, please
+ * refer to [suspendFunctionArgumentCaptor] for that. This incompatibility is caused by the use of
+ * `typeOf<T>()` which is the way to determine runtime nullability of T, but this function is yet
+ * incompatible with suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been delivered ever
+ * since. See
+ * [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
  * for more details.
  */
 inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
     @Suppress("unused") b: KClass<B> = B::class,
     @Suppress("unused") c: KClass<C> = C::class,
-    @Suppress("unused") d: KClass<D> = D::class
-): ArgumentCaptorHolder4<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>> {
+    @Suppress("unused") d: KClass<D> = D::class,
+): ArgumentCaptorHolder4<
+    KArgumentCaptor<A>,
+    KArgumentCaptor<B>,
+    KArgumentCaptor<C>,
+    KArgumentCaptor<D>,
+> {
     return ArgumentCaptorHolder4(
         KArgumentCaptor(typeOf<A>()),
         KArgumentCaptor(typeOf<B>()),
         KArgumentCaptor(typeOf<C>()),
-        KArgumentCaptor(typeOf<D>())
+        KArgumentCaptor(typeOf<D>()),
     )
 }
 
@@ -150,92 +149,101 @@ class ArgumentCaptorHolder5<out A, out B, out C, out D, out E>(
     val second: B,
     val third: C,
     val fourth: D,
-    val fifth: E
+    val fifth: E,
 ) {
     operator fun component1() = first
+
     operator fun component2() = second
+
     operator fun component3() = third
+
     operator fun component4() = fourth
+
     operator fun component5() = fifth
 }
 
 /**
  * Creates 5 [KArgumentCaptor]s for given types.
  *
- * Caution: this factory method cannot be used to create a captor for a suspend
- * function, please refer to [suspendFunctionArgumentCaptor] for that.
- * This incompatibility is caused by the use of `typeOf<T>()` which is the way
- * to determine runtime nullability of T, but this function is yet incompatible with
- * suspend functions at compile time. That incompatibility has been declared since
- * Kotlin 1.6, and the promised proper support for suspend functions has not been
- * delivered ever since.
- * See [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
+ * Caution: this factory method cannot be used to create a captor for a suspend function, please
+ * refer to [suspendFunctionArgumentCaptor] for that. This incompatibility is caused by the use of
+ * `typeOf<T>()` which is the way to determine runtime nullability of T, but this function is yet
+ * incompatible with suspend functions at compile time. That incompatibility has been declared since
+ * Kotlin 1.6, and the promised proper support for suspend functions has not been delivered ever
+ * since. See
+ * [Kotlin issue KT-47562](https://youtrack.jetbrains.com/issue/KT-47562/Support-suspend-functional-types-in-typeOf)
  * for more details.
  */
-inline fun <reified A : Any, reified B : Any, reified C : Any, reified D : Any, reified E : Any> argumentCaptor(
+inline fun <
+    reified A : Any,
+    reified B : Any,
+    reified C : Any,
+    reified D : Any,
+    reified E : Any,
+> argumentCaptor(
     @Suppress("unused") a: KClass<A> = A::class,
     @Suppress("unused") b: KClass<B> = B::class,
     @Suppress("unused") c: KClass<C> = C::class,
     @Suppress("unused") d: KClass<D> = D::class,
-    @Suppress("unused") e: KClass<E> = E::class
-): ArgumentCaptorHolder5<KArgumentCaptor<A>, KArgumentCaptor<B>, KArgumentCaptor<C>, KArgumentCaptor<D>, KArgumentCaptor<E>> {
+    @Suppress("unused") e: KClass<E> = E::class,
+): ArgumentCaptorHolder5<
+    KArgumentCaptor<A>,
+    KArgumentCaptor<B>,
+    KArgumentCaptor<C>,
+    KArgumentCaptor<D>,
+    KArgumentCaptor<E>,
+> {
     return ArgumentCaptorHolder5(
         KArgumentCaptor(typeOf<A>()),
         KArgumentCaptor(typeOf<B>()),
         KArgumentCaptor(typeOf<C>()),
         KArgumentCaptor(typeOf<D>()),
-        KArgumentCaptor(typeOf<E>())
+        KArgumentCaptor(typeOf<E>()),
     )
 }
 
-/**
- * Creates a [KArgumentCaptor] for given type, taking in a lambda to allow fast verification.
- */
+/** Creates a [KArgumentCaptor] for given type, taking in a lambda to allow fast verification. */
 inline fun <reified T : Any> argumentCaptor(f: KArgumentCaptor<T>.() -> Unit): KArgumentCaptor<T> {
     return argumentCaptor<T>().apply(f)
 }
 
-/**
- * Creates a [KArgumentCaptor] for given nullable type.
- */
+/** Creates a [KArgumentCaptor] for given nullable type. */
 inline fun <reified T : Any> nullableArgumentCaptor(): KArgumentCaptor<T?> {
     return KArgumentCaptor(typeOf<T>())
 }
 
 /**
- * Creates a [KArgumentCaptor] for given nullable type, taking in a lambda to allow fast verification.
+ * Creates a [KArgumentCaptor] for given nullable type, taking in a lambda to allow fast
+ * verification.
  */
-inline fun <reified T : Any> nullableArgumentCaptor(f: KArgumentCaptor<T?>.() -> Unit): KArgumentCaptor<T?> {
+inline fun <reified T : Any> nullableArgumentCaptor(
+    f: KArgumentCaptor<T?>.() -> Unit
+): KArgumentCaptor<T?> {
     return nullableArgumentCaptor<T>().apply(f)
 }
 
-/**
- * Alias for [ArgumentCaptor.capture].
- */
+/** Alias for [ArgumentCaptor.capture]. */
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T {
     return captor.capture() ?: createInstance()
 }
 
 class KArgumentCaptor<out T : Any?>(
     private val clazz: KClass<*>,
-    private val isMarkedNullable: Boolean = false
+    private val isMarkedNullable: Boolean = false,
 ) {
-    constructor(kType: KType):this(
-        kType.classifier as KClass<*>,
-        kType.isMarkedNullable
-    )
+    constructor(kType: KType) : this(kType.classifier as KClass<*>, kType.isMarkedNullable)
 
     private val captor: ArgumentCaptor<Any?> =
         if (clazz.isValue && !isMarkedNullable) {
-            clazz.valueClassInnerClass()
-        } else {
-            clazz
-        }.let {
-            ArgumentCaptor.forClass(it.java)
-        }
+                clazz.valueClassInnerClass()
+            } else {
+                clazz
+            }
+            .let { ArgumentCaptor.forClass(it.java) }
 
     /**
      * The first captured value of the argument.
+     *
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val firstValue: T
@@ -243,6 +251,7 @@ class KArgumentCaptor<out T : Any?>(
 
     /**
      * The second captured value of the argument.
+     *
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val secondValue: T
@@ -250,6 +259,7 @@ class KArgumentCaptor<out T : Any?>(
 
     /**
      * The third captured value of the argument.
+     *
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val thirdValue: T
@@ -257,14 +267,15 @@ class KArgumentCaptor<out T : Any?>(
 
     /**
      * The last captured value of the argument.
+     *
      * @throws IndexOutOfBoundsException if the value is not available.
      */
     val lastValue: T
         get() = captor.lastValue.toKotlinType(clazz)
 
     /**
-     * The *only* captured value of the argument,
-     * or throws an exception if no value or more than one value was captured.
+     * The *only* captured value of the argument, or throws an exception if no value or more than
+     * one value was captured.
      */
     val singleValue: T
         get() = captor.singleValue.toKotlinType(clazz)
@@ -275,17 +286,21 @@ class KArgumentCaptor<out T : Any?>(
     @Suppress("UNCHECKED_CAST")
     fun capture(): T {
         // Special handling for arrays to make it work for varargs
-        // In Kotlin we want have to capture vararg like this `verify(m).methodName(*captor.capture())` to make the types work
+        // In Kotlin we want have to capture vararg like this
+        // `verify(m).methodName(*captor.capture())` to make the types work
         // If we return null for array types, the spread `*` operator will fail with NPE
         // If we return empty array, it will fail in MatchersBinder.validateMatchers
         // In Java, `captor.capture` returns null and so the method is called with `[null]`
         // In Kotlin, we have to create `[null]` explicitly.
-        // This code-path is applied for non-vararg array arguments as well, but it seems to work fine.
-        return captor.capture().toKotlinType(clazz) ?: if (clazz.java.isArray) {
-            singleElementArray()
-        } else {
-            createInstance(clazz)
-        } as T
+        // This code-path is applied for non-vararg array arguments as well, but it seems to work
+        // fine.
+        return captor.capture().toKotlinType(clazz)
+            ?: if (clazz.java.isArray) {
+                singleElementArray()
+            } else {
+                createInstance(clazz)
+            }
+                as T
     }
 
     private fun singleElementArray(): Any? = Array.newInstance(clazz.java.componentType, 1)

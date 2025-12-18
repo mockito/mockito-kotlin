@@ -1,11 +1,11 @@
 package org.mockito.kotlin
 
+import kotlin.test.assertFailsWith
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertFailsWith
 
 class BDDMockitoKtTest {
 
@@ -39,13 +39,10 @@ class BDDMockitoKtTest {
     fun willSuspendableAnswer_givenBlocking() {
         val fixture: SomeInterface = mock()
 
-        givenBlocking { fixture.suspending() }.willSuspendableAnswer {
-            withContext(Dispatchers.Default) { 42 }
-        }
+        givenBlocking { fixture.suspending() }
+            .willSuspendableAnswer { withContext(Dispatchers.Default) { 42 } }
 
-        val result = runBlocking {
-            fixture.suspending()
-        }
+        val result = runBlocking { fixture.suspending() }
 
         assertEquals(42, result)
         then(fixture).shouldBlocking { suspending() }
@@ -56,13 +53,10 @@ class BDDMockitoKtTest {
     fun willSuspendableAnswer_givenBlocking_withArgument() {
         val fixture: SomeInterface = mock()
 
-        givenBlocking { fixture.suspendingWithArg(any()) }.willSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
-        }
+        givenBlocking { fixture.suspendingWithArg(any()) }
+            .willSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument<Int>(0) } }
 
-        val result = runBlocking {
-            fixture.suspendingWithArg(42)
-        }
+        val result = runBlocking { fixture.suspendingWithArg(42) }
 
         assertEquals(42, result)
         then(fixture).shouldBlocking { suspendingWithArg(42) }
@@ -75,9 +69,7 @@ class BDDMockitoKtTest {
 
         given(fixture.foo()).willThrow(RuntimeException::class)
 
-        assertFailsWith(RuntimeException::class) {
-            fixture.foo()
-        }
+        assertFailsWith(RuntimeException::class) { fixture.foo() }
     }
 
     @Test
@@ -86,12 +78,8 @@ class BDDMockitoKtTest {
 
         given(fixture.foo()).willThrow(RuntimeException::class, IllegalArgumentException::class)
 
-        assertFailsWith(RuntimeException::class) {
-            fixture.foo()
-        }
-        assertFailsWith(IllegalArgumentException::class) {
-            fixture.foo()
-        }
+        assertFailsWith(RuntimeException::class) { fixture.foo() }
+        assertFailsWith(IllegalArgumentException::class) { fixture.foo() }
     }
 
     @Test
@@ -109,5 +97,6 @@ interface SomeInterface {
     fun foo(): Int
 
     suspend fun suspending(): Int
+
     suspend fun suspendingWithArg(arg: Int): Int
 }

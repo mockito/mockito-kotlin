@@ -13,8 +13,7 @@ import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness
 
 open class LenientStubberTest {
-    @get:Rule
-    val rule: MockitoRule = MockitoJUnit.rule().strictness(Strictness.STRICT_STUBS)
+    @get:Rule val rule: MockitoRule = MockitoJUnit.rule().strictness(Strictness.STRICT_STUBS)
 
     @Test
     fun unused_and_lenient_stubbings() {
@@ -45,6 +44,7 @@ open class LenientStubberTest {
 
     private class NullableToString {
         fun returnsNullableString(): String? = ""
+
         fun returnsNonNullableString(): String = ""
     }
 }

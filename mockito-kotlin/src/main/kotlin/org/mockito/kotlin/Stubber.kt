@@ -25,11 +25,11 @@
 
 package org.mockito.kotlin
 
+import kotlin.reflect.KClass
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Stubber
-import kotlin.reflect.KClass
 
 /**
  * Sets a generic answer, specified with a lambda, to be applied in reverse stubbing.
@@ -61,9 +61,9 @@ fun <T> doAnswer(answer: (KInvocationOnMock) -> T?): Stubber {
  *      }.whenever(mock).someMethod()
  * ```
  *
- * This function is an alias for Mockito's [Mockito.doAnswer], but also taking
- * extra steps to wire the suspendable lambda answer properly into the Kotlin's coroutine
- * context of the stubbed suspendable function call.
+ * This function is an alias for Mockito's [Mockito.doAnswer], but also taking extra steps to wire
+ * the suspendable lambda answer properly into the Kotlin's coroutine context of the stubbed
+ * suspendable function call.
  *
  * See examples in javadoc for [Mockito] class
  *
@@ -91,10 +91,9 @@ fun doCallRealMethod(): Stubber {
 }
 
 /**
- * Sets to do nothing, to be applied in reverse stubbing.
- * This comes handy is some rare cases, like:
- *  - stubbing consecutive calls with different behavior
- *  - when spying a real object, suppress the real implementation of the spied object
+ * Sets to do nothing, to be applied in reverse stubbing. This comes handy is some rare cases, like:
+ * - stubbing consecutive calls with different behavior
+ * - when spying a real object, suppress the real implementation of the spied object
  *
  * Example:
  * ```kotlin
@@ -177,8 +176,8 @@ fun doThrow(throwable: Throwable): Stubber {
  *
  * This function is an alias for Mockito's [Mockito.doThrow].
  *
- * You can specify [throwables] to be thrown for consecutive invocations.
- * In that case the last throwable determines the behavior of further consecutive invocations.
+ * You can specify [throwables] to be thrown for consecutive invocations. In that case the last
+ * throwable determines the behavior of further consecutive invocations.
  *
  * See examples in javadoc for [Mockito] class
  *
@@ -221,8 +220,8 @@ fun doThrow(throwableType: KClass<out Throwable>): Stubber {
  *
  * This function is an alias for Mockito's [Mockito.doThrow].
  *
- * You can specify [throwableTypes] to be thrown for consecutive invocations.
- * In that case the last throwable type determines the behavior of further consecutive invocations.
+ * You can specify [throwableTypes] to be thrown for consecutive invocations. In that case the last
+ * throwable type determines the behavior of further consecutive invocations.
  *
  * See examples in javadoc for [Mockito] class
  *
@@ -230,18 +229,18 @@ fun doThrow(throwableType: KClass<out Throwable>): Stubber {
  * @param throwableTypes to be thrown on the next method/function invocations.
  * @return Stubber object used to stub fluently.
  */
-fun doThrow(throwableType: KClass<out Throwable>, vararg throwableTypes: KClass<out Throwable>): Stubber {
-    return Mockito.doThrow(
-        throwableType.java,
-        *throwableTypes.map { it.java }.toTypedArray()
-    )
+fun doThrow(
+    throwableType: KClass<out Throwable>,
+    vararg throwableTypes: KClass<out Throwable>,
+): Stubber {
+    return Mockito.doThrow(throwableType.java, *throwableTypes.map { it.java }.toTypedArray())
 }
 
 /**
  * Sets the mock to apply the reverse stubbing on.
  *
- * Reverse stubbing is especially useful when stubbing a void method (or Unit function)
- * to throw an exception.
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) to throw an
+ * exception.
  *
  * Example:
  * ```kotlin
@@ -250,8 +249,8 @@ fun doThrow(throwableType: KClass<out Throwable>, vararg throwableTypes: KClass<
  *      }
  * ```
  *
- * This function is an alias for Mockito's [Mockito.`when`]. So, for more detailed
- * documentation, please refer to the Javadoc of that method in the [Mockito] class.
+ * This function is an alias for Mockito's [Mockito.`when`]. So, for more detailed documentation,
+ * please refer to the Javadoc of that method in the [Mockito] class.
  *
  * @param mock the mock to stub the method/function call on.
  * @return the mock used to stub the method/function call fluently.
@@ -259,51 +258,51 @@ fun doThrow(throwableType: KClass<out Throwable>, vararg throwableTypes: KClass<
 fun <T> Stubber.whenever(mock: T) = `when`(mock)!!
 
 /**
- * Sets the mock and the method call to be stubbed.
- * With this version of whenever you can reverse stub either synchronous or suspendable function calls.
+ * Sets the mock and the method call to be stubbed. With this version of whenever you can reverse
+ * stub either synchronous or suspendable function calls.
  *
- * Reverse stubbing is especially useful when stubbing a void method (or Unit function)
- * to throw an exception.
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) to throw an
+ * exception.
  *
- * Warning: Only one method call can be stubbed in the function. Subsequent method calls are 
+ * Warning: Only one method call can be stubbed in the function. Subsequent method calls are
  * ignored!
- * 
+ *
  * Example:
  * ```kotlin
  *      doThrow(RuntimeException()).whenever(mock) { someMethod() }
  * ```
  *
- * This function is an alias for Mockito's [Mockito.`when`]. So, for more detailed 
- * documentation, please refer to the Javadoc of that method in the [Mockito] class.
+ * This function is an alias for Mockito's [Mockito.`when`]. So, for more detailed documentation,
+ * please refer to the Javadoc of that method in the [Mockito] class.
  *
  * @param mock the mock to stub the method/function call on.
- * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
+ * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be
+ *   stubbed.
  */
 fun <T> Stubber.whenever(mock: T, methodCall: suspend T.() -> Unit) {
-    whenever(mock).let {
-        runBlocking { it.methodCall() }
-    }
+    whenever(mock).let { runBlocking { it.methodCall() } }
 }
 
 /**
- * Sets the mock and the method call to be stubbed.
- * With this version of whenever you can reverse stub either synchronous or suspendable function calls.
+ * Sets the mock and the method call to be stubbed. With this version of whenever you can reverse
+ * stub either synchronous or suspendable function calls.
  *
- * Reverse stubbing is especially useful when stubbing a void method (or Unit function)
- * to throw an exception.
+ * Reverse stubbing is especially useful when stubbing a void method (or Unit function) to throw an
+ * exception.
  *
  * Warning: Only one method call can be stubbed in the function. Subsequent method calls are
  * ignored!
-
+ *
  * Example:
  * ```kotlin
  *      doThrow(RuntimeException()).wheneverBlocking(mock) { someMethod() }
  * ```
- * 
+ *
  * This function is an alias for [whenever].
  *
  * @param mock the mock to stub the method/function call on.
- * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be stubbed.
+ * @param methodCall (regular or suspendable) lambda, wrapping the method/function call to be
+ *   stubbed.
  */
 @Deprecated("Use whenever(mock) { methodCall() } instead")
 fun <T> Stubber.wheneverBlocking(mock: T, methodCall: suspend T.() -> Unit) {

@@ -97,10 +97,10 @@ class BDDMockitoTest {
         val mock = mock<SynchronousFunctions>()
 
         /* When */
-        given(mock.stringResult(any())) willAnswer { invocation ->
-            (invocation.arguments[0] as String)
-                .reversed()
-        }
+        given(mock.stringResult(any())) willAnswer
+            { invocation ->
+                (invocation.arguments[0] as String).reversed()
+            }
 
         /* Then */
         expect(mock.stringResult("Test")).toBe("tseT")

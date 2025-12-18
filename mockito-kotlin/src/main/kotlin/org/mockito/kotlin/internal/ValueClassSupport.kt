@@ -52,8 +52,7 @@ fun Any.unboxValueClass(): Any {
     require(clazz.isValue) { "${clazz.qualifiedName} is not a value class." }
 
     val unboxImpl =
-        clazz.java.declaredMethods
-            .single { it.name == "unbox-impl" && it.parameterCount == 0 }
+        clazz.java.declaredMethods.single { it.name == "unbox-impl" && it.parameterCount == 0 }
 
     return unboxImpl.invoke(this)
 }

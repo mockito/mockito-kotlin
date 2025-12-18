@@ -23,20 +23,19 @@
  */
 
 import com.nhaarman.expect.expect
+import java.io.IOException
+import java.math.BigInteger
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.*
 import test.mockMakerInlineEnabled
-import java.io.IOException
-import java.math.BigInteger
 
 class UsingMockMakerInlineTest {
 
     class ClassToBeMocked {
 
-        fun doSomething(@Suppress("UNUSED_PARAMETER") c: ClassToBeMocked) {
-        }
+        fun doSomething(@Suppress("UNUSED_PARAMETER") c: ClassToBeMocked) {}
 
         fun doSomethingElse(value: BigInteger): BigInteger {
             return value.plus(BigInteger.ONE)
@@ -73,9 +72,7 @@ class UsingMockMakerInlineTest {
     @Test
     fun mockClosedFunction_mockStubbing() {
         /* Given */
-        val mock = mock<ClassToBeMocked> {
-            on { doSomethingElse(any()) } doReturn BigInteger.ONE
-        }
+        val mock = mock<ClassToBeMocked> { on { doSomethingElse(any()) } doReturn BigInteger.ONE }
 
         /* When */
         val result = mock.doSomethingElse(BigInteger.TEN)
@@ -112,5 +109,4 @@ class UsingMockMakerInlineTest {
     }
 
     class ThrowableClass(cause: Throwable) : Throwable(cause)
-
 }

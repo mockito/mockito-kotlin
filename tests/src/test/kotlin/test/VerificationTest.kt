@@ -84,9 +84,7 @@ class VerificationTest : TestBase() {
 
     @Test
     fun testClearInvocations() {
-        val mock = mock<SynchronousFunctions>().apply {
-            string("")
-        }
+        val mock = mock<SynchronousFunctions>().apply { string("") }
 
         clearInvocations(mock)
 
@@ -96,9 +94,7 @@ class VerificationTest : TestBase() {
     @Test
     fun testDescription() {
         try {
-            mock<SynchronousFunctions>().apply {
-                verify(this, description("Test")).string(any())
-            }
+            mock<SynchronousFunctions>().apply { verify(this, description("Test")).string(any()) }
             throw AssertionError("Verify should throw Exception.")
         } catch (e: MockitoAssertionError) {
             expect(e.message).toContain("Test")

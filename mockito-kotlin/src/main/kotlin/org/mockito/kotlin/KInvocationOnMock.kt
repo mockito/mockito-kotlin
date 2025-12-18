@@ -27,13 +27,16 @@ package org.mockito.kotlin
 
 import org.mockito.invocation.InvocationOnMock
 
-class KInvocationOnMock(
-    private val invocationOnMock: InvocationOnMock
-) : InvocationOnMock by invocationOnMock {
+class KInvocationOnMock(private val invocationOnMock: InvocationOnMock) :
+    InvocationOnMock by invocationOnMock {
 
     operator fun <T> component1(): T = invocationOnMock.getArgument(0)
+
     operator fun <T> component2(): T = invocationOnMock.getArgument(1)
+
     operator fun <T> component3(): T = invocationOnMock.getArgument(2)
+
     operator fun <T> component4(): T = invocationOnMock.getArgument(3)
+
     operator fun <T> component5(): T = invocationOnMock.getArgument(4)
 }

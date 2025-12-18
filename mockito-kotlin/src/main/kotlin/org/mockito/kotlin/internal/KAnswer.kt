@@ -29,13 +29,9 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.KInvocationOnMock
 import org.mockito.stubbing.Answer
 
-/**
- * This class wraps destructuring lambda into [Answer]
- */
+/** This class wraps destructuring lambda into [Answer] */
 @Suppress("UNCHECKED_CAST")
-internal class KAnswer<T>(
-    private val body: (KInvocationOnMock) -> T?
-) : Answer<T> {
+internal class KAnswer<T>(private val body: (KInvocationOnMock) -> T?) : Answer<T> {
     override fun answer(invocation: InvocationOnMock): T {
         return body(KInvocationOnMock(invocation)) as T
     }

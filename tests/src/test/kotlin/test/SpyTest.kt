@@ -26,11 +26,11 @@ package test
  */
 
 import com.nhaarman.expect.expect
+import java.util.*
 import org.junit.After
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.*
-import java.util.*
 
 class SpyTest : TestBase() {
 
@@ -96,9 +96,7 @@ class SpyTest : TestBase() {
     fun doReturnWithDefaultInstanceSpyStubbing() {
         val timeVal = 12L
 
-        val dateSpy = spy<Date> {
-            on { time } doReturn timeVal
-        }
+        val dateSpy = spy<Date> { on { time } doReturn timeVal }
 
         expect(dateSpy.time).toBe(timeVal)
     }
@@ -107,9 +105,7 @@ class SpyTest : TestBase() {
     fun doReturnWithSpyStubbing() {
         val timeVal = 15L
 
-        val dateSpy = spy(Date(0)) {
-            on { time } doReturn timeVal
-        }
+        val dateSpy = spy(Date(0)) { on { time } doReturn timeVal }
 
         expect(dateSpy.time).toBe(timeVal)
     }
@@ -138,4 +134,3 @@ class SpyTest : TestBase() {
 
     private class ClosedClass
 }
-
