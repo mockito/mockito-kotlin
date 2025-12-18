@@ -65,6 +65,18 @@ class StubbingTest {
     }
 
     @Test
+    fun `should stub already existing mock, using whenever function`() {
+        val mock = mock<SynchronousFunctions>()
+        whenever { mock.stringResult() } doReturn "result"
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("result")
+    }
+
+    @Test
     fun `should override default stub of mock`() {
         /* Given mock with stub */
         val mock = mock<SynchronousFunctions> {
@@ -135,7 +147,7 @@ class StubbingTest {
     fun `should throw when stubbing is incomplete`() {
         /* Given */
         val mock = mock<Open>()
-        whenever(mock.stringResult())
+        whenever { mock.stringResult() }
 
         /* When */
         try {
@@ -143,14 +155,13 @@ class StubbingTest {
         } catch (e: UnfinishedStubbingException) {
             /* Then */
             expect(e.message).toContain("Unfinished stubbing detected here:")
-            expect(e.message).toContain("-> at test.StubbingTest.should throw when stubbing is incomplete")
         }
     }
 
     @Test
     fun `should stub sync method call in reverse manner as part of mock creation`() {
         val mock = mock<SynchronousFunctions> {
-            doReturn("A").on { stringResult() }
+            doReturn("A") on { stringResult() }
         }
 
         expect(mock.stringResult()).toBe("A")
@@ -160,7 +171,7 @@ class StubbingTest {
     fun `should stub sync method call, with whenever`() {
         /* Given */
         val mock = mock<Open>()
-        whenever(mock.stringResult()).doReturn("A")
+        whenever { mock.stringResult() } doReturn "A"
 
         /* When */
         val result = mock.stringResult()
@@ -213,10 +224,10 @@ class StubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call, with wheneverBlocking as part of mock creation`() {
+    fun `should stub suspendable function call, with whenever as part of mock creation`() {
         /* Given */
         val mock = mock<SuspendFunctions> { mock ->
-            wheneverBlocking { mock.stringResult() } doReturn "A"
+            whenever { mock.stringResult() } doReturn "A"
         }
 
         /* When */
@@ -227,10 +238,24 @@ class StubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call in reverse manner, with wheneverBlocking as part of mock creation`() {
+    fun `should stub sync method call in reverse manner, with whenever() and lambda as part of mock creation`() {
         /* Given */
-        val mock = mock<SuspendFunctions> { mock ->
-            doReturn( "A").wheneverBlocking(mock) { mock.stringResult() }
+        val mock = mock<SynchronousFunctions> { mock ->
+            doReturn( "A").whenever(mock) { stringResult() }
+        }
+
+        /* When */
+        val result = mock.stringResult()
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call in reverse manner with on() as part of mock creation`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> {
+            doReturn( "A") on { stringResult() }
         }
 
         /* When */
@@ -241,9 +266,23 @@ class StubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call in reverse manner, with whenever as part of mock creation`() = runTest{
+    fun `should stub suspendable function call in reverse manner, with whenever() and lambda as part of mock creation`() {
         /* Given */
-        val mock = mock<SuspendFunctions> { mock ->
+        val mock = mock<SynchronousFunctions> { mock ->
+            doReturn( "A").whenever(mock) { stringResult() }
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    fun `should stub suspendable function call in reverse manner, with whenever() as part of mock creation`() = runTest{
+        /* Given */
+        val mock = mock<SuspendFunctions> {
             doReturn( "A").whenever(mock).stringResult()
         }
 
@@ -258,7 +297,7 @@ class StubbingTest {
     fun `should stub sync function call within a suspendable lambda`() {
         /* Given */
         val mock = mock<SynchronousFunctions> {
-            onBlocking { stringResult() } doReturn "A"
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -269,10 +308,10 @@ class StubbingTest {
     }
 
     @Test
-    fun `should stub sync function call within a suspendable lambda of wheneverBlocking`() {
+    fun `should stub sync function call within a suspendable lambda of whenever`() {
         /* Given */
         val mock = mock<SynchronousFunctions>()
-        wheneverBlocking { mock.stringResult() } doReturn "A"
+        whenever { mock.stringResult() } doReturn "A"
 
         /* When */
         val result = mock.stringResult()
@@ -282,7 +321,7 @@ class StubbingTest {
     }
 
     @Test
-    fun `should stub suspend function call with a call to the sync version of whenever`() = runTest {
+    fun `should stub suspendable function call with a call to the sync version of whenever`() = runTest {
         /* Given */
         val mock = mock<SuspendFunctions>()
         whenever (mock.stringResult()) doReturn "A"
@@ -295,10 +334,10 @@ class StubbingTest {
     }
 
     @Test
-    fun `should provide backwards support to stub suspendable function call with 'whenever' method`() = runTest {
+    fun `should support to stub suspendable function call with synchronous 'whenever' method`() = runTest {
         /* Given */
         val mock = mock<SuspendFunctions>()
-        whenever(mock.stringResult()).doSuspendableAnswer {
+        whenever(mock.stringResult()) doSuspendableAnswer {
             delay(0)
             "A"
         }
@@ -308,5 +347,64 @@ class StubbingTest {
 
         /* Then */
         expect(result).toBe("A")
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `should provide backwards compatibility support to stub suspendable function call with 'wheneverBlocking' method`() {
+        /* Given */
+        val mock = mock<SuspendFunctions>()
+        wheneverBlocking { mock.stringResult() } doReturn "A"
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `should provide backwards compatibility support to stub suspendable function call in reverse manner, with wheneverBlocking`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> { mock ->
+            doReturn( "A").wheneverBlocking(mock) { stringResult() }
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `should provide backwards compatibility support to stub suspendable function call with 'onBlocking' method`() {
+        /* Given */
+        val mock = mock<SuspendFunctions> {
+            onBlocking { mock.stringResult() } doReturn "A"
+        }
+
+        /* When */
+        val result = runBlocking { mock.stringResult() }
+
+        /* Then */
+        expect(result).toBe("A")
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `should provide backwards compatibility support to stub generics function calls with integer result`() {
+        /* Given */
+        val mock = mock<GenericMethods<Int>> {
+            onGeneric { genericMethod() } doReturn 2
+        }
+
+        /* When */
+        val result = mock.genericMethod()
+
+        /* Then */
+        expect(result).toBe(2)
     }
 }

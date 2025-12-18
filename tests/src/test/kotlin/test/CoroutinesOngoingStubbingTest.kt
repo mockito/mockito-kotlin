@@ -9,6 +9,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doCallRealMethod
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doSuspendableAnswer
@@ -21,7 +22,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() } doReturn "A"
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -35,7 +36,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call within a coroutine scope`() = runTest {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() } doReturn "A"
+            on { stringResult() } doReturn "A"
         }
 
         /* When */
@@ -49,7 +50,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub consecutive suspendable function calls`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() }.doReturn("A", "B", "C")
+            on { stringResult() }.doReturn("A", "B", "C")
         }
 
         /* When */
@@ -67,7 +68,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub consecutive suspendable function calls by a list of answers`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() } doReturnConsecutively listOf("A", "B", "C")
+            on { stringResult() } doReturnConsecutively listOf("A", "B", "C")
         }
 
         /* When */
@@ -99,7 +100,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub builder method returning mock itself via answer`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { builderMethod() } doAnswer Mockito.RETURNS_SELF
+            on { builderMethod() } doAnswer Mockito.RETURNS_SELF
         }
 
         /* When */
@@ -113,7 +114,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub builder method returning mock itself`() {
         /* Given */
         val mock = mock<SuspendFunctions> { mock ->
-            onBlocking { builderMethod() } doReturn mock
+            on { builderMethod() } doReturn mock
         }
 
         /* When */
@@ -127,7 +128,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with nullable result`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { nullableStringResult() } doReturn "Test"
+            on { nullableStringResult() } doReturn "Test"
         }
 
         /* When */
@@ -141,7 +142,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should throw exception instance on suspendable function call`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { builderMethod() } doThrow IllegalArgumentException()
+            on { builderMethod() } doThrow IllegalArgumentException()
         }
 
         /* When, Then */
@@ -156,7 +157,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should throw exception class on suspendable function call`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { builderMethod() } doThrow IllegalArgumentException::class
+            on { builderMethod() } doThrow IllegalArgumentException::class
         }
 
         /* When, Then */
@@ -171,7 +172,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should throw exception instances on consecutive suspendable function calls`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { builderMethod() }.doThrow(
+            on { builderMethod() }.doThrow(
                 IllegalArgumentException(),
                 UnsupportedOperationException()
             )
@@ -192,7 +193,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should throw exception classes on consecutive suspendable function calls`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { builderMethod() }.doThrow(
+            on { builderMethod() }.doThrow(
                 IllegalArgumentException::class,
                 UnsupportedOperationException::class
             )
@@ -214,7 +215,7 @@ class CoroutinesOngoingStubbingTest {
         /* Given */
         val answer: Answer<String> = Answer { "result" }
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() } doAnswer answer
+            on { stringResult() } doAnswer answer
         }
 
         /* When */
@@ -229,7 +230,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with result from lambda`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult() } doAnswer { "result" }
+            on { stringResult() } doAnswer { "result" }
         }
 
         /* When */
@@ -243,7 +244,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with result from lambda with argument`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
+            on { stringResult(any()) } doAnswer { "${it.arguments[0]}-result" }
         }
 
         /* When */
@@ -257,7 +258,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with result from lambda with deconstructed argument`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
+            on { stringResult(any()) } doAnswer { (s: String) -> "$s-result" }
         }
 
         /* When */
@@ -271,7 +272,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with result from lambda with deconstructed arguments`() {
         /* Given */
         val mock = mock<SuspendFunctions> {
-            onBlocking { stringResult(any(), any()) } doAnswer { (a: String, b: String) ->
+            on { stringResult(any(), any()) } doAnswer { (a: String, b: String) ->
                 "$a + $b"
             }
         }
@@ -288,7 +289,8 @@ class CoroutinesOngoingStubbingTest {
         /* Given */
         val valueClass = ValueClass("A")
         val mock = mock<SuspendFunctions> {
-            on(mock.valueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on (mock.valueClassResult()) doReturn valueClass"
+            on (mock.valueClassResult()) doSuspendableAnswer {
                 delay(1)
                 valueClass
             }
@@ -302,36 +304,38 @@ class CoroutinesOngoingStubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call with nullable value class result`() = runTest {
+    fun `should stub suspendable function call with nullable value class result`() {
         /* Given */
         val valueClass = ValueClass("A")
         val mock = mock<SuspendFunctions> {
-            on (mock.nullableValueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on { nullableValueClassResult() } doReturn valueClass"
+            on { nullableValueClassResult() } doSuspendableAnswer {
                 delay(1)
                 valueClass
             }
         }
 
         /* When */
-        val result: ValueClass? = mock.nullableValueClassResult()
+        val result: ValueClass? = runBlocking { mock.nullableValueClassResult() }
 
         /* Then */
         expect(result).toBe(valueClass)
     }
 
     @Test
-    fun `should stub suspendable function call with nested value class result`() = runTest {
+    fun `should stub suspendable function call with nested value class result`() {
         /* Given */
         val nestedValueClass = NestedValueClass(ValueClass("A"))
         val mock = mock<SuspendFunctions> {
-            on (mock.nestedValueClassResult()) doSuspendableAnswer {
+            // TODO: simplify to "on { nestedValueClassResult() } doReturn nestedValueClass"
+            on { nestedValueClassResult() } doSuspendableAnswer {
                 delay(1)
                 nestedValueClass
             }
         }
 
         /* When */
-        val result: NestedValueClass = mock.nestedValueClassResult()
+        val result: NestedValueClass = runBlocking { mock.nestedValueClassResult() }
 
         /* Then */
         expect(result).toBe(nestedValueClass)
@@ -372,5 +376,31 @@ class CoroutinesOngoingStubbingTest {
 
         /* Then */
         expect(result).toBe(primitiveValueClass)
+    }
+
+    @Test
+    fun `should stub consecutive suspendable function call with value class results`() {
+        /* Given */
+        val valueClassA = ValueClass("A")
+        val valueClassB = ValueClass("B")
+        val mock = mock<SuspendFunctions> {
+            // TODO: simplify to "on { valueClassResult() }.doReturnConsecutively(valueClassA, valueClassB)"
+            on { valueClassResult() } doSuspendableAnswer {
+                delay(1)
+                valueClassA
+            } doSuspendableAnswer {
+                delay(1)
+                valueClassB
+            }
+        }
+
+        /* When */
+        val (result1, result2) = runBlocking {
+            mock.valueClassResult() to mock.valueClassResult()
+        }
+
+        /* Then */
+        expect(result1).toBe(valueClassA)
+        expect(result2).toBe(valueClassB)
     }
 }
