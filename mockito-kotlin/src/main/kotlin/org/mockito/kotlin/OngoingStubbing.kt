@@ -47,7 +47,7 @@ import kotlin.reflect.KClass
  *      whenever(mock.someFunction()) doReturn 10
  *
  *      //you can use flexible argument matchers, e.g:
- *      whenever(mock.someFunction(anyString())) doReturn 10
+ *      whenever(mock.someFunction(any())) doReturn 10
  * ```
  *
  * This function is an alias for [Mockito.when]. So, for more detailed documentation,
@@ -76,7 +76,7 @@ fun <T> whenever(methodCall: T): OngoingStubbing<T> {
  *      whenever { mock.someFunction() } doReturn 10
  *
  *      //you can use flexible argument matchers, e.g:
- *      whenever { mock.someFunction(anyString()) } doReturn 10
+ *      whenever { mock.someFunction(any()) } doReturn 10
  * ```
  *
  * This function is an alias for [Mockito.when]. So, for more detailed documentation,
@@ -186,7 +186,7 @@ inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(values: Li
 }
 
 /**
- * Sets throwable to be thrown when the stubbed method/function is being called. E.g:
+ * Sets a throwable to be thrown when the stubbed method/function is being called. E.g:
  *
  * ```kotlin
  *      whenever { mock.someFunction() } doThrow RuntimeException()

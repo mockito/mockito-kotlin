@@ -72,7 +72,7 @@ class KStubbing<out T : Any>(val mock: T) {
      *
      * ```kotlin
      *      stubbing(mock) {
-     *          on (mock.someFunction()) doReturn 10
+     *          on(mock.someFunction()) doReturn 10
      *      }
      * ```
      *
@@ -219,18 +219,15 @@ class KStubbing<out T : Any>(val mock: T) {
      * Stubs a method/function call in a reverse manner, as part of a mock being created.
      * You can reverse stub either synchronous as well as suspendable function calls.
      *
-     * Reverse stubbing is especially useful when stubbing a void method (or Unit function) as
-     * the regular approach of ongoing stubbing through [org.mockito.kotlin.whenever] leads to
-     * problems in case of void methods (or Unit functions): the java compiler does not like void
-     * methods inside brackets...
+     * Reverse stubbing is especially useful when stubbing a void method (or Unit function)
+     * to throw an exception.
      *
      * Example:
      * ```kotlin
      *      mock<SynchronousFunctions> {
-     *          doReturn("Test").on { stringResult() }
+     *          doThrow(RuntimeException()).on { string("test") }
      *      }
      * ```
-     * Warning: Only one method call can be stubbed in the function. Subsequent method calls are ignored!
      *
      * This function is an alias for [whenever]. Please use [whenever] instead.
      *
