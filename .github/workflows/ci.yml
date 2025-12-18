@@ -49,7 +49,6 @@ jobs:
     # Definition of the build matrix
     strategy:
       matrix:
-        mock-maker: ['mock-maker-default', 'mock-maker-inline']
         kotlin: ['2.1.20']
         # Note that the old Travis CI referenced other Kotlin versions: '1.0.7', '1.1.61', '1.2.50'
         # However, those versions of Kotlin don't work with latest Gradle
@@ -64,12 +63,16 @@ jobs:
         with:
           java-version: 17
 
-      - name: 3. Build with Kotlin ${{ matrix.kotlin }} and mock-maker ${{ matrix.mock-maker }}
+      - name: 3. Spotless check. Run './gradlew spotlessApply :tests:spotlessApply' locally if this job fails.
+        run: >
+          ./gradlew
+          spotlessCheck :tests:spotlessCheck
+          --stacktrace
+          --scan
+
+      - name: 4. Build with Kotlin ${{ matrix.kotlin }}
         run: |
-          ops/mockMakerInline.sh
           ./gradlew build -PtestKotlinVersion=${{ matrix.kotlin }}
-        env:
-          MOCK_MAKER: ${{ matrix.mock-maker }}
 
   #
   # Release job, only for pushes to the main development branch
