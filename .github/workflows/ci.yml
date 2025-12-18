@@ -63,7 +63,14 @@ jobs:
         with:
           java-version: 17
 
-      - name: 3. Build with Kotlin ${{ matrix.kotlin }}
+      - name: 3. Spotless check. Run './gradlew spotlessApply :tests:spotlessApply' locally if this job fails.
+        run: >
+          ./gradlew
+          spotlessCheck :tests:spotlessCheck
+          --stacktrace
+          --scan
+
+      - name: 4. Build with Kotlin ${{ matrix.kotlin }}
         run: |
           ./gradlew build -PtestKotlinVersion=${{ matrix.kotlin }}
 
