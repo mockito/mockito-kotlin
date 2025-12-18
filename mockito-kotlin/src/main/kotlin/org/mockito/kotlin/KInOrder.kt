@@ -32,16 +32,17 @@ interface KInOrder : InOrder {
     /**
      * Verifies certain suspending behavior <b>happened once</b> in order.
      *
-     * Warning: Only one method call can be verified in the function.
-     * Subsequent method calls are ignored!
+     * Warning: Only one method call can be verified in the function. Subsequent method calls are
+     * ignored!
      */
     fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit)
 
     /**
-     * Verifies certain suspending behavior happened at least once / exact number of times / never in order.
+     * Verifies certain suspending behavior happened at least once / exact number of times / never
+     * in order.
      *
-     * Warning: Only one method call can be verified in the function.
-     * Subsequent method calls are ignored!
+     * Warning: Only one method call can be verified in the function. Subsequent method calls are
+     * ignored!
      */
     fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit)
 }

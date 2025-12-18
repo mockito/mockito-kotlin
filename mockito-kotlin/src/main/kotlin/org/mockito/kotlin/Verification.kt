@@ -25,10 +25,10 @@
 
 package org.mockito.kotlin
 
-import org.mockito.kotlin.internal.createInstance
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.kotlin.internal.KInOrderDecorator
+import org.mockito.kotlin.internal.createInstance
 import org.mockito.verification.VerificationAfterDelay
 import org.mockito.verification.VerificationMode
 import org.mockito.verification.VerificationWithTimeout
@@ -45,8 +45,8 @@ fun <T> verify(mock: T): T {
 /**
  * Verifies certain suspending behavior <b>happened once</b>.
  *
- * Warning: Only one method call can be verified in the function.
- * Subsequent method calls are ignored!
+ * Warning: Only one method call can be verified in the function. Subsequent method calls are
+ * ignored!
  */
 fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
     val m = Mockito.verify(mock)
@@ -56,8 +56,8 @@ fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
 /**
  * Verifies certain behavior happened at least once / exact number of times / never.
  *
- * Warning: Only one method call can be verified in the function.
- * Subsequent method calls are ignored!
+ * Warning: Only one method call can be verified in the function. Subsequent method calls are
+ * ignored!
  */
 fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit) {
     val m = Mockito.verify(mock, mode)
@@ -74,7 +74,8 @@ fun <T> verify(mock: T, mode: VerificationMode): T {
 }
 
 /**
- * Verifies that no interactions happened on given mocks beyond the previously verified interactions.
+ * Verifies that no interactions happened on given mocks beyond the previously verified
+ * interactions.
  *
  * Alias for [Mockito.verifyNoMoreInteractions].
  */
@@ -136,9 +137,7 @@ fun calls(wantedNumberOfInvocations: Int): VerificationMode {
     return Mockito.calls(wantedNumberOfInvocations)!!
 }
 
-/**
- * Alias for [times] with parameter `0`.
- */
+/** Alias for [times] with parameter `0`. */
 fun never(): VerificationMode {
     return Mockito.never()!!
 }
@@ -162,18 +161,18 @@ fun description(description: String): VerificationMode {
 }
 
 /**
- * Allows verifying over a given period. It causes a verify to wait for a specified period of time for a desired
- * interaction rather than failing immediately if has not already happened. May be useful for testing in concurrent
- * conditions.
+ * Allows verifying over a given period. It causes a verify to wait for a specified period of time
+ * for a desired interaction rather than failing immediately if has not already happened. May be
+ * useful for testing in concurrent conditions.
  */
 fun after(millis: Long): VerificationAfterDelay {
     return Mockito.after(millis)!!
 }
 
 /**
- * Allows verifying with timeout. It causes a verify to wait for a specified period of time for a desired
- * interaction rather than fails immediately if has not already happened. May be useful for testing in concurrent
- * conditions.
+ * Allows verifying with timeout. It causes a verify to wait for a specified period of time for a
+ * desired interaction rather than fails immediately if has not already happened. May be useful for
+ * testing in concurrent conditions.
  */
 fun timeout(millis: Long): VerificationWithTimeout {
     return Mockito.timeout(millis)!!
@@ -198,26 +197,19 @@ fun inOrder(vararg mocks: Any): KInOrder {
 }
 
 /**
- * Creates [KInOrder] object that allows verifying mocks in order.
- * Accepts a lambda to allow easy evaluation.
+ * Creates [KInOrder] object that allows verifying mocks in order. Accepts a lambda to allow easy
+ * evaluation.
  *
  * Wrapper for [Mockito.inOrder] that also allows to verify suspending method calls.
  */
-inline fun inOrder(
-    vararg mocks: Any,
-    evaluation: KInOrder.() -> Unit
-) {
+inline fun inOrder(vararg mocks: Any, evaluation: KInOrder.() -> Unit) {
     KInOrderDecorator(Mockito.inOrder(*mocks)).evaluation()
 }
 
 /**
  * Allows [KInOrder] verification for a single mocked instance:
  *
- * mock.inOrder {
- *    verify().foo()
- *    verifyBlocking { bar() }
- * }
- *
+ * mock.inOrder { verify().foo() verifyBlocking { bar() } }
  */
 inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Any) {
     block.invoke(InOrderOnType(this))
@@ -225,9 +217,7 @@ inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Any) {
 
 class InOrderOnType<T>(private val t: T) : KInOrder by inOrder(t as Any) {
 
-    /**
-     * Verifies certain behavior <b>happened once</b> in order.
-     */
+    /** Verifies certain behavior <b>happened once</b> in order. */
     fun verify(): T = verify(t)
 
     /**
@@ -238,23 +228,22 @@ class InOrderOnType<T>(private val t: T) : KInOrder by inOrder(t as Any) {
     /**
      * Verifies certain suspending behavior <b>happened once</b> in order.
      *
-     * Warning: Only one method call can be verified in the function.
-     * Subsequent method calls are ignored!
+     * Warning: Only one method call can be verified in the function. Subsequent method calls are
+     * ignored!
      */
     fun verifyBlocking(f: suspend T.() -> Unit) = verifyBlocking(t, f)
 
     /**
-     * Verifies certain suspending behavior happened at least once / exact number of times / never in order.
+     * Verifies certain suspending behavior happened at least once / exact number of times / never
+     * in order.
      *
-     * Warning: Only one method call can be verified in the function.
-     * Subsequent method calls are ignored!
+     * Warning: Only one method call can be verified in the function. Subsequent method calls are
+     * ignored!
      */
     fun verifyBlocking(mode: VerificationMode, f: suspend T.() -> Unit) = verifyBlocking(t, mode, f)
 }
 
-/**
- * Allows checking if given method was the only one invoked.
- */
+/** Allows checking if given method was the only one invoked. */
 fun only(): VerificationMode {
     return Mockito.only()!!
 }
@@ -262,21 +251,22 @@ fun only(): VerificationMode {
 /**
  * For usage with verification only.
  *
- * For example:
- *  verify(myObject).doSomething(check { assertThat(it, is("Test")) })
+ * For example: verify(myObject).doSomething(check { assertThat(it, is("Test")) })
  *
  * @param predicate A function that performs actions to verify an argument [T].
  */
 inline fun <reified T : Any> check(noinline predicate: (T) -> Unit): T {
     return Mockito.argThat { arg: T? ->
-        if (arg == null) error(
-            """
+        if (arg == null)
+            error(
+                """
                 The argument passed to the predicate was null.
-                
+
                 If you are trying to verify an argument to be null, use `isNull()`.
                 If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
-            """.trimIndent()
-        )
+                """
+                    .trimIndent()
+            )
 
         try {
             predicate(arg)

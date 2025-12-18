@@ -25,6 +25,7 @@
 
 package org.mockito.kotlin
 
+import kotlin.reflect.KClass
 import org.mockito.AdditionalMatchers
 import org.mockito.ArgumentMatcher
 import org.mockito.ArgumentMatchers
@@ -33,25 +34,22 @@ import org.mockito.kotlin.internal.createInstance
 import org.mockito.kotlin.internal.toKotlinType
 import org.mockito.kotlin.internal.unboxValueClass
 import org.mockito.kotlin.internal.valueClassInnerClass
-import kotlin.reflect.KClass
 
 /** Matches an argument that is equal to the given value. */
 inline fun <reified T : Any?> eq(value: T): T {
-    if (T::class.isValue)
-        return eqValueClass(value)
+    if (T::class.isValue) return eqValueClass(value)
 
     return ArgumentMatchers.eq(value) ?: value
 }
 
-/**  Matches an argument that is the same as the given value. */
+/** Matches an argument that is the same as the given value. */
 fun <T> same(value: T): T {
     return ArgumentMatchers.same(value) ?: value
 }
 
 /** Matches any object, excluding nulls. */
 inline fun <reified T : Any> any(): T {
-    if (T::class.isValue)
-        return anyValueClass()
+    if (T::class.isValue) return anyValueClass()
 
     return ArgumentMatchers.any(T::class.java) ?: createInstance()
 }
@@ -93,31 +91,28 @@ inline fun <reified T> eqValueClass(value: T): T {
     require(value::class.isValue) { "${value::class.qualifiedName} is not a value class." }
 
     val unboxed = value?.unboxValueClass()
-    val matcher = AdditionalMatchers.or(
-        ArgumentMatchers.eq(value),
-        ArgumentMatchers.eq(unboxed)
-    )
+    val matcher = AdditionalMatchers.or(ArgumentMatchers.eq(value), ArgumentMatchers.eq(unboxed))
 
     return (matcher ?: unboxed).toKotlinType(T::class)
 }
 
 /**
- * Matches an argument that is matching the given predicate.
- * `null` values will never evaluate to `true`.
+ * Matches an argument that is matching the given predicate. `null` values will never evaluate to
+ * `true`.
  *
- * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
+ * @param predicate An extension function on [T] that returns `true` when a [T] matches the
+ *   predicate.
  */
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean): T {
-    return ArgumentMatchers.argThat { arg: T? -> arg?.predicate() ?: false } ?: createInstance(
-        T::class
-    )
+    return ArgumentMatchers.argThat { arg: T? -> arg?.predicate() ?: false }
+        ?: createInstance(T::class)
 }
 
 /**
  * Matches an argument that is matching the given [ArgumentMatcher].
  *
- * Registers a custom ArgumentMatcher. The original Mockito function registers the matcher and returns null,
- * here the required type is returned.
+ * Registers a custom ArgumentMatcher. The original Mockito function registers the matcher and
+ * returns null, here the required type is returned.
  *
  * @param matcher The ArgumentMatcher on [T] to be registered.
  */
@@ -130,18 +125,18 @@ inline fun <reified T : Any> argThat(matcher: ArgumentMatcher<T>): T {
  *
  * Alias for [argThat].
  *
- * Creates a custom argument matcher.
- * `null` values will never evaluate to `true`.
+ * Creates a custom argument matcher. `null` values will never evaluate to `true`.
  *
- * @param predicate An extension function on [T] that returns `true` when a [T] matches the predicate.
+ * @param predicate An extension function on [T] that returns `true` when a [T] matches the
+ *   predicate.
  */
 inline fun <reified T : Any> argForWhich(noinline predicate: T.() -> Boolean): T {
     return argThat(predicate)
 }
 
 /**
- * Matches an argument that is matching the given predicate.
- * `null` values will never evaluate to `true`.
+ * Matches an argument that is matching the given predicate. `null` values will never evaluate to
+ * `true`.
  *
  * @param predicate A function that returns `true` when given [T] matches the predicate.
  */
@@ -149,28 +144,20 @@ inline fun <reified T : Any> argWhere(noinline predicate: (T) -> Boolean): T {
     return argThat(predicate)
 }
 
-/**
- * Matches an argument that is instance of the given class.
- */
+/** Matches an argument that is instance of the given class. */
 inline fun <reified T : Any> isA(): T {
     return ArgumentMatchers.isA(T::class.java) ?: createInstance()
 }
 
-/**
- * Matches an argument that is `null`.
- */
+/** Matches an argument that is `null`. */
 fun <T : Any> isNull(): T? = ArgumentMatchers.isNull()
 
-/**
- * Matches an argument that is not `null`.
- */
+/** Matches an argument that is not `null`. */
 fun <T : Any> isNotNull(): T? {
     return ArgumentMatchers.isNotNull()
 }
 
-/**
- * Matches an argument that is not `null`.
- */
+/** Matches an argument that is not `null`. */
 fun <T : Any> notNull(): T? {
     return ArgumentMatchers.notNull()
 }

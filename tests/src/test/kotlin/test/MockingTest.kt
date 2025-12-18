@@ -3,28 +3,27 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import com.nhaarman.expect.fail
-import kotlinx.coroutines.test.runTest
-import org.mockito.kotlin.UseConstructor.Companion.parameterless
-import org.mockito.kotlin.UseConstructor.Companion.withArguments
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.any
-import org.junit.Test
-import org.mockito.Mockito
-import org.mockito.MockitoSession
-import org.mockito.exceptions.verification.WantedButNotInvoked
-import org.mockito.invocation.DescribedInvocation
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.mockConstruction
-import org.mockito.kotlin.mockStatic
-import org.mockito.listeners.InvocationListener
-import org.mockito.mock.SerializableMode.BASIC
-import org.mockito.quality.Strictness
 import java.io.PrintStream
 import java.io.Serializable
 import java.util.*
+import kotlinx.coroutines.test.runTest
+import org.junit.Test
+import org.mockito.Mockito
+import org.mockito.exceptions.verification.WantedButNotInvoked
+import org.mockito.invocation.DescribedInvocation
+import org.mockito.kotlin.UseConstructor.Companion.parameterless
+import org.mockito.kotlin.UseConstructor.Companion.withArguments
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.mockConstruction
+import org.mockito.kotlin.mockStatic
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.mockito.listeners.InvocationListener
+import org.mockito.mock.SerializableMode.BASIC
+import org.mockito.quality.Strictness
 
 class MockingTest : TestBase() {
 
@@ -85,9 +84,7 @@ class MockingTest : TestBase() {
     @Test
     fun testMockStubbing_lambda() {
         /* Given */
-        val mock = mock<Open>() {
-            on { stringResult() } doReturn "A"
-        }
+        val mock = mock<Open>() { on { stringResult() } doReturn "A" }
 
         /* When */
         val result = mock.stringResult()
@@ -99,9 +96,7 @@ class MockingTest : TestBase() {
     @Test
     fun testMockStubbing_normalOverridesLambda() {
         /* Given */
-        val mock = mock<Open> {
-            on { stringResult() } doReturn "A"
-        }
+        val mock = mock<Open> { on { stringResult() } doReturn "A" }
         whenever { mock.stringResult() }.thenReturn("B")
 
         /* When */
@@ -126,9 +121,7 @@ class MockingTest : TestBase() {
     @Test
     fun mock_withSettingsAPI_extraInterfaces() {
         /* Given */
-        val mock = mock<SynchronousFunctions>(
-              extraInterfaces = arrayOf(ExtraInterface::class)
-        )
+        val mock = mock<SynchronousFunctions>(extraInterfaces = arrayOf(ExtraInterface::class))
 
         /* Then */
         expect(mock).toBeInstanceOf<ExtraInterface>()
@@ -140,9 +133,7 @@ class MockingTest : TestBase() {
         val mock = mock<SynchronousFunctions>(name = "myName")
 
         /* When */
-        expectErrorWithMessage("myName.stringResult()") on {
-            verify(mock).stringResult()
-        }
+        expectErrorWithMessage("myName.stringResult()") on { verify(mock).stringResult() }
     }
 
     @Test
@@ -182,11 +173,8 @@ class MockingTest : TestBase() {
         System.setOut(out)
         val mock = mock<SynchronousFunctions>(verboseLogging = true)
 
-
         /* When, Then */
-        assertThrows<WantedButNotInvoked> {
-            verify(mock).stringResult()
-        }
+        assertThrows<WantedButNotInvoked> { verify(mock).stringResult() }
         argumentCaptor<DescribedInvocation>().apply {
             verify(out).println(capture())
             expect(lastValue.toString()).toBe("synchronousFunctions.stringResult();")
@@ -197,7 +185,10 @@ class MockingTest : TestBase() {
     fun mock_withSettingsAPI_invocationListeners() {
         /* Given */
         var bool = false
-        val mock = mock<SynchronousFunctions>(invocationListeners = arrayOf(InvocationListener { bool = true }))
+        val mock =
+            mock<SynchronousFunctions>(
+                invocationListeners = arrayOf(InvocationListener { bool = true })
+            )
 
         /* When */
         mock.stringResult()
@@ -212,33 +203,37 @@ class MockingTest : TestBase() {
         val mock = mock<SynchronousFunctions>(stubOnly = true)
 
         /* Expect */
-        expectErrorWithMessage("is a stubOnly() mock") on {
+        expectErrorWithMessage("is a stubOnly() mock") on
+            {
 
-            /* When */
-            verify(mock).stringResult()
-        }
+                /* When */
+                verify(mock).stringResult()
+            }
     }
 
     @Test
     fun mock_withSettingsAPI_useConstructor() {
         /* Given */
-        expectErrorWithMessage("Unable to create mock instance of type ") on {
-            mock<ThrowingConstructor>(useConstructor = parameterless()) {}
-        }
+        expectErrorWithMessage("Unable to create mock instance of type ") on
+            {
+                mock<ThrowingConstructor>(useConstructor = parameterless()) {}
+            }
     }
 
     @Test
     fun mock_withSettingsAPI_useConstructorWithArguments_failing() {
         /* Given */
-        expectErrorWithMessage("Unable to create mock instance of type ") on {
-            mock<ThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
-        }
+        expectErrorWithMessage("Unable to create mock instance of type ") on
+            {
+                mock<ThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
+            }
     }
 
     @Test
     fun mock_withSettingsAPI_useConstructorWithArguments() {
         /* When */
-        val result = mock<NonThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
+        val result =
+            mock<NonThrowingConstructorWithArgument>(useConstructor = withArguments("Test")) {}
 
         /* Then */
         expect(result).toNotBeNull()
@@ -254,9 +249,7 @@ class MockingTest : TestBase() {
         whenever(result.intResult()).thenReturn(42)
 
         /* Then */
-        expectErrorWithMessage("Unnecessary stubbings detected") on {
-            session.finishMocking()
-        }
+        expectErrorWithMessage("Unnecessary stubbings detected") on { session.finishMocking() }
     }
 
     @Test
@@ -302,17 +295,16 @@ class MockingTest : TestBase() {
         val mock = mock<SynchronousFunctions>(name = "myName") {}
 
         /* When */
-        expectErrorWithMessage("myName.stringResult()") on {
-            verify(mock).stringResult()
-        }
+        expectErrorWithMessage("myName.stringResult()") on { verify(mock).stringResult() }
     }
 
     @Test
     fun mockStubbing_withSettingsAPIAndStubbing_name() {
         /* Given */
-        val mock = mock<SynchronousFunctions>(name = "myName") {
-            on { nullableStringResult() } doReturn "foo"
-        }
+        val mock =
+            mock<SynchronousFunctions>(name = "myName") {
+                on { nullableStringResult() } doReturn "foo"
+            }
 
         /* When */
         val result = mock.nullableStringResult()
@@ -324,9 +316,10 @@ class MockingTest : TestBase() {
     @Test
     fun mockSuspendFunction_withClosedBooleanReturn_name() = runTest {
         /* Given */
-        val mock = mock<SuspendFunctions>(name = "myName") {
-            on { closedBooleanResult(any()) } doReturn true
-        }
+        val mock =
+            mock<SuspendFunctions>(name = "myName") {
+                on { closedBooleanResult(any()) } doReturn true
+            }
 
         /* When */
         val result = mock.closedBooleanResult(Closed())
@@ -338,9 +331,10 @@ class MockingTest : TestBase() {
     @Test
     fun mockSuspendFunction_withClassClosedBooleanReturn_name() = runTest {
         /* Given */
-        val mock = mock<SuspendFunctions>(name = "myName") {
-            on { classClosedBooleanResult(any()) } doReturn true
-        }
+        val mock =
+            mock<SuspendFunctions>(name = "myName") {
+                on { classClosedBooleanResult(any()) } doReturn true
+            }
 
         /* When */
         val result = mock.classClosedBooleanResult(Closed::class.java)
@@ -403,7 +397,10 @@ class MockingTest : TestBase() {
     fun mockStubbing_withSettingsAPI_invocationListeners() {
         /* Given */
         var bool = false
-        val mock = mock<SynchronousFunctions>(invocationListeners = arrayOf(InvocationListener { bool = true })) {}
+        val mock =
+            mock<SynchronousFunctions>(
+                invocationListeners = arrayOf(InvocationListener { bool = true })
+            ) {}
 
         /* When */
         mock.stringResult()
@@ -418,19 +415,21 @@ class MockingTest : TestBase() {
         val mock = mock<SynchronousFunctions>(stubOnly = true) {}
 
         /* Expect */
-        expectErrorWithMessage("is a stubOnly() mock") on {
+        expectErrorWithMessage("is a stubOnly() mock") on
+            {
 
-            /* When */
-            verify(mock).stringResult()
-        }
+                /* When */
+                verify(mock).stringResult()
+            }
     }
 
     @Test
     fun mockStubbing_withSettingsAPI_useConstructor() {
         /* Given */
-        expectErrorWithMessage("Unable to create mock instance of type ") on {
-            mock<ThrowingConstructor>(useConstructor = parameterless()) {}
-        }
+        expectErrorWithMessage("Unable to create mock instance of type ") on
+            {
+                mock<ThrowingConstructor>(useConstructor = parameterless()) {}
+            }
     }
 
     @Test
@@ -463,16 +462,15 @@ class MockingTest : TestBase() {
 
     @Test
     fun mockConstruction_withInitializer() {
-        mockConstruction<Open> { mock, _ ->
-            whenever { mock.stringResult() }.thenReturn("Hello")
-        }.use {
-            val open = Open()
+        mockConstruction<Open> { mock, _ -> whenever { mock.stringResult() }.thenReturn("Hello") }
+            .use {
+                val open = Open()
 
-            expect(open.stringResult()).toBe("Hello")
-        }
+                expect(open.stringResult()).toBe("Hello")
+            }
     }
 
-
     private interface MyInterface
+
     private open class MyClass
 }

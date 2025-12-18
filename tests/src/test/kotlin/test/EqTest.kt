@@ -26,12 +26,12 @@ package test
  */
 
 import com.nhaarman.expect.expect
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
 
 class EqTest : TestBase() {
 
@@ -44,7 +44,7 @@ class EqTest : TestBase() {
     @Before
     fun setup() {
         /* Create a proper Mockito state */
-        doAnswer = Mockito.doAnswer { }.`when`(mock())
+        doAnswer = Mockito.doAnswer {}.`when`(mock())
     }
 
     @After
@@ -107,7 +107,8 @@ class EqTest : TestBase() {
     }
 
     private interface MyInterface
+
     private open class MyClass : MyInterface
+
     class ClosedClass
 }
-

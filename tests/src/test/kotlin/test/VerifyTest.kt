@@ -1,11 +1,11 @@
 package test
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.junit.Test
 import org.mockito.exceptions.verification.TooFewActualInvocations
 import org.mockito.exceptions.verification.junit.ArgumentsAreDifferent
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 class VerifyTest : TestBase() {
 
@@ -13,9 +13,7 @@ class VerifyTest : TestBase() {
     fun verify0Calls() {
         val iface = mock<TestInterface>()
 
-        verify(iface) {
-            0 * { call(any()) }
-        }
+        verify(iface) { 0 * { call(any()) } }
     }
 
     @Test
@@ -25,9 +23,7 @@ class VerifyTest : TestBase() {
         iface.call(42)
         iface.call(42)
 
-        verify(iface) {
-            2 * { call(42) }
-        }
+        verify(iface) { 2 * { call(42) } }
     }
 
     @Test(expected = TooFewActualInvocations::class)
@@ -36,9 +32,7 @@ class VerifyTest : TestBase() {
 
         iface.call(0)
 
-        verify(iface) {
-            2 * { call(0) }
-        }
+        verify(iface) { 2 * { call(0) } }
     }
 
     @Test(expected = ArgumentsAreDifferent::class)
@@ -47,9 +41,7 @@ class VerifyTest : TestBase() {
 
         iface.call(3)
 
-        verify(iface) {
-            1 * { call(0) }
-        }
+        verify(iface) { 1 * { call(0) } }
     }
 
     @Test

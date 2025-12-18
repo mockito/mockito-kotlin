@@ -1,6 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -23,16 +24,13 @@ import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
-import java.util.*
 
 class CoroutinesTest {
 
     @Test
     fun stubbingSuspending() {
         /* Given */
-        val m = mock<SuspendFunctions> {
-            on { intResult() } doReturn 42
-        }
+        val m = mock<SuspendFunctions> { on { intResult() } doReturn 42 }
 
         /* When */
         val result = runBlocking { m.intResult() }
@@ -44,9 +42,10 @@ class CoroutinesTest {
     @Test
     fun stubbingSuspending_usingSuspendingFunction() {
         /* Given */
-        val m = mock<SuspendFunctions> {
-            on { intResult() } doReturn runBlocking { Open().intResult(42) }
-        }
+        val m =
+            mock<SuspendFunctions> {
+                on { intResult() } doReturn runBlocking { Open().intResult(42) }
+            }
 
         /* When */
         val result = runBlocking { m.intResult() }
@@ -58,9 +57,7 @@ class CoroutinesTest {
     @Test
     fun stubbingSuspending_runBlocking() = runBlocking {
         /* Given */
-        val mock = mock<SuspendFunctions> {
-            on { intResult() } doReturn 42
-        }
+        val mock = mock<SuspendFunctions> { on { intResult() } doReturn 42 }
 
         /* When */
         val result = mock.intResult()
@@ -73,8 +70,7 @@ class CoroutinesTest {
     fun stubbingSuspending_wheneverBlocking() {
         /* Given */
         val mock: SuspendFunctions = mock()
-        whenever { mock.intResult() }
-            .doReturn(42)
+        whenever { mock.intResult() }.doReturn(42)
 
         /* When */
         val result = runBlocking { mock.intResult() }
@@ -99,9 +95,7 @@ class CoroutinesTest {
     @Test
     fun stubbingNonSuspending() {
         /* Given */
-        val mock = mock<SynchronousFunctions> {
-            on { intResult() } doReturn 42
-        }
+        val mock = mock<SynchronousFunctions> { on { intResult() } doReturn 42 }
 
         /* When */
         val result = mock.intResult()
@@ -113,9 +107,7 @@ class CoroutinesTest {
     @Test
     fun stubbingNonSuspending_runBlocking() = runBlocking {
         /* Given */
-        val mock = mock<SuspendFunctions> {
-            on { intResult() } doReturn 42
-        }
+        val mock = mock<SuspendFunctions> { on { intResult() } doReturn 42 }
 
         /* When */
         val result = mock.intResult()
@@ -161,13 +153,14 @@ class CoroutinesTest {
     }
 
     @Test
-    fun verifySuspendFunctionCalled_runBlocking() = runBlocking<Unit> {
-        val mock = mock<SuspendFunctions>()
+    fun verifySuspendFunctionCalled_runBlocking() =
+        runBlocking<Unit> {
+            val mock = mock<SuspendFunctions>()
 
-        mock.intResult()
+            mock.intResult()
 
-        verify(mock).intResult()
-    }
+            verify(mock).intResult()
+        }
 
     @Test
     fun verifySuspendFunctionCalled_verifyBlocking() {
@@ -194,18 +187,17 @@ class CoroutinesTest {
 
         mock.intResult()
 
-        inOrder(mock) {
-            verify(mock).intResult()
-        }
+        inOrder(mock) { verify(mock).intResult() }
     }
 
     @Test
     fun answerWithSuspendFunction() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        whenever { mock.intResult(any()) } doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument(0) }
-        }
+        whenever { mock.intResult(any()) } doSuspendableAnswer
+            {
+                withContext(Dispatchers.Default) { it.getArgument(0) }
+            }
 
         assertEquals(5, mock.intResult(5))
     }
@@ -213,9 +205,10 @@ class CoroutinesTest {
     @Test
     fun inplaceAnswerWithSuspendFunction() = runBlocking {
         val mock: SuspendFunctions = mock {
-            on { intResult(any()) } doSuspendableAnswer {
-                withContext(Dispatchers.Default) { it.getArgument(0) }
-            }
+            on { intResult(any()) } doSuspendableAnswer
+                {
+                    withContext(Dispatchers.Default) { it.getArgument(0) }
+                }
         }
 
         assertEquals(5, mock.intResult(5))
@@ -225,9 +218,10 @@ class CoroutinesTest {
     fun callFromSuspendFunction() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        whenever { mock.intResult(any()) } doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument(0) }
-        }
+        whenever { mock.intResult(any()) } doSuspendableAnswer
+            {
+                withContext(Dispatchers.Default) { it.getArgument(0) }
+            }
 
         val result = async {
             val answer = mock.intResult(5)
@@ -243,15 +237,17 @@ class CoroutinesTest {
     fun callFromActor() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        whenever { mock.intResult(any()) } doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument(0) }
-        }
-
-        val actor = actor<Optional<Int>> {
-            for (element in channel) {
-                mock.intResult(element.get())
+        whenever { mock.intResult(any()) } doSuspendableAnswer
+            {
+                withContext(Dispatchers.Default) { it.getArgument(0) }
             }
-        }
+
+        val actor =
+            actor<Optional<Int>> {
+                for (element in channel) {
+                    mock.intResult(element.get())
+                }
+            }
 
         actor.send(Optional.of(10))
         actor.close()
@@ -265,9 +261,10 @@ class CoroutinesTest {
     fun answerWithSuspendFunctionWithoutArgs() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        whenever { mock.intResult() } doSuspendableAnswer {
-            withContext(Dispatchers.Default) { 42 }
-        }
+        whenever { mock.intResult() } doSuspendableAnswer
+            {
+                withContext(Dispatchers.Default) { 42 }
+            }
 
         assertEquals(42, mock.intResult())
     }
@@ -276,9 +273,10 @@ class CoroutinesTest {
     fun answerWithSuspendFunctionWithDestructuredArgs() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        whenever { mock.intResult(any()) } doSuspendableAnswer { (i: Int) ->
-            withContext(Dispatchers.Default) { i }
-        }
+        whenever { mock.intResult(any()) } doSuspendableAnswer
+            { (i: Int) ->
+                withContext(Dispatchers.Default) { i }
+            }
 
         assertEquals(5, mock.intResult(5))
     }
@@ -289,29 +287,26 @@ class CoroutinesTest {
 
         val job = Job()
 
-        whenever { mock.intResult() } doSuspendableAnswer {
-            job.join()
-            5
-        }
+        whenever { mock.intResult() } doSuspendableAnswer
+            {
+                job.join()
+                5
+            }
 
-        val asyncTask = async {
-            mock.intResult()
-        }
+        val asyncTask = async { mock.intResult() }
 
         job.complete()
 
-        withTimeout(100) {
-            assertEquals(5, asyncTask.await())
-        }
+        withTimeout(100) { assertEquals(5, asyncTask.await()) }
     }
 
     @Test
     fun stubberAnswerWithSuspendFunction() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
-        }.whenever(mock).intResult(any())
+        doSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument<Int>(0) } }
+            .whenever(mock)
+            .intResult(any())
 
         assertEquals(5, mock.intResult(5))
     }
@@ -320,9 +315,9 @@ class CoroutinesTest {
     fun stubberCallFromSuspendFunction() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
-        }.whenever(mock).intResult(any())
+        doSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument<Int>(0) } }
+            .whenever(mock)
+            .intResult(any())
 
         val result = async {
             val answer = mock.intResult(5)
@@ -338,15 +333,16 @@ class CoroutinesTest {
     fun stubberCallFromActor() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        doSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
-        }.whenever(mock).intResult(any())
+        doSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument<Int>(0) } }
+            .whenever(mock)
+            .intResult(any())
 
-        val actor = actor<Optional<Int>> {
-            for (element in channel) {
-                mock.intResult(element.get())
+        val actor =
+            actor<Optional<Int>> {
+                for (element in channel) {
+                    mock.intResult(element.get())
+                }
             }
-        }
 
         actor.send(Optional.of(10))
         actor.close()
@@ -360,9 +356,7 @@ class CoroutinesTest {
     fun stubberAnswerWithSuspendFunctionWithoutArgs() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        doSuspendableAnswer {
-            withContext(Dispatchers.Default) { 42 }
-        }.whenever(mock).intResult()
+        doSuspendableAnswer { withContext(Dispatchers.Default) { 42 } }.whenever(mock).intResult()
 
         assertEquals(42, mock.intResult())
     }
@@ -371,9 +365,9 @@ class CoroutinesTest {
     fun stubberAnswerWithSuspendFunctionWithDestructuredArgs() = runBlocking {
         val mock: SuspendFunctions = mock()
 
-        doSuspendableAnswer { (i: Int) ->
-            withContext(Dispatchers.Default) { i }
-        }.whenever(mock).intResult(any())
+        doSuspendableAnswer { (i: Int) -> withContext(Dispatchers.Default) { i } }
+            .whenever(mock)
+            .intResult(any())
 
         assertEquals(5, mock.intResult(5))
     }
@@ -385,19 +379,17 @@ class CoroutinesTest {
         val job = Job()
 
         doSuspendableAnswer {
-            job.join()
-            5
-        }.whenever(mock).intResult()
+                job.join()
+                5
+            }
+            .whenever(mock)
+            .intResult()
 
-        val asyncTask = async {
-            mock.intResult()
-        }
+        val asyncTask = async { mock.intResult() }
 
         job.complete()
 
-        withTimeout(100) {
-            assertEquals(5, asyncTask.await())
-        }
+        withTimeout(100) { assertEquals(5, asyncTask.await()) }
     }
 
     @Test
@@ -445,9 +437,7 @@ class CoroutinesTest {
         /* Then */
         val inOrder = inOrder(mockOne, mockTwo)
         inOrder.verifyBlocking(mockTwo) { intResult() }
-        assertThrows(AssertionError::class.java) {
-            inOrder.verifyBlocking(mockOne) { intResult() }
-        }
+        assertThrows(AssertionError::class.java) { inOrder.verifyBlocking(mockOne) { intResult() } }
     }
 
     @Test
@@ -484,9 +474,7 @@ class CoroutinesTest {
         /* Then */
         inOrder(mockOne, mockTwo) {
             verifyBlocking(mockTwo) { intResult() }
-            assertThrows(AssertionError::class.java) {
-                verifyBlocking(mockOne) { intResult() }
-            }
+            assertThrows(AssertionError::class.java) { verifyBlocking(mockOne) { intResult() } }
         }
     }
 
@@ -522,9 +510,7 @@ class CoroutinesTest {
         /* Then */
         mock.inOrder {
             verifyBlocking { intResult(2) }
-            assertThrows(AssertionError::class.java) {
-                verifyBlocking { intResult(1) }
-            }
+            assertThrows(AssertionError::class.java) { verifyBlocking { intResult(1) } }
         }
     }
 }

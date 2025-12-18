@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import java.util.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.kotlin.KArgumentCaptor
@@ -14,7 +15,6 @@ import org.mockito.kotlin.suspendFunctionArgumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.*
 
 class ArgumentCaptorTest : TestBase() {
 
@@ -96,7 +96,8 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        val (captor1, captor2, captor3, captor4, captor5) = argumentCaptor<Long, Long, Long, Long, Long>()
+        val (captor1, captor2, captor3, captor4, captor5) =
+            argumentCaptor<Long, Long, Long, Long, Long>()
         val verifyCaptor: KArgumentCaptor<Long>.() -> Unit = {
             verify(date).time = capture()
             expect(lastValue).toBe(5L)
@@ -258,12 +259,13 @@ class ArgumentCaptorTest : TestBase() {
         date.time = 5L
 
         /* Then */
-        expectErrorWithMessage("Expected: 3 but was: 5") on {
-            argumentCaptor<Long> {
-                verify(date).time = capture()
-                expect(lastValue).toBe(3L)
+        expectErrorWithMessage("Expected: 3 but was: 5") on
+            {
+                argumentCaptor<Long> {
+                    verify(date).time = capture()
+                    expect(lastValue).toBe(3L)
+                }
             }
-        }
     }
 
     @Test
@@ -428,9 +430,7 @@ class ArgumentCaptorTest : TestBase() {
         /* Given */
         var counter = 0
         val m: SynchronousFunctions = mock()
-        val function: () -> Unit = {
-            counter++
-        }
+        val function: () -> Unit = { counter++ }
 
         /* When */
         m.functionArgument(function)
@@ -447,9 +447,7 @@ class ArgumentCaptorTest : TestBase() {
         /* Given */
         var counter = 0
         val m: SynchronousFunctions = mock()
-        val function: suspend () -> Unit = suspend {
-            counter++
-        }
+        val function: suspend () -> Unit = suspend { counter++ }
 
         /* When */
         m.suspendFunctionArgument(function)
@@ -457,7 +455,7 @@ class ArgumentCaptorTest : TestBase() {
         /* Then */
         val captor = suspendFunctionArgumentCaptor<suspend () -> Unit>()
         verify(m).suspendFunctionArgument(captor.capture())
-        runBlocking {  captor.firstValue.invoke() }
+        runBlocking { captor.firstValue.invoke() }
         expect(counter).toBe(1)
     }
 }

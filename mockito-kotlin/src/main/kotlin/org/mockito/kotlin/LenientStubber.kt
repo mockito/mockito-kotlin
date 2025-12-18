@@ -35,4 +35,3 @@ inline fun <reified T> LenientStubber.whenever(methodCall: T): OngoingStubbing<T
 inline fun <reified T> LenientStubber.whenever(methodCall: () -> T): OngoingStubbing<T> {
     return whenever(methodCall())
 }
-

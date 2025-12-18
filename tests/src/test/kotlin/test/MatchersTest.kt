@@ -2,6 +2,7 @@ package test
 
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
+import java.io.IOException
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
@@ -10,7 +11,6 @@ import org.mockito.ArgumentMatcher
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
-import java.io.IOException
 
 @RunWith(Enclosed::class)
 class MatchersTest : TestBase() {
@@ -261,13 +261,14 @@ class MatchersTest : TestBase() {
 
         @Test
         fun anyValueClass_withNonValueClass() {
-            expectErrorWithMessage("kotlin.Float is not a value class.") on {
-                mock<SynchronousFunctions>().apply {
-                    float(10f)
-                    // Should throw an error because Float is not a value class
-                    float(anyValueClass())
+            expectErrorWithMessage("kotlin.Float is not a value class.") on
+                {
+                    mock<SynchronousFunctions>().apply {
+                        float(10f)
+                        // Should throw an error because Float is not a value class
+                        float(anyValueClass())
+                    }
                 }
-            }
         }
 
         @Test
@@ -678,11 +679,7 @@ class MatchersTest : TestBase() {
         fun listArgThat() {
             mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
-                verify(this).closedList(
-                    argThat {
-                        size == 2
-                    }
-                )
+                verify(this).closedList(argThat { size == 2 })
             }
         }
 
@@ -690,11 +687,7 @@ class MatchersTest : TestBase() {
         fun listArgForWhich() {
             mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
-                verify(this).closedList(
-                    argForWhich {
-                        size == 2
-                    }
-                )
+                verify(this).closedList(argForWhich { size == 2 })
             }
         }
 
@@ -702,11 +695,7 @@ class MatchersTest : TestBase() {
         fun listArgWhere() {
             mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
-                verify(this).closedList(
-                    argWhere {
-                        it.size == 2
-                    }
-                )
+                verify(this).closedList(argWhere { it.size == 2 })
             }
         }
 
@@ -714,11 +703,7 @@ class MatchersTest : TestBase() {
         fun listArgCheck() {
             mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
-                verify(this).closedList(
-                    check {
-                        expect(it.size).toBe(2)
-                    }
-                )
+                verify(this).closedList(check { expect(it.size).toBe(2) })
             }
         }
 
@@ -727,13 +712,10 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 closedList(listOf(Closed(), Closed()))
 
-                expectErrorWithMessage("Argument(s) are different!") on {
-                    verify(this).closedList(
-                        check {
-                            expect(it.size).toBe(1)
-                        }
-                    )
-                }
+                expectErrorWithMessage("Argument(s) are different!") on
+                    {
+                        verify(this).closedList(check { expect(it.size).toBe(1) })
+                    }
             }
         }
 
@@ -742,9 +724,7 @@ class MatchersTest : TestBase() {
             mock<SynchronousFunctions>().apply {
                 nullableString(null)
 
-                expectErrorWithMessage("null").on {
-                    verify(this).nullableString(check {})
-                }
+                expectErrorWithMessage("null").on { verify(this).nullableString(check {}) }
             }
         }
 
@@ -830,14 +810,14 @@ class MatchersTest : TestBase() {
         }
 
         /**
-         * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if any of the var args
-         * matched. Needs to keep state between matching invocations.
+         * a VarargMatcher implementation for varargs of type [T] that will answer with type [R] if
+         * any of the var args matched. Needs to keep state between matching invocations.
          */
         private class VarargAnyMatcher<T, R>(
             private val match: ((T) -> Boolean),
             private val clazz: Class<T>,
             private val success: R,
-            private val failure: R
+            private val failure: R,
         ) : ArgumentMatcher<T>, Answer<R> {
             private var anyMatched = false
 

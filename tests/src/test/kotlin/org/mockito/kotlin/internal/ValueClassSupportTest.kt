@@ -1,10 +1,10 @@
 package org.mockito.kotlin.internal
 
 import com.nhaarman.expect.expect
+import kotlin.reflect.KClass
 import org.junit.Test
 import test.ValueClass
 import test.assertThrows
-import kotlin.reflect.KClass
 
 class ValueClassSupportTest {
     @Test
@@ -88,9 +88,7 @@ class ValueClassSupportTest {
         val value: String? = null
 
         /* When, Then */
-        val exception = assertThrows<IllegalArgumentException> {
-            value.boxAsValueClass(Int::class)
-        }
+        val exception = assertThrows<IllegalArgumentException> { value.boxAsValueClass(Int::class) }
         expect(exception.message).toBe("kotlin.Int is not a value class.")
     }
 
@@ -114,9 +112,7 @@ class ValueClassSupportTest {
         val value = "test"
 
         /* When, Then */
-        val exception = assertThrows<IllegalArgumentException> {
-            value.unboxValueClass()
-        }
+        val exception = assertThrows<IllegalArgumentException> { value.unboxValueClass() }
         expect(exception.message).toBe("kotlin.String is not a value class.")
     }
 
@@ -139,9 +135,7 @@ class ValueClassSupportTest {
         val clazz = String::class
 
         /* When, Then */
-        val exception = assertThrows<IllegalArgumentException> {
-            clazz.valueClassInnerClass()
-        }
+        val exception = assertThrows<IllegalArgumentException> { clazz.valueClassInnerClass() }
         expect(exception.message).toBe("kotlin.String is not a value class.")
     }
 }

@@ -1,8 +1,8 @@
 package test.createinstance
 
 import com.nhaarman.expect.expect
-import org.mockito.kotlin.internal.createInstance
 import org.junit.Test
+import org.mockito.kotlin.internal.createInstance
 import test.TestBase
 
 class NullCasterTest : TestBase() {
@@ -25,6 +25,5 @@ class NullCasterTest : TestBase() {
         acceptNonNullableString(s)
     }
 
-    private fun acceptNonNullableString(@Suppress("UNUSED_PARAMETER") s: String) {
-    }
+    private fun acceptNonNullableString(@Suppress("UNUSED_PARAMETER") s: String) {}
 }

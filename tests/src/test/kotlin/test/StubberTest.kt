@@ -20,9 +20,7 @@ class StubberTest : TestBase() {
     fun `should stub function call with result from lambda`() {
         val mock = mock<SynchronousFunctions>()
 
-        doAnswer { "Test" }
-            .whenever(mock)
-            .stringResult()
+        doAnswer { "Test" }.whenever(mock).stringResult()
 
         expect(mock.stringResult()).toBe("Test")
     }
@@ -92,37 +90,24 @@ class StubberTest : TestBase() {
 
         doThrow(IllegalStateException("test")).whenever(mock).go()
 
-        val exception: IllegalStateException = assertThrows {
-            mock.go()
-        }
+        val exception: IllegalStateException = assertThrows { mock.go() }
         assertEquals("test", exception.message)
         // any consecutive call should throw the last specified exception
-        assertThrows<IllegalStateException> {
-            mock.go()
-        }
+        assertThrows<IllegalStateException> { mock.go() }
     }
 
     @Test
     fun `should stub function call to throw exception instances consecutively`() {
         val mock = mock<Open>()
 
-        doThrow(
-            IllegalStateException("test"),
-            NullPointerException("test2")
-        ).whenever(mock).go()
+        doThrow(IllegalStateException("test"), NullPointerException("test2")).whenever(mock).go()
 
-        val first: IllegalStateException = assertThrows {
-            mock.go()
-        }
+        val first: IllegalStateException = assertThrows { mock.go() }
         assertEquals("test", first.message)
-        val second: NullPointerException = assertThrows {
-            mock.go()
-        }
+        val second: NullPointerException = assertThrows { mock.go() }
         assertEquals("test2", second.message)
         // any consecutive call should throw the last specified exception
-        assertThrows<NullPointerException> {
-            mock.go()
-        }
+        assertThrows<NullPointerException> { mock.go() }
     }
 
     @Test
@@ -131,56 +116,41 @@ class StubberTest : TestBase() {
 
         doThrow(IllegalStateException::class).whenever(mock).go()
 
-        assertThrows<IllegalStateException> {
-            mock.go()
-        }
+        assertThrows<IllegalStateException> { mock.go() }
         // any consecutive call should throw the last specified exception
-        assertThrows<IllegalStateException> {
-            mock.go()
-        }
+        assertThrows<IllegalStateException> { mock.go() }
     }
 
     @Test
     fun `should stub function call to throw exception classes consecutively`() {
         val mock = mock<Open>()
 
-        doThrow(
-            IllegalStateException::class,
-            NullPointerException::class
-        ).whenever(mock).go()
+        doThrow(IllegalStateException::class, NullPointerException::class).whenever(mock).go()
 
-        assertThrows<IllegalStateException> {
-            mock.go()
-        }
-        assertThrows<NullPointerException> {
-            mock.go()
-        }
+        assertThrows<IllegalStateException> { mock.go() }
+        assertThrows<NullPointerException> { mock.go() }
         // any consecutive call should throw the last specified exception
-        assertThrows<NullPointerException> {
-            mock.go()
-        }
+        assertThrows<NullPointerException> { mock.go() }
     }
 
     @Test
-    fun `should stub suspendable function call in reverse manner, with on() as part of mock creation`() = runTest{
-        /* Given */
-        val mock = mock<SuspendFunctions> {
-            doReturn( "A") on { stringResult() }
+    fun `should stub suspendable function call in reverse manner, with on() as part of mock creation`() =
+        runTest {
+            /* Given */
+            val mock = mock<SuspendFunctions> { doReturn("A") on { stringResult() } }
+
+            /* When */
+            val result = runBlocking { mock.stringResult() }
+
+            /* Then */
+            expect(result).toBe("A")
         }
-
-        /* When */
-        val result = runBlocking { mock.stringResult() }
-
-        /* Then */
-        expect(result).toBe("A")
-    }
 
     @Test
-    fun `should stub synchronous function call in reverse manner, with on() as part of mock creation`() = runTest{
-        val mock = mock<SynchronousFunctions> {
-            doReturn("Test").on { stringResult() }
-        }
+    fun `should stub synchronous function call in reverse manner, with on() as part of mock creation`() =
+        runTest {
+            val mock = mock<SynchronousFunctions> { doReturn("Test").on { stringResult() } }
 
-        expect(mock.stringResult()).toBe("Test")
-    }
+            expect(mock.stringResult()).toBe("Test")
+        }
 }

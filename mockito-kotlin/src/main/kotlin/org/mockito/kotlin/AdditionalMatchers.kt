@@ -57,7 +57,7 @@ inline fun <reified T : Comparable<T>> cmpEq(value: T): T {
  * and each element has to be equal.
  */
 inline fun <reified T> aryEq(value: Array<T>): Array<T> {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -65,7 +65,7 @@ inline fun <reified T> aryEq(value: Array<T>): Array<T> {
  * each element has to be equal.
  */
 fun aryEq(value: ShortArray): ShortArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -73,7 +73,7 @@ fun aryEq(value: ShortArray): ShortArray {
  * each element has to be equal.
  */
 fun aryEq(value: LongArray): LongArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -81,7 +81,7 @@ fun aryEq(value: LongArray): LongArray {
  * each element has to be equal.
  */
 fun aryEq(value: IntArray): IntArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -89,7 +89,7 @@ fun aryEq(value: IntArray): IntArray {
  * each element has to be equal.
  */
 fun aryEq(value: FloatArray): FloatArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -97,7 +97,7 @@ fun aryEq(value: FloatArray): FloatArray {
  * each element has to be equal.
  */
 fun aryEq(value: DoubleArray): DoubleArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -105,7 +105,7 @@ fun aryEq(value: DoubleArray): DoubleArray {
  * each element has to be equal.
  */
 fun aryEq(value: CharArray): CharArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -113,7 +113,7 @@ fun aryEq(value: CharArray): CharArray {
  * each element has to be equal.
  */
 fun aryEq(value: ByteArray): ByteArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /**
@@ -121,7 +121,7 @@ fun aryEq(value: ByteArray): ByteArray {
  * each element has to be equal.
  */
 fun aryEq(value: BooleanArray): BooleanArray {
-  return AdditionalMatchers.aryEq(value) ?: createInstance()
+    return AdditionalMatchers.aryEq(value) ?: createInstance()
 }
 
 /** String argument that contains a substring that matches the given regular expression. */
