@@ -31,12 +31,16 @@ import kotlinx.coroutines.runBlocking
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.BDDMyOngoingStubbing
 import org.mockito.BDDMockito.Then
+import org.mockito.internal.stubbing.answers.Returns
+import org.mockito.internal.stubbing.answers.ThrowsException
+import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
 import org.mockito.invocation.InvocationOnMock
-import org.mockito.kotlin.internal.SuspendableAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.stubbing.Answer
 
 /** Alias for [BDDMockito.given]. */
-fun <T> given(methodCall: T): BDDMockito.BDDMyOngoingStubbing<T> {
+fun <T> given(methodCall: T): BDDMyOngoingStubbing<T> {
     return BDDMockito.given(methodCall)
 }
 
@@ -50,14 +54,12 @@ fun <T> given(methodCall: () -> T): BDDMyOngoingStubbing<T> {
  *
  * Warning: Only last method call can be stubbed in the function. other method calls are ignored!
  */
-fun <T> givenBlocking(
-    methodCall: suspend CoroutineScope.() -> T
-): BDDMockito.BDDMyOngoingStubbing<T> {
+fun <T> givenBlocking(methodCall: suspend CoroutineScope.() -> T): BDDMyOngoingStubbing<T> {
     return runBlocking { BDDMockito.given(methodCall()) }
 }
 
 /** Alias for [BDDMockito.then]. */
-fun <T> then(mock: T): BDDMockito.Then<T> {
+fun <T> then(mock: T): Then<T> {
     return BDDMockito.then(mock)
 }
 
@@ -68,36 +70,34 @@ fun <T, R> Then<T>.shouldBlocking(f: suspend T.() -> R): R {
 }
 
 /** Alias for [BDDMyOngoingStubbing.will] */
-infix fun <T> BDDMyOngoingStubbing<T>.will(value: Answer<T>): BDDMockito.BDDMyOngoingStubbing<T> {
-    return will(value)
+infix fun <T> BDDMyOngoingStubbing<T>.will(answer: Answer<T>): BDDMyOngoingStubbing<T> {
+    return willAnswerInternal(answer)
 }
 
-/** Alias for [BBDMyOngoingStubbing.willAnswer], accepting a lambda. */
+/** Alias for [BDDMyOngoingStubbing.willAnswer], accepting a lambda. */
 infix fun <T> BDDMyOngoingStubbing<T>.willAnswer(
-    value: (InvocationOnMock) -> T?
-): BDDMockito.BDDMyOngoingStubbing<T> {
-    return willAnswer { value(it) }
+    answer: (InvocationOnMock) -> T?
+): BDDMyOngoingStubbing<T> {
+    return willAnswerInternal { answer.invoke(it) }
 }
 
-/** Alias for [BBDMyOngoingStubbing.willAnswer], accepting a suspend lambda. */
+/** Alias for [BDDMyOngoingStubbing.willAnswer], accepting a suspend lambda. */
 infix fun <T> BDDMyOngoingStubbing<T>.willSuspendableAnswer(
-    value: suspend (InvocationOnMock) -> T?
-): BDDMockito.BDDMyOngoingStubbing<T> {
-    return willAnswer(SuspendableAnswer(value))
+    answer: suspend (InvocationOnMock) -> T?
+): BDDMyOngoingStubbing<T> {
+    return willAnswer(CoroutineAwareAnswer(answer))
 }
 
-/** Alias for [BBDMyOngoingStubbing.willReturn]. */
-infix fun <T> BDDMyOngoingStubbing<T>.willReturn(
-    value: () -> T
-): BDDMockito.BDDMyOngoingStubbing<T> {
-    return willReturn(value())
+/** Alias for [BDDMyOngoingStubbing.willReturn]. */
+infix fun <T> BDDMyOngoingStubbing<T>.willReturn(value: () -> T): BDDMyOngoingStubbing<T> {
+    return willAnswerInternal(Returns(value.invoke()))
 }
 
-/** Alias for [BBDMyOngoingStubbing.willThrow]. */
+/** Alias for [BDDMyOngoingStubbing.willThrow]. */
 infix fun <T> BDDMyOngoingStubbing<T>.willThrow(
-    value: () -> Throwable
-): BDDMockito.BDDMyOngoingStubbing<T> {
-    return willThrow(value())
+    throwable: () -> Throwable
+): BDDMyOngoingStubbing<T> {
+    return willAnswerInternal(ThrowsException(throwable.invoke()))
 }
 
 /**
@@ -105,8 +105,10 @@ infix fun <T> BDDMyOngoingStubbing<T>.willThrow(
  *
  * Alias for [BDDMyOngoingStubbing.willThrow]
  */
-infix fun <T> BDDMyOngoingStubbing<T>.willThrow(t: KClass<out Throwable>): BDDMyOngoingStubbing<T> {
-    return willThrow(t.java)
+infix fun <T> BDDMyOngoingStubbing<T>.willThrow(
+    throwableType: KClass<out Throwable>
+): BDDMyOngoingStubbing<T> {
+    return willAnswerInternal(ThrowsExceptionForClassType(throwableType.java))
 }
 
 /**
@@ -115,18 +117,34 @@ infix fun <T> BDDMyOngoingStubbing<T>.willThrow(t: KClass<out Throwable>): BDDMy
  * Alias for [BDDMyOngoingStubbing.willThrow]
  */
 fun <T> BDDMyOngoingStubbing<T>.willThrow(
-    t: KClass<out Throwable>,
-    vararg ts: KClass<out Throwable>,
+    throwableType: KClass<out Throwable>,
+    vararg throwableTypes: KClass<out Throwable>,
 ): BDDMyOngoingStubbing<T> {
-    return willThrow(t.java, *ts.map { it.java }.toTypedArray())
+    return willAnswerInternal(
+        listOf(throwableType, *throwableTypes).map { ThrowsExceptionForClassType(it.java) }
+    )
 }
 
 /**
  * Sets consecutive return values to be returned when the method is called. Same as
  * [BDDMyOngoingStubbing.willReturn], but accepts list instead of varargs.
  */
-inline infix fun <reified T> BDDMyOngoingStubbing<T>.willReturnConsecutively(
-    ts: List<T>
+infix fun <T> BDDMyOngoingStubbing<T>.willReturnConsecutively(
+    values: List<T>
 ): BDDMyOngoingStubbing<T> {
-    return willReturn(ts[0], *ts.drop(1).toTypedArray())
+    return willAnswerInternal(values.map { Returns(it) })
+}
+
+private fun <T> BDDMyOngoingStubbing<T>.willAnswerInternal(
+    answer: Answer<*>
+): BDDMyOngoingStubbing<T> {
+    return willAnswer(answer.wrapAsCoroutineAwareAnswer())
+}
+
+private fun <T> BDDMyOngoingStubbing<T>.willAnswerInternal(
+    answers: List<Answer<*>>
+): BDDMyOngoingStubbing<T> {
+    return answers.fold(this) { bddMyOngoingStubbing, answer ->
+        bddMyOngoingStubbing.willAnswerInternal(answer)
+    }
 }
