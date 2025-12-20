@@ -30,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.internal.stubbing.answers.CallsRealMethods
 import org.mockito.internal.stubbing.answers.Returns
 import org.mockito.internal.stubbing.answers.ThrowsException
 import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
@@ -262,6 +263,36 @@ fun <T> OngoingStubbing<T>.doThrow(
     return doAnswerInternal(
         listOf(throwableType, *throwableTypes).map { ThrowsExceptionForClassType(it.java) }
     )
+}
+
+/**
+ * Calls the real method of the spy/mock when the method is called. E.g:
+ * ```kotlin
+ *      whenever { mock.someFunction() }.doCallRealMethod()
+ * ```
+ *
+ * This function is an alias for [callRealMethod].
+ *
+ * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
+ *   returned object.
+ */
+fun <T> OngoingStubbing<T>.doCallRealMethod(): OngoingStubbing<T> {
+    return callRealMethod()
+}
+
+/**
+ * Calls the real method of the spy/mock when the method is called. E.g:
+ * ```kotlin
+ *      whenever { mock.someFunction() }.callRealMethod()
+ * ```
+ *
+ * This function is an alias for Mockito's [OngoingStubbing.thenCallRealMethod].
+ *
+ * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
+ *   returned object.
+ */
+fun <T> OngoingStubbing<T>.callRealMethod(): OngoingStubbing<T> {
+    return doAnswerInternal(CallsRealMethods())
 }
 
 /**
