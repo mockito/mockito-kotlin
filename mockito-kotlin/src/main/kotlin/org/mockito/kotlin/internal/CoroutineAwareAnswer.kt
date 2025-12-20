@@ -1,0 +1,109 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2018 Niek Haarman
+ * Copyright (c) 2007 Mockito contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package org.mockito.kotlin.internal
+
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
+import kotlin.reflect.KFunction
+import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.kotlinFunction
+import kotlinx.coroutines.delay
+import org.mockito.internal.invocation.InterceptedInvocation
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.kotlin.KInvocationOnMock
+import org.mockito.stubbing.Answer
+
+internal class CoroutineAwareAnswer<T> private constructor(private val delegate: Answer<T>) :
+    Answer<T> {
+    constructor(block: suspend (KInvocationOnMock) -> T?) : this(SuspendableAnswer<T>(block))
+
+    companion object {
+        internal fun <T> Answer<T>.wrapAsCoroutineAwareAnswer(): CoroutineAwareAnswer<T> {
+            return this as? CoroutineAwareAnswer<T> ?: CoroutineAwareAnswer(this)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun answer(invocation: InvocationOnMock): T {
+        val wrapped =
+            if (invocation.isInvocationOnSuspendFunction ?: false) {
+                delegate.wrapAsSuspendableAnswer()
+            } else {
+                delegate
+            }
+        return wrapped.answer(invocation) as T
+    }
+
+    private val InvocationOnMock.isInvocationOnSuspendFunction: Boolean?
+        get() {
+            return this.method.kotlinFunction?.isSuspend
+        }
+
+    private fun Answer<*>.wrapAsSuspendableAnswer(): Answer<out Any?> =
+        (this as? SuspendableAnswer<*>)
+            ?: SuspendableAnswer { invocation ->
+                val result = this.answer(invocation)
+
+                val method = invocation.method
+                val kFunction: KFunction<*> =
+                    requireNotNull(method.kotlinFunction) {
+                        "Invocation method '${method.name}' can not be represented by a Kotlin function"
+                    }
+                result.toKotlinType<T>(kFunction.returnType.jvmErasure)
+            }
+
+    @Suppress("UNCHECKED_CAST")
+    private class SuspendableAnswer<T>(private val block: suspend (KInvocationOnMock) -> T?) :
+        Answer<T> {
+        override fun answer(invocation: InvocationOnMock?): T {
+            // all suspend functions/lambdas has Continuation as the last argument.
+            // InvocationOnMock does not see last argument
+            val rawInvocation = invocation as InterceptedInvocation
+            val continuation = rawInvocation.rawArguments.last() as Continuation<T?>
+
+            val suspensionEnforced: suspend (KInvocationOnMock) -> T? = {
+
+                // Delaying for 1 ms, forces a suspension to happen.
+                //
+                // Without any suspension happening in the coroutine, the return value of the
+                // block lambda will be returned directly from the
+                // startCoroutineUninterceptedOrReturn() function (and will then be passed on as
+                // return value of this answer() function. Instead the result should be passed into
+                // the continuation callback, and this happens only with at least 1 suspension
+                // happening.
+                delay(1)
+
+                block.invoke(it)
+            }
+
+            // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
+            return suspensionEnforced.startCoroutineUninterceptedOrReturn(
+                KInvocationOnMock(invocation),
+                continuation,
+            ) as T
+        }
+    }
+}

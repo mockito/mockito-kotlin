@@ -30,8 +30,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.internal.stubbing.answers.Returns
+import org.mockito.internal.stubbing.answers.ThrowsException
+import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
+import org.mockito.kotlin.internal.CoroutineAwareAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.kotlin.internal.KAnswer
-import org.mockito.kotlin.internal.SuspendableAnswer
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 
@@ -119,7 +123,7 @@ fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStu
  *   returned object.
  */
 infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
-    return thenReturn(value)
+    return doAnswerInternal(Returns(value))
 }
 
 /**
@@ -138,7 +142,7 @@ infix fun <T> OngoingStubbing<T>.doReturn(value: T): OngoingStubbing<T> {
  * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
  *   returned object.
  */
-inline fun <reified T> OngoingStubbing<T>.doReturn(value: T, vararg values: T): OngoingStubbing<T> {
+fun <T> OngoingStubbing<T>.doReturn(value: T, vararg values: T): OngoingStubbing<T> {
     return doReturnConsecutively(value, *values)
 }
 
@@ -158,10 +162,7 @@ inline fun <reified T> OngoingStubbing<T>.doReturn(value: T, vararg values: T): 
  * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
  *   returned object.
  */
-inline fun <reified T> OngoingStubbing<T>.doReturnConsecutively(
-    value: T,
-    vararg values: T,
-): OngoingStubbing<T> {
+fun <T> OngoingStubbing<T>.doReturnConsecutively(value: T, vararg values: T): OngoingStubbing<T> {
     return doReturnConsecutively(listOf(value, *values))
 }
 
@@ -179,10 +180,8 @@ inline fun <reified T> OngoingStubbing<T>.doReturnConsecutively(
  * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
  *   returned object.
  */
-inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(
-    values: List<T>
-): OngoingStubbing<T> {
-    return thenReturn(values.first(), *values.drop(1).toTypedArray())
+infix fun <T> OngoingStubbing<T>.doReturnConsecutively(values: List<T>): OngoingStubbing<T> {
+    return doAnswerInternal(values.map { Returns(it) })
 }
 
 /**
@@ -198,7 +197,7 @@ inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(
  *   returned object.
  */
 infix fun <T> OngoingStubbing<T>.doThrow(throwable: Throwable): OngoingStubbing<T> {
-    return thenThrow(throwable)
+    return doAnswerInternal(ThrowsException(throwable))
 }
 
 /**
@@ -221,7 +220,7 @@ fun <T> OngoingStubbing<T>.doThrow(
     throwable: Throwable,
     vararg throwables: Throwable,
 ): OngoingStubbing<T> {
-    return thenThrow(throwable, *throwables)
+    return doAnswerInternal(listOf(throwable, *throwables).map { ThrowsException(it) })
 }
 
 /**
@@ -237,7 +236,7 @@ fun <T> OngoingStubbing<T>.doThrow(
  *   returned object.
  */
 infix fun <T> OngoingStubbing<T>.doThrow(throwableType: KClass<out Throwable>): OngoingStubbing<T> {
-    return thenThrow(throwableType.java)
+    return doAnswerInternal(ThrowsExceptionForClassType(throwableType.java))
 }
 
 /**
@@ -260,7 +259,9 @@ fun <T> OngoingStubbing<T>.doThrow(
     throwableType: KClass<out Throwable>,
     vararg throwableTypes: KClass<out Throwable>,
 ): OngoingStubbing<T> {
-    return thenThrow(throwableType.java, *throwableTypes.map { it.java }.toTypedArray())
+    return doAnswerInternal(
+        listOf(throwableType, *throwableTypes).map { ThrowsExceptionForClassType(it.java) }
+    )
 }
 
 /**
@@ -277,7 +278,7 @@ fun <T> OngoingStubbing<T>.doThrow(
  *   returned object.
  */
 infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<*>): OngoingStubbing<T> {
-    return thenAnswer(answer)
+    return doAnswerInternal(answer)
 }
 
 /**
@@ -294,17 +295,14 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: Answer<*>): OngoingStubbing<T>
  *   returned object.
  */
 infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): OngoingStubbing<T> {
-    return thenAnswer(KAnswer(answer))
+    return doAnswerInternal(KAnswer(answer))
 }
 
 /**
  * Sets an answer to be applied when the stubbed suspendable function is being called, specified by
  * a suspendable lambda. E.g:
  * ```kotlin
- *      whenever { mock.someFunction() } doSuspendableAnswer {
- *          delay(1)
- *          "result"
- *      }
+ *      whenever { mock.someFunction() } doSuspendableAnswer { "result" }
  * ```
  *
  * This function is an alias for Mockito's [OngoingStubbing.thenAnswer], but also taking extra steps
@@ -318,5 +316,15 @@ infix fun <T> OngoingStubbing<T>.doAnswer(answer: (KInvocationOnMock) -> T?): On
 infix fun <T> OngoingStubbing<T>.doSuspendableAnswer(
     answer: suspend (KInvocationOnMock) -> T?
 ): OngoingStubbing<T> {
-    return thenAnswer(SuspendableAnswer(answer))
+    return thenAnswer(CoroutineAwareAnswer(answer))
+}
+
+private fun <T> OngoingStubbing<T>.doAnswerInternal(answer: Answer<*>): OngoingStubbing<T> {
+    return thenAnswer(answer.wrapAsCoroutineAwareAnswer())
+}
+
+private fun <T> OngoingStubbing<T>.doAnswerInternal(answers: List<Answer<*>>): OngoingStubbing<T> {
+    return answers.fold(this) { ongoingStubbing, answer ->
+        ongoingStubbing.doAnswerInternal(answer)
+    }
 }
