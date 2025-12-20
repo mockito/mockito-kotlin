@@ -44,17 +44,30 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         internal fun <T> Answer<T>.wrapAsCoroutineAwareAnswer(): CoroutineAwareAnswer<T> {
             return this as? CoroutineAwareAnswer<T> ?: CoroutineAwareAnswer(this)
         }
+
+        internal fun <T> Answer<T>.wrap(isInvocationOnSuspendFunction: Boolean?): Answer<T> {
+            val shouldWrap = isInvocationOnSuspendFunction ?: false
+            if (!shouldWrap) {
+                return this
+            }
+
+            return (this as? SuspendableAnswer<T>)
+                ?: SuspendableAnswer { invocation ->
+                    val result = answer(invocation)
+
+                    val method = invocation.method
+                    val kFunction: KFunction<*> =
+                        requireNotNull(method.kotlinFunction) {
+                            "Invocation method '${method.name}' can not be represented by a Kotlin function"
+                        }
+                    result.toKotlinType(kFunction.returnType.jvmErasure)
+                }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun answer(invocation: InvocationOnMock): T {
-        val wrapped =
-            if (invocation.isInvocationOnSuspendFunction ?: false) {
-                delegate.wrapAsSuspendableAnswer()
-            } else {
-                delegate
-            }
-        return wrapped.answer(invocation) as T
+        return delegate.wrap(invocation.isInvocationOnSuspendFunction).answer(invocation) as T
     }
 
     private val InvocationOnMock.isInvocationOnSuspendFunction: Boolean?
@@ -62,23 +75,10 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
             return this.method.kotlinFunction?.isSuspend
         }
 
-    private fun Answer<*>.wrapAsSuspendableAnswer(): Answer<out Any?> =
-        (this as? SuspendableAnswer<*>)
-            ?: SuspendableAnswer { invocation ->
-                val result = this.answer(invocation)
-
-                val method = invocation.method
-                val kFunction: KFunction<*> =
-                    requireNotNull(method.kotlinFunction) {
-                        "Invocation method '${method.name}' can not be represented by a Kotlin function"
-                    }
-                result.toKotlinType<T>(kFunction.returnType.jvmErasure)
-            }
-
     @Suppress("UNCHECKED_CAST")
     private class SuspendableAnswer<T>(private val block: suspend (KInvocationOnMock) -> T?) :
         Answer<T> {
-        override fun answer(invocation: InvocationOnMock?): T {
+        override fun answer(invocation: InvocationOnMock): T {
             // all suspend functions/lambdas has Continuation as the last argument.
             // InvocationOnMock does not see last argument
             val rawInvocation = invocation as InterceptedInvocation
@@ -100,10 +100,9 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
             }
 
             // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
-            return suspensionEnforced.startCoroutineUninterceptedOrReturn(
-                KInvocationOnMock(invocation),
-                continuation,
-            ) as T
+            val receiver = KInvocationOnMock(invocation)
+            return suspensionEnforced.startCoroutineUninterceptedOrReturn(receiver, continuation)
+                as T
         }
     }
 }
