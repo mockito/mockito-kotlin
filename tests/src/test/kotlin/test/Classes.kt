@@ -48,6 +48,11 @@ open class Open {
 
     open fun stringResult() = "Default"
 
+    fun valueClassResult(arg: ValueClass): ValueClass = ValueClass("Result: ${arg.content}")
+
+    suspend fun suspendValueClassResult(arg: suspend () -> ValueClass): ValueClass =
+        ValueClass("Result: ${arg().content}")
+
     fun throwsNPE(): Any = throw NullPointerException("Test")
 }
 

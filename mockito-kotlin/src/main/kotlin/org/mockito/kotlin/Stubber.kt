@@ -28,7 +28,11 @@ package org.mockito.kotlin
 import kotlin.reflect.KClass
 import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
-import org.mockito.kotlin.internal.SuspendableAnswer
+import org.mockito.internal.stubbing.answers.*
+import org.mockito.kotlin.internal.CoroutineAwareAnswer
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
+import org.mockito.kotlin.internal.KAnswer
+import org.mockito.stubbing.Answer
 import org.mockito.stubbing.Stubber
 
 /**
@@ -46,8 +50,8 @@ import org.mockito.stubbing.Stubber
  * @param answer to answer to apply when the stubbed method/function is being called.
  * @return Stubber object used to stub fluently.
  */
-fun <T> doAnswer(answer: (KInvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer { answer.invoke(KInvocationOnMock(it)) }
+fun <T> doAnswer(answer: (KInvocationOnMock) -> T): Stubber {
+    return doAnswerInternal(KAnswer(answer))
 }
 
 /**
@@ -55,10 +59,7 @@ fun <T> doAnswer(answer: (KInvocationOnMock) -> T?): Stubber {
  *
  * Example:
  * ```kotlin
- *      doSuspendableAnswer {
- *          delay(1)
- *          "result"
- *      }.whenever(mock).someMethod()
+ *      doSuspendableAnswer { "result" }.whenever(mock).someMethod()
  * ```
  *
  * This function is an alias for Mockito's [Mockito.doAnswer], but also taking extra steps to wire
@@ -70,8 +71,8 @@ fun <T> doAnswer(answer: (KInvocationOnMock) -> T?): Stubber {
  * @param answer to answer to apply when the stubbed method/function is being called.
  * @return Stubber object used to stub fluently.
  */
-fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): Stubber {
-    return Mockito.doAnswer(SuspendableAnswer(answer))
+fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T): Stubber {
+    return Mockito.doAnswer(CoroutineAwareAnswer(answer))
 }
 
 /**
@@ -87,7 +88,7 @@ fun <T> doSuspendableAnswer(answer: suspend (KInvocationOnMock) -> T?): Stubber 
  * @return Stubber object used to stub fluently.
  */
 fun doCallRealMethod(): Stubber {
-    return Mockito.doCallRealMethod()!!
+    return doAnswerInternal(CallsRealMethods())
 }
 
 /**
@@ -105,7 +106,7 @@ fun doCallRealMethod(): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doNothing(): Stubber {
-    return Mockito.doNothing()
+    return doAnswerInternal(DoesNothing.doesNothing())
 }
 
 /**
@@ -124,7 +125,7 @@ fun doNothing(): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doReturn(value: Any?): Stubber {
-    return Mockito.doReturn(value)
+    return doAnswerInternal(Returns(value))
 }
 
 /**
@@ -144,7 +145,7 @@ fun doReturn(value: Any?): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doReturn(value: Any?, vararg values: Any?): Stubber {
-    return Mockito.doReturn(value, *values)
+    return doAnswerInternal(listOf(value, *values).map { Returns(it) })
 }
 
 /**
@@ -163,7 +164,7 @@ fun doReturn(value: Any?, vararg values: Any?): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doThrow(throwable: Throwable): Stubber {
-    return Mockito.doThrow(throwable)
+    return doAnswerInternal(ThrowsException(throwable))
 }
 
 /**
@@ -186,7 +187,7 @@ fun doThrow(throwable: Throwable): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doThrow(throwable: Throwable, vararg throwables: Throwable): Stubber {
-    return Mockito.doThrow(throwable, *throwables)
+    return doAnswerInternal(listOf(throwable, *throwables).map { ThrowsException(it) })
 }
 
 /**
@@ -205,7 +206,7 @@ fun doThrow(throwable: Throwable, vararg throwables: Throwable): Stubber {
  * @return Stubber object used to stub fluently.
  */
 fun doThrow(throwableType: KClass<out Throwable>): Stubber {
-    return Mockito.doThrow(throwableType.java)
+    return doAnswerInternal(ThrowsExceptionForClassType(throwableType.java))
 }
 
 /**
@@ -233,7 +234,9 @@ fun doThrow(
     throwableType: KClass<out Throwable>,
     vararg throwableTypes: KClass<out Throwable>,
 ): Stubber {
-    return Mockito.doThrow(throwableType.java, *throwableTypes.map { it.java }.toTypedArray())
+    return doAnswerInternal(
+        listOf(throwableType, *throwableTypes).map { ThrowsExceptionForClassType(it.java) }
+    )
 }
 
 /**
@@ -307,4 +310,17 @@ fun <T> Stubber.whenever(mock: T, methodCall: suspend T.() -> Unit) {
 @Deprecated("Use whenever(mock) { methodCall() } instead")
 fun <T> Stubber.wheneverBlocking(mock: T, methodCall: suspend T.() -> Unit) {
     whenever(mock, methodCall)
+}
+
+private fun doAnswerInternal(answer: Answer<*>): Stubber {
+    return Mockito.doAnswer(answer.wrapAsCoroutineAwareAnswer())
+}
+
+private fun doAnswerInternal(answers: List<Answer<*>>): Stubber {
+    return answers
+        .map { it.wrapAsCoroutineAwareAnswer() }
+        .let { wrappedAnswers ->
+            val stubber = Mockito.doAnswer(wrappedAnswers.first())
+            wrappedAnswers.drop(1).fold(stubber) { stubber, answer -> stubber.doAnswer(answer) }
+        }
 }
