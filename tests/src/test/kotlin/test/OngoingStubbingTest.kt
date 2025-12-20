@@ -8,6 +8,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doCallRealMethod
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doThrow
@@ -360,11 +361,22 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub function call to make real function call into mock`() {
+        /* Given */
+        val mock = mock<Open> { on { valueClassResult(any()) }.doCallRealMethod() }
+
+        /* When */
+        val result = mock.valueClassResult(ValueClass("Value"))
+
+        /* Then */
+        expect(result.content).toBe("Result: Value")
+    }
+
+    @Test
     fun doReturn_throwsNPE() {
         assumeFalse(mockMakerInlineEnabled())
         expectErrorWithMessage("look at the stack trace below") on
             {
-
                 /* When */
                 mock<Open> { on { throwsNPE() } doReturn "result" }
             }

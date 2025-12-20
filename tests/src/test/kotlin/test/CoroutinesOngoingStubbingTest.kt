@@ -334,4 +334,18 @@ class CoroutinesOngoingStubbingTest {
         expect(result1).toBe(valueClassA)
         expect(result2).toBe(valueClassB)
     }
+
+    @Test
+    fun `should stub suspendable function call to make real function call into mock`() {
+        /* Given */
+        val mock = mock<Open> { on { suspendValueClassResult(any()) }.doCallRealMethod() }
+
+        /* When */
+        val result: ValueClass = runBlocking {
+            mock.suspendValueClassResult { ValueClass("Value") }
+        }
+
+        /* Then */
+        expect(result.content).toBe("Result: Value")
+    }
 }
