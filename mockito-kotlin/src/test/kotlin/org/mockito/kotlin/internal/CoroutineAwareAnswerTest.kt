@@ -10,7 +10,7 @@ import org.mockito.internal.stubbing.answers.Returns
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrap
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.timeout
 import org.mockito.kotlin.verify
@@ -27,7 +27,7 @@ private interface Functions {
 
 class CoroutineAwareAnswerTest {
     @Test
-    fun `should not wrap an answer to a sync method call`() {
+    fun `should not really wrap and answer synchronously to a sync method call`() {
         val function = Functions::syncString
         val stringValue = "test"
         val invocationOnMock: InvocationOnMock = mock {
@@ -35,14 +35,14 @@ class CoroutineAwareAnswerTest {
         }
         val answer = Returns(stringValue)
 
-        val result = answer.wrap(function)
+        val wrapped = answer.wrapAsCoroutineAwareAnswer()
+        val result = wrapped.answer(invocationOnMock)
 
-        expect(result).toBeInstanceOf<Returns>()
-        assertEquals(stringValue, result.answer(invocationOnMock))
+        assertEquals(stringValue, result)
     }
 
     @Test
-    fun `should wrap an answer to a suspend function call`() {
+    fun `should wrap and answer via the continuation to a suspend function call`() {
         val function = Functions::suspendString
         val stringValue = "test"
         val continuation: Continuation<String> = mock { on { context } doReturn mock() }
@@ -52,10 +52,8 @@ class CoroutineAwareAnswerTest {
         }
         val answer = Returns(stringValue)
 
-        val wrapped = answer.wrap(function)
+        val wrapped = answer.wrapAsCoroutineAwareAnswer()
         wrapped.answer(invocationOnMock)
-
-        expect(wrapped::class.simpleName).toBe("SuspendableAnswer")
 
         verify(continuation).context
         val resultCaptor = argumentCaptor<Result<String>>()
@@ -64,7 +62,7 @@ class CoroutineAwareAnswerTest {
     }
 
     @Test
-    fun `should cast answer of a suspend function call to value class`() {
+    fun `should cast the unboxed answer of a suspend function call to value class`() {
         val function = Functions::suspendValueClass
         val stringValue = "test"
 
@@ -73,9 +71,9 @@ class CoroutineAwareAnswerTest {
             on { it.method } doReturn function.javaMethod!!
             on { it.rawArguments } doReturn arrayOf(continuation)
         }
-        val answer = Returns(stringValue) // mimic Mockito core to return an unboxed String value
+        val answer = Returns(stringValue) // mimics Mockito core to return an unboxed String value
 
-        val wrapped = answer.wrap(function)
+        val wrapped = answer.wrapAsCoroutineAwareAnswer()
         wrapped.answer(invocationOnMock)
 
         val resultCaptor = argumentCaptor<Result<ValueClass>>()
