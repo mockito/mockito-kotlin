@@ -45,34 +45,35 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
             return this as? CoroutineAwareAnswer<T> ?: CoroutineAwareAnswer(this)
         }
 
-        internal fun <T> Answer<T>.wrap(isInvocationOnSuspendFunction: Boolean?): Answer<T> {
-            val shouldWrap = isInvocationOnSuspendFunction ?: false
-            if (!shouldWrap) {
-                return this
+        internal fun <T> Answer<T>.wrap(invokedKotlinFunction: KFunction<*>?): Answer<T> {
+            return if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) {
+                this
+            } else {
+                (this as? SuspendableAnswer<T>)
+                    ?: SuspendableAnswer { invocation ->
+                        val result = answer(invocation)
+                        result.toKotlinType(invokedKotlinFunction.returnType.jvmErasure)
+                    }
             }
-
-            return (this as? SuspendableAnswer<T>)
-                ?: SuspendableAnswer { invocation ->
-                    val result = answer(invocation)
-
-                    val method = invocation.method
-                    val kFunction: KFunction<*> =
-                        requireNotNull(method.kotlinFunction) {
-                            "Invocation method '${method.name}' can not be represented by a Kotlin function"
-                        }
-                    result.toKotlinType(kFunction.returnType.jvmErasure)
-                }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun answer(invocation: InvocationOnMock): T {
-        return delegate.wrap(invocation.isInvocationOnSuspendFunction).answer(invocation) as T
+        val wrapped = delegate.wrap(invocation.invokedKotlinFunction)
+        return wrapped.answer(invocation) as T
     }
 
-    private val InvocationOnMock.isInvocationOnSuspendFunction: Boolean?
-        get() {
-            return this.method.kotlinFunction?.isSuspend
+    private val InvocationOnMock.invokedKotlinFunction: KFunction<*>?
+        get() = try {
+            this.method.kotlinFunction
+        } catch (_: Throwable) {
+            // Failed to determine kotlin function by reflection. This can happen, for
+            // instance, when the invocation is on a mocked function object (when
+            // the Java method is of a type from the kotlin.jvm.functions package)
+            // or when reflection fails due to interoperability issues with Java
+            // classes.
+            null
         }
 
     @Suppress("UNCHECKED_CAST")

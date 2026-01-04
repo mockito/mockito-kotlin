@@ -373,6 +373,18 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub mocked function object`() {
+        /* Given */
+        val mockFunction: (String) -> String = mock { on { invoke(any()) } doReturn "Text" }
+
+        /* When */
+        val result = mockFunction.invoke("")
+
+        /* Then */
+        expect(result).toBe("Text")
+    }
+
+    @Test
     fun doReturn_throwsNPE() {
         assumeFalse(mockMakerInlineEnabled())
         expectErrorWithMessage("look at the stack trace below") on
