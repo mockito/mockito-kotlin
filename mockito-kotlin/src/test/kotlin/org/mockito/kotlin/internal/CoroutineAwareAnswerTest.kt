@@ -62,4 +62,26 @@ class CoroutineAwareAnswerTest {
         verify(continuation, timeout(20)).resumeWith(resultCaptor.capture())
         expect(resultCaptor.firstValue.getOrNull()).toBe(stringValue)
     }
+
+    @Test
+    fun `should cast answer of a suspend function call to value class`() {
+        val function = Functions::suspendValueClass
+        val stringValue = "test"
+
+        val continuation: Continuation<ValueClass> = mock { on { context } doReturn mock() }
+        val invocationOnMock: InterceptedInvocation = mock {
+            on { it.method } doReturn function.javaMethod!!
+            on { it.rawArguments } doReturn arrayOf(continuation)
+        }
+        val answer = Returns(stringValue) // mimic Mockito core to return an unboxed String value
+
+        val wrapped = answer.wrap(function)
+        wrapped.answer(invocationOnMock)
+
+        val resultCaptor = argumentCaptor<Result<ValueClass>>()
+        verify(continuation).resumeWith(resultCaptor.capture())
+        val result = resultCaptor.firstValue.getOrNull()
+        expect(result).toBeInstanceOf<ValueClass>()
+        expect(result?.value).toBe(stringValue)
+    }
 }
