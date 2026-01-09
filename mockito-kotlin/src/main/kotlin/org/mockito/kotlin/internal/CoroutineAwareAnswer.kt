@@ -30,15 +30,14 @@ import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
-import kotlinx.coroutines.delay
 import org.mockito.internal.invocation.InterceptedInvocation
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.KInvocationOnMock
 import org.mockito.stubbing.Answer
 
-internal class CoroutineAwareAnswer<T> private constructor(private val delegate: Answer<T>) :
+internal class CoroutineAwareAnswer<T> private constructor(private val delegate: Answer<*>) :
     Answer<T> {
-    constructor(block: suspend (KInvocationOnMock) -> T?) : this(SuspendableAnswer<T>(block))
+    constructor(block: suspend (KInvocationOnMock) -> T?) : this(SuspendableAnswer(block))
 
     companion object {
         internal fun <T> Answer<T>.wrapAsCoroutineAwareAnswer(): CoroutineAwareAnswer<T> {
@@ -47,13 +46,13 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun answer(invocation: InvocationOnMock): T {
+    override fun answer(invocation: InvocationOnMock): T? {
         val invokedKotlinFunction = invocation.invokedKotlinFunction
         val wrappedAnswer =
             if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) {
                 delegate
             } else {
-                (delegate as? SuspendableAnswer<T>)
+                (delegate as? SuspendableAnswer)
                     ?: SuspendableAnswer { invocation ->
                         val result = delegate.answer(invocation)
                         val returnType = invokedKotlinFunction.returnType.jvmErasure
@@ -78,33 +77,32 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
             }
 
     @Suppress("UNCHECKED_CAST")
-    private class SuspendableAnswer<T>(private val block: suspend (KInvocationOnMock) -> T?) :
-        Answer<T> {
-        override fun answer(invocation: InvocationOnMock): T {
+    private class SuspendableAnswer(private val block: suspend (KInvocationOnMock) -> Any?) :
+        Answer<Any?> {
+        override fun answer(invocation: InvocationOnMock): Any? {
+            val unboxNonPrimitiveValueClasses: suspend (KInvocationOnMock) -> Any? =
+                { invocationOnMock ->
+                    block.invoke(invocationOnMock)?.let {
+                        if (it::class.isValue) {
+                            val unboxed = it.unboxValueClass()
+                            if (unboxed is Number) it else unboxed
+                        } else {
+                            it
+                        }
+                    }
+                }
+
             // all suspend functions/lambdas has Continuation as the last argument.
             // InvocationOnMock does not see last argument
+            val receiver = KInvocationOnMock(invocation)
             val rawInvocation = invocation as InterceptedInvocation
-            val continuation = rawInvocation.rawArguments.last() as Continuation<T?>
-
-            val suspensionEnforced: suspend (KInvocationOnMock) -> T? = {
-
-                // Delaying for 1 ms, forces a suspension to happen.
-                //
-                // Without any suspension happening in the coroutine, the return value of the
-                // block lambda will be returned directly from the
-                // startCoroutineUninterceptedOrReturn() function (and will then be passed on as
-                // return value of this answer() function. Instead the result should be passed into
-                // the continuation callback, and this happens only with at least 1 suspension
-                // happening.
-                delay(1)
-
-                block.invoke(it)
-            }
+            val continuation = rawInvocation.rawArguments.last() as Continuation<Any?>
 
             // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
-            val receiver = KInvocationOnMock(invocation)
-            return suspensionEnforced.startCoroutineUninterceptedOrReturn(receiver, continuation)
-                as T
+            return unboxNonPrimitiveValueClasses.startCoroutineUninterceptedOrReturn(
+                receiver,
+                continuation,
+            )
         }
     }
 }
