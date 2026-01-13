@@ -202,10 +202,10 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        fun anyPrimitiveValueClass() {
+        fun anyLongValueClass() {
             mock<SynchronousFunctions>().apply {
-                primitiveValueClass(PrimitiveValueClass(123))
-                verify(this).primitiveValueClass(any())
+                longValueClass(LongValueClass(123))
+                verify(this).longValueClass(any())
             }
         }
 
@@ -394,18 +394,18 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        fun anyOrNullNullablePrimitiveValueClass() {
+        fun anyOrNullNullableLongValueClass() {
             mock<SynchronousFunctions>().apply {
-                nullablePrimitiveValueClass(PrimitiveValueClass(123))
-                verify(this).nullablePrimitiveValueClass(anyOrNull())
+                nullableLongValueClass(LongValueClass(123))
+                verify(this).nullableLongValueClass(anyOrNull())
             }
         }
 
         @Test
-        fun anyOrNullNullablePrimitiveValueClassNullValue() {
+        fun anyOrNullNullableLongValueClassNullValue() {
             mock<SynchronousFunctions>().apply {
-                nullablePrimitiveValueClass(null)
-                verify(this).nullablePrimitiveValueClass(anyOrNull())
+                nullableLongValueClass(null)
+                verify(this).nullableLongValueClass(anyOrNull())
             }
         }
     }
@@ -638,29 +638,29 @@ class MatchersTest : TestBase() {
         }
 
         @Test
-        fun eqPrimitiveValueClass() {
-            val primitiveValueClass = PrimitiveValueClass(123)
+        fun eqLongValueClass() {
+            val longValueClass = LongValueClass(123)
             mock<SynchronousFunctions>().apply {
-                primitiveValueClass(primitiveValueClass)
-                verify(this).primitiveValueClass(eq(primitiveValueClass))
+                longValueClass(longValueClass)
+                verify(this).longValueClass(eq(longValueClass))
             }
         }
 
         @Test
-        fun eqNullablePrimitiveValueClass_nullableArgument() {
-            val primitiveValueClass = PrimitiveValueClass(123) as PrimitiveValueClass?
+        fun eqNullableLongValueClass_nullableArgument() {
+            val longValueClass = LongValueClass(123) as LongValueClass?
             mock<SynchronousFunctions>().apply {
-                nullablePrimitiveValueClass(primitiveValueClass)
-                verify(this).nullablePrimitiveValueClass(eq(primitiveValueClass))
+                nullableLongValueClass(longValueClass)
+                verify(this).nullableLongValueClass(eq(longValueClass))
             }
         }
 
         @Test
-        fun eqNullablePrimitiveValueClass_nonNullableArgument() {
-            val primitiveValueClass = PrimitiveValueClass(123)
+        fun eqNullableLongValueClass_nonNullableArgument() {
+            val longValueClass = LongValueClass(123)
             mock<SynchronousFunctions>().apply {
-                nullablePrimitiveValueClass(primitiveValueClass)
-                verify(this).nullablePrimitiveValueClass(eq(primitiveValueClass))
+                nullableLongValueClass(longValueClass)
+                verify(this).nullableLongValueClass(eq(longValueClass))
             }
         }
 

@@ -283,39 +283,36 @@ class CoroutinesOngoingStubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call with primitive value class result`() = runTest {
+    fun `should stub suspendable function call with long value class result`() = runTest {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
-            mock<SuspendFunctions> {
-                on(mock.primitiveValueClassResult()) doReturn primitiveValueClass
-            }
+            mock<SuspendFunctions> { on(mock.longValueClassResult()) doReturn longValueClass }
 
         /* When */
-        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+        val result: LongValueClass = mock.longValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
     }
 
     @Test
-    fun `should stub suspendable function call with nullable primitive value class result`() =
-        runTest {
-            /* Given */
-            val primitiveValueClass = PrimitiveValueClass(42) as PrimitiveValueClass?
-            val mock =
-                mock<SuspendFunctions> {
-                    on(mock.nullablePrimitiveValueClassResult()) doReturn primitiveValueClass
-                }
+    fun `should stub suspendable function call with nullable long value class result`() = runTest {
+        /* Given */
+        val longValueClass = LongValueClass(42) as LongValueClass?
+        val mock =
+            mock<SuspendFunctions> {
+                on(mock.nullableLongValueClassResult()) doReturn longValueClass
+            }
 
-            /* When */
-            val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+        /* When */
+        val result: LongValueClass? = mock.nullableLongValueClassResult()
 
-            /* Then */
-            // expect(result).toBe(primitiveValueClass) // expect does not deal well with nullable
-            // expected value
-            assertEquals(primitiveValueClass, result)
-        }
+        /* Then */
+        // expect(result).toBe(longValueClass) // expect does not deal well with nullable
+        // expected value
+        assertEquals(longValueClass, result)
+    }
 
     @Test
     fun `should stub consecutive suspendable function call with value class results`() {

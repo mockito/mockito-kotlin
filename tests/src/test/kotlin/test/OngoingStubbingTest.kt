@@ -310,35 +310,33 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun `should stub function call with primitive value class result`() {
+    fun `should stub function call with long value class result`() {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
-            mock<SynchronousFunctions> {
-                on { primitiveValueClassResult() } doReturn primitiveValueClass
-            }
+            mock<SynchronousFunctions> { on { longValueClassResult() } doReturn longValueClass }
 
         /* When */
-        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+        val result: LongValueClass = mock.longValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
     }
 
     @Test
-    fun `should stub function call with nullable primitive value class result`() {
+    fun `should stub function call with nullable long value class result`() {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
             mock<SynchronousFunctions> {
-                on { nullablePrimitiveValueClassResult() } doReturn primitiveValueClass
+                on { nullableLongValueClassResult() } doReturn longValueClass
             }
 
         /* When */
-        val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+        val result: LongValueClass? = mock.nullableLongValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
     }
 
     @Test

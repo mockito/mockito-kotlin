@@ -139,9 +139,9 @@ interface SynchronousFunctions {
 
     fun nestedValueClass(v: NestedValueClass)
 
-    fun primitiveValueClass(v: PrimitiveValueClass)
+    fun longValueClass(v: LongValueClass)
 
-    fun nullablePrimitiveValueClass(v: PrimitiveValueClass?)
+    fun nullableLongValueClass(v: LongValueClass?)
 
     fun valueClassResult(): ValueClass
 
@@ -149,9 +149,9 @@ interface SynchronousFunctions {
 
     fun nestedValueClassResult(): NestedValueClass
 
-    fun primitiveValueClassResult(): PrimitiveValueClass
+    fun longValueClassResult(): LongValueClass
 
-    fun nullablePrimitiveValueClassResult(): PrimitiveValueClass?
+    fun nullableLongValueClassResult(): LongValueClass?
 
     fun functionArgument(function: () -> Unit)
 
@@ -183,9 +183,9 @@ interface SuspendFunctions {
 
     suspend fun nestedValueClassResult(): NestedValueClass
 
-    suspend fun primitiveValueClassResult(): PrimitiveValueClass
+    suspend fun longValueClassResult(): LongValueClass
 
-    suspend fun nullablePrimitiveValueClassResult(): PrimitiveValueClass?
+    suspend fun nullableLongValueClassResult(): LongValueClass?
 
     suspend fun builderMethod(): SuspendFunctions
 }
@@ -194,7 +194,7 @@ interface SuspendFunctions {
 
 @JvmInline value class NestedValueClass(val value: ValueClass)
 
-@JvmInline value class PrimitiveValueClass(val value: Long)
+@JvmInline value class LongValueClass(val value: Long)
 
 interface ExtraInterface
 
