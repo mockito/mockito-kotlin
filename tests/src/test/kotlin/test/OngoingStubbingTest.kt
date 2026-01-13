@@ -340,6 +340,68 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub function call with boolean value class result`() {
+        /* Given */
+        val booleanValueClass = BooleanValueClass(true)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { booleanValueClassResult() } doReturn booleanValueClass
+            }
+
+        /* When */
+        val result: BooleanValueClass = mock.booleanValueClassResult()
+
+        /* Then */
+        expect(result).toBe(booleanValueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable boolean value class result`() {
+        /* Given */
+        val booleanValueClass = BooleanValueClass(false)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { nullableBooleanValueClassResult() } doReturn booleanValueClass
+            }
+
+        /* When */
+        val result: BooleanValueClass? = mock.nullableBooleanValueClassResult()
+
+        /* Then */
+        expect(result).toBe(booleanValueClass)
+    }
+
+    @Test
+    fun `should stub function call with char value class result`() {
+        /* Given */
+        val charValueClass = CharValueClass('a')
+        val mock =
+            mock<SynchronousFunctions> { on { charValueClassResult() } doReturn charValueClass }
+
+        /* When */
+        val result: CharValueClass = mock.charValueClassResult()
+
+        /* Then */
+        expect(result).toBe(charValueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable char value class result`() {
+        /* Given */
+        val charValueClass = CharValueClass('a')
+        val mock =
+            mock<SynchronousFunctions> {
+                on { nullableCharValueClassResult() } doReturn charValueClass
+            }
+
+        /* When */
+        val result: CharValueClass? = mock.nullableCharValueClassResult()
+
+        /* Then */
+        expect(result).toBe(charValueClass)
+    }
+
+    @Test
     fun `should stub consecutive function calls with value class results`() {
         /* Given */
         val valueClassA = ValueClass("A")

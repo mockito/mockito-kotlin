@@ -82,12 +82,13 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         override fun answer(invocation: InvocationOnMock): Any? {
             val unboxNonPrimitiveValueClasses: suspend (KInvocationOnMock) -> Any? =
                 { invocationOnMock ->
-                    block.invoke(invocationOnMock)?.let {
-                        if (it::class.isValue) {
-                            val unboxed = it.unboxValueClass()
-                            if (unboxed is Number) it else unboxed
+                    block.invoke(invocationOnMock)?.let { result: Any ->
+                        if (result::class.isValue) {
+                            result.unboxValueClass().let { unboxed ->
+                                if (unboxed.isPrimitiveValue()) result else unboxed
+                            }
                         } else {
-                            it
+                            result
                         }
                     }
                 }
@@ -104,5 +105,8 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
                 continuation,
             )
         }
+
+        private fun Any.isPrimitiveValue(): Boolean =
+            this is Number || this is Boolean || this is Char
     }
 }

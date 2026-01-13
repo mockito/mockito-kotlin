@@ -153,6 +153,14 @@ interface SynchronousFunctions {
 
     fun nullableLongValueClassResult(): LongValueClass?
 
+    fun booleanValueClassResult(): BooleanValueClass
+
+    fun nullableBooleanValueClassResult(): BooleanValueClass?
+
+    fun charValueClassResult(): CharValueClass
+
+    fun nullableCharValueClassResult(): CharValueClass?
+
     fun functionArgument(function: () -> Unit)
 
     fun suspendFunctionArgument(function: suspend () -> Unit)
@@ -187,6 +195,14 @@ interface SuspendFunctions {
 
     suspend fun nullableLongValueClassResult(): LongValueClass?
 
+    suspend fun booleanValueClassResult(): BooleanValueClass
+
+    suspend fun nullableBooleanValueClassResult(): BooleanValueClass?
+
+    suspend fun charValueClassResult(): CharValueClass
+
+    suspend fun nullableCharValueClassResult(): CharValueClass?
+
     suspend fun builderMethod(): SuspendFunctions
 }
 
@@ -195,6 +211,10 @@ interface SuspendFunctions {
 @JvmInline value class NestedValueClass(val value: ValueClass)
 
 @JvmInline value class LongValueClass(val value: Long)
+
+@JvmInline value class BooleanValueClass(val value: Boolean)
+
+@JvmInline value class CharValueClass(val value: Char)
 
 interface ExtraInterface
 
