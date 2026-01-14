@@ -48,6 +48,11 @@ open class Open {
 
     open fun stringResult() = "Default"
 
+    fun valueClassResult(arg: ValueClass): ValueClass = ValueClass("Result: ${arg.content}")
+
+    suspend fun suspendValueClassResult(arg: suspend () -> ValueClass): ValueClass =
+        ValueClass("Result: ${arg().content}")
+
     fun throwsNPE(): Any = throw NullPointerException("Test")
 }
 
@@ -134,9 +139,9 @@ interface SynchronousFunctions {
 
     fun nestedValueClass(v: NestedValueClass)
 
-    fun primitiveValueClass(v: PrimitiveValueClass)
+    fun longValueClass(v: LongValueClass)
 
-    fun nullablePrimitiveValueClass(v: PrimitiveValueClass?)
+    fun nullableLongValueClass(v: LongValueClass?)
 
     fun valueClassResult(): ValueClass
 
@@ -144,9 +149,17 @@ interface SynchronousFunctions {
 
     fun nestedValueClassResult(): NestedValueClass
 
-    fun primitiveValueClassResult(): PrimitiveValueClass
+    fun longValueClassResult(): LongValueClass
 
-    fun nullablePrimitiveValueClassResult(): PrimitiveValueClass?
+    fun nullableLongValueClassResult(): LongValueClass?
+
+    fun booleanValueClassResult(): BooleanValueClass
+
+    fun nullableBooleanValueClassResult(): BooleanValueClass?
+
+    fun charValueClassResult(): CharValueClass
+
+    fun nullableCharValueClassResult(): CharValueClass?
 
     fun functionArgument(function: () -> Unit)
 
@@ -178,9 +191,17 @@ interface SuspendFunctions {
 
     suspend fun nestedValueClassResult(): NestedValueClass
 
-    suspend fun primitiveValueClassResult(): PrimitiveValueClass
+    suspend fun longValueClassResult(): LongValueClass
 
-    suspend fun nullablePrimitiveValueClassResult(): PrimitiveValueClass?
+    suspend fun nullableLongValueClassResult(): LongValueClass?
+
+    suspend fun booleanValueClassResult(): BooleanValueClass
+
+    suspend fun nullableBooleanValueClassResult(): BooleanValueClass?
+
+    suspend fun charValueClassResult(): CharValueClass
+
+    suspend fun nullableCharValueClassResult(): CharValueClass?
 
     suspend fun builderMethod(): SuspendFunctions
 }
@@ -189,7 +210,11 @@ interface SuspendFunctions {
 
 @JvmInline value class NestedValueClass(val value: ValueClass)
 
-@JvmInline value class PrimitiveValueClass(val value: Long)
+@JvmInline value class LongValueClass(val value: Long)
+
+@JvmInline value class BooleanValueClass(val value: Boolean)
+
+@JvmInline value class CharValueClass(val value: Char)
 
 interface ExtraInterface
 

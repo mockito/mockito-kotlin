@@ -396,32 +396,32 @@ class ArgumentCaptorTest : TestBase() {
     }
 
     @Test
-    fun argumentCaptor_primitive_value_class() {
+    fun argumentCaptor_long_value_class() {
         /* Given */
         val m: SynchronousFunctions = mock()
-        val valueClass = PrimitiveValueClass(123)
+        val valueClass = LongValueClass(123)
 
         /* When */
-        m.primitiveValueClass(valueClass)
+        m.longValueClass(valueClass)
 
         /* Then */
-        val captor = argumentCaptor<PrimitiveValueClass>()
-        verify(m).primitiveValueClass(captor.capture())
+        val captor = argumentCaptor<LongValueClass>()
+        verify(m).longValueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
     }
 
     @Test
-    fun argumentCaptor_nullable_primitive_value_class() {
+    fun argumentCaptor_nullable_long_value_class() {
         /* Given */
         val m: SynchronousFunctions = mock()
-        val valueClass = PrimitiveValueClass(123)
+        val valueClass = LongValueClass(123)
 
         /* When */
-        m.nullablePrimitiveValueClass(valueClass)
+        m.nullableLongValueClass(valueClass)
 
         /* Then */
-        val captor = argumentCaptor<PrimitiveValueClass?>()
-        verify(m).nullablePrimitiveValueClass(captor.capture())
+        val captor = argumentCaptor<LongValueClass?>()
+        verify(m).nullableLongValueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
     }
 

@@ -10,6 +10,17 @@ import org.junit.Test
 class BDDMockitoKtTest {
 
     @Test
+    fun willReturn() = runBlocking {
+        val fixture: SomeInterface = mock()
+
+        given(fixture.suspending()).willReturn { 42 }
+
+        assertEquals(42, fixture.suspending())
+        then(fixture).should().suspending()
+        Unit
+    }
+
+    @Test
     fun willSuspendableAnswer_withoutArgument() = runBlocking {
         val fixture: SomeInterface = mock()
 
@@ -27,7 +38,7 @@ class BDDMockitoKtTest {
         val fixture: SomeInterface = mock()
 
         given(fixture.suspendingWithArg(any())).willSuspendableAnswer {
-            withContext(Dispatchers.Default) { it.getArgument<Int>(0) }
+            withContext(Dispatchers.Default) { it.getArgument(0) }
         }
 
         assertEquals(42, fixture.suspendingWithArg(42))
@@ -36,17 +47,15 @@ class BDDMockitoKtTest {
     }
 
     @Test
-    fun willSuspendableAnswer_givenBlocking() {
+    fun willSuspendableAnswer_givenBlocking_suspendLambdaAnswer() {
         val fixture: SomeInterface = mock()
 
-        givenBlocking { fixture.suspending() }
-            .willSuspendableAnswer { withContext(Dispatchers.Default) { 42 } }
+        givenBlocking { fixture.suspending() }.willSuspendableAnswer { 42 }
 
         val result = runBlocking { fixture.suspending() }
 
         assertEquals(42, result)
         then(fixture).shouldBlocking { suspending() }
-        Unit
     }
 
     @Test
@@ -54,13 +63,12 @@ class BDDMockitoKtTest {
         val fixture: SomeInterface = mock()
 
         givenBlocking { fixture.suspendingWithArg(any()) }
-            .willSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument<Int>(0) } }
+            .willSuspendableAnswer { withContext(Dispatchers.Default) { it.getArgument(0) } }
 
         val result = runBlocking { fixture.suspendingWithArg(42) }
 
         assertEquals(42, result)
         then(fixture).shouldBlocking { suspendingWithArg(42) }
-        Unit
     }
 
     @Test

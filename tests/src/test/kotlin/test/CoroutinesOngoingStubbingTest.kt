@@ -1,19 +1,13 @@
 package test
 
 import com.nhaarman.expect.expect
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doReturnConsecutively
-import org.mockito.kotlin.doSuspendableAnswer
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.mock
+import org.mockito.kotlin.*
 import org.mockito.stubbing.Answer
 
 class CoroutinesOngoingStubbingTest {
@@ -251,15 +245,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with value class result`() = runTest {
         /* Given */
         val valueClass = ValueClass("A")
-        val mock =
-            mock<SuspendFunctions> {
-                // TODO: simplify to "on (mock.valueClassResult()) doReturn valueClass"
-                on(mock.valueClassResult()) doSuspendableAnswer
-                    {
-                        delay(1)
-                        valueClass
-                    }
-            }
+        val mock = mock<SuspendFunctions> { on(mock.valueClassResult()) doReturn valueClass }
 
         /* When */
         val result: ValueClass = mock.valueClassResult()
@@ -272,15 +258,7 @@ class CoroutinesOngoingStubbingTest {
     fun `should stub suspendable function call with nullable value class result`() {
         /* Given */
         val valueClass = ValueClass("A")
-        val mock =
-            mock<SuspendFunctions> {
-                // TODO: simplify to "on { nullableValueClassResult() } doReturn valueClass"
-                on { nullableValueClassResult() } doSuspendableAnswer
-                    {
-                        delay(1)
-                        valueClass
-                    }
-            }
+        val mock = mock<SuspendFunctions> { on { nullableValueClassResult() } doReturn valueClass }
 
         /* When */
         val result: ValueClass? = runBlocking { mock.nullableValueClassResult() }
@@ -294,14 +272,7 @@ class CoroutinesOngoingStubbingTest {
         /* Given */
         val nestedValueClass = NestedValueClass(ValueClass("A"))
         val mock =
-            mock<SuspendFunctions> {
-                // TODO: simplify to "on { nestedValueClassResult() } doReturn nestedValueClass"
-                on { nestedValueClassResult() } doSuspendableAnswer
-                    {
-                        delay(1)
-                        nestedValueClass
-                    }
-            }
+            mock<SuspendFunctions> { on { nestedValueClassResult() } doReturn nestedValueClass }
 
         /* When */
         val result: NestedValueClass = runBlocking { mock.nestedValueClassResult() }
@@ -312,45 +283,97 @@ class CoroutinesOngoingStubbingTest {
     }
 
     @Test
-    fun `should stub suspendable function call with primitive value class result`() = runTest {
+    fun `should stub suspendable function call with long value class result`() = runTest {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
-            mock<SuspendFunctions> {
-                on(mock.primitiveValueClassResult()) doSuspendableAnswer
-                    {
-                        delay(1)
-                        primitiveValueClass
-                    }
-            }
+            mock<SuspendFunctions> { on(mock.longValueClassResult()) doReturn longValueClass }
 
         /* When */
-        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+        val result: LongValueClass = mock.longValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
     }
 
     @Test
-    fun `should stub suspendable function call with nullable primitive value class result`() =
+    fun `should stub suspendable function call with nullable long value class result`() = runTest {
+        /* Given */
+        val longValueClass = LongValueClass(42) as LongValueClass?
+        val mock =
+            mock<SuspendFunctions> {
+                on(mock.nullableLongValueClassResult()) doReturn longValueClass
+            }
+
+        /* When */
+        val result: LongValueClass? = mock.nullableLongValueClassResult()
+
+        /* Then */
+        // expect(result).toBe(longValueClass) // expect does not deal well with nullable
+        // expected value
+        assertEquals(longValueClass, result)
+    }
+
+    @Test
+    fun `should stub suspendable function call with boolean value class result`() = runTest {
+        /* Given */
+        val booleanValueClass = BooleanValueClass(true)
+        val mock =
+            mock<SuspendFunctions> { on(mock.booleanValueClassResult()) doReturn booleanValueClass }
+
+        /* When */
+        val result: BooleanValueClass = mock.booleanValueClassResult()
+
+        /* Then */
+        expect(result).toBe(booleanValueClass)
+    }
+
+    @Test
+    fun `should stub suspendable function call with nullable boolean value class result`() =
         runTest {
             /* Given */
-            val primitiveValueClass = PrimitiveValueClass(42)
+            val booleanValueClass = BooleanValueClass(false) as BooleanValueClass?
             val mock =
                 mock<SuspendFunctions> {
-                    on(mock.nullablePrimitiveValueClassResult()) doSuspendableAnswer
-                        {
-                            delay(1)
-                            primitiveValueClass
-                        }
+                    on(mock.nullableBooleanValueClassResult()) doReturn booleanValueClass
                 }
 
             /* When */
-            val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+            val result: BooleanValueClass? = mock.nullableBooleanValueClassResult()
 
             /* Then */
-            expect(result).toBe(primitiveValueClass)
+            assertEquals(booleanValueClass, result)
         }
+
+    @Test
+    fun `should stub suspendable function call with char value class result`() = runTest {
+        /* Given */
+        val charValueClass = CharValueClass('a')
+        val mock =
+            mock<SuspendFunctions> { on(mock.charValueClassResult()) doReturn charValueClass }
+
+        /* When */
+        val result: CharValueClass = mock.charValueClassResult()
+
+        /* Then */
+        expect(result).toBe(charValueClass)
+    }
+
+    @Test
+    fun `should stub suspendable function call with nullable char value class result`() = runTest {
+        /* Given */
+        val charValueClass = CharValueClass('a') as CharValueClass?
+        val mock =
+            mock<SuspendFunctions> {
+                on(mock.nullableCharValueClassResult()) doReturn charValueClass
+            }
+
+        /* When */
+        val result: CharValueClass? = mock.nullableCharValueClassResult()
+
+        /* Then */
+        assertEquals(charValueClass, result)
+    }
 
     @Test
     fun `should stub consecutive suspendable function call with value class results`() {
@@ -359,17 +382,7 @@ class CoroutinesOngoingStubbingTest {
         val valueClassB = ValueClass("B")
         val mock =
             mock<SuspendFunctions> {
-                // TODO: simplify to "on { valueClassResult() }.doReturnConsecutively(valueClassA,
-                // valueClassB)"
-                on { valueClassResult() } doSuspendableAnswer
-                    {
-                        delay(1)
-                        valueClassA
-                    } doSuspendableAnswer
-                    {
-                        delay(1)
-                        valueClassB
-                    }
+                on { valueClassResult() }.doReturnConsecutively(valueClassA, valueClassB)
             }
 
         /* When */
@@ -378,5 +391,19 @@ class CoroutinesOngoingStubbingTest {
         /* Then */
         expect(result1).toBe(valueClassA)
         expect(result2).toBe(valueClassB)
+    }
+
+    @Test
+    fun `should stub suspendable function call to make real function call into mock`() {
+        /* Given */
+        val mock = mock<Open> { on { suspendValueClassResult(any()) }.doCallRealMethod() }
+
+        /* When */
+        val result: ValueClass = runBlocking {
+            mock.suspendValueClassResult { ValueClass("Value") }
+        }
+
+        /* Then */
+        expect(result.content).toBe("Result: Value")
     }
 }

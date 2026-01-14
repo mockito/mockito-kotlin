@@ -8,6 +8,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doCallRealMethod
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doReturnConsecutively
 import org.mockito.kotlin.doThrow
@@ -309,35 +310,95 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
-    fun `should stub function call with primitive value class result`() {
+    fun `should stub function call with long value class result`() {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
-            mock<SynchronousFunctions> {
-                on { primitiveValueClassResult() } doReturn primitiveValueClass
-            }
+            mock<SynchronousFunctions> { on { longValueClassResult() } doReturn longValueClass }
 
         /* When */
-        val result: PrimitiveValueClass = mock.primitiveValueClassResult()
+        val result: LongValueClass = mock.longValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
     }
 
     @Test
-    fun `should stub function call with nullable primitive value class result`() {
+    fun `should stub function call with nullable long value class result`() {
         /* Given */
-        val primitiveValueClass = PrimitiveValueClass(42)
+        val longValueClass = LongValueClass(42)
         val mock =
             mock<SynchronousFunctions> {
-                on { nullablePrimitiveValueClassResult() } doReturn primitiveValueClass
+                on { nullableLongValueClassResult() } doReturn longValueClass
             }
 
         /* When */
-        val result: PrimitiveValueClass? = mock.nullablePrimitiveValueClassResult()
+        val result: LongValueClass? = mock.nullableLongValueClassResult()
 
         /* Then */
-        expect(result).toBe(primitiveValueClass)
+        expect(result).toBe(longValueClass)
+    }
+
+    @Test
+    fun `should stub function call with boolean value class result`() {
+        /* Given */
+        val booleanValueClass = BooleanValueClass(true)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { booleanValueClassResult() } doReturn booleanValueClass
+            }
+
+        /* When */
+        val result: BooleanValueClass = mock.booleanValueClassResult()
+
+        /* Then */
+        expect(result).toBe(booleanValueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable boolean value class result`() {
+        /* Given */
+        val booleanValueClass = BooleanValueClass(false)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { nullableBooleanValueClassResult() } doReturn booleanValueClass
+            }
+
+        /* When */
+        val result: BooleanValueClass? = mock.nullableBooleanValueClassResult()
+
+        /* Then */
+        expect(result).toBe(booleanValueClass)
+    }
+
+    @Test
+    fun `should stub function call with char value class result`() {
+        /* Given */
+        val charValueClass = CharValueClass('a')
+        val mock =
+            mock<SynchronousFunctions> { on { charValueClassResult() } doReturn charValueClass }
+
+        /* When */
+        val result: CharValueClass = mock.charValueClassResult()
+
+        /* Then */
+        expect(result).toBe(charValueClass)
+    }
+
+    @Test
+    fun `should stub function call with nullable char value class result`() {
+        /* Given */
+        val charValueClass = CharValueClass('a')
+        val mock =
+            mock<SynchronousFunctions> {
+                on { nullableCharValueClassResult() } doReturn charValueClass
+            }
+
+        /* When */
+        val result: CharValueClass? = mock.nullableCharValueClassResult()
+
+        /* Then */
+        expect(result).toBe(charValueClass)
     }
 
     @Test
@@ -360,11 +421,34 @@ class OngoingStubbingTest : TestBase() {
     }
 
     @Test
+    fun `should stub function call to make real function call into mock`() {
+        /* Given */
+        val mock = mock<Open> { on { valueClassResult(any()) }.doCallRealMethod() }
+
+        /* When */
+        val result = mock.valueClassResult(ValueClass("Value"))
+
+        /* Then */
+        expect(result.content).toBe("Result: Value")
+    }
+
+    @Test
+    fun `should stub mocked function object`() {
+        /* Given */
+        val mockFunction: (String) -> String = mock { on { invoke(any()) } doReturn "Text" }
+
+        /* When */
+        val result = mockFunction.invoke("")
+
+        /* Then */
+        expect(result).toBe("Text")
+    }
+
+    @Test
     fun doReturn_throwsNPE() {
         assumeFalse(mockMakerInlineEnabled())
         expectErrorWithMessage("look at the stack trace below") on
             {
-
                 /* When */
                 mock<Open> { on { throwsNPE() } doReturn "result" }
             }
