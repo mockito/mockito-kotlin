@@ -26,12 +26,16 @@
 package org.mockito.kotlin
 
 import kotlin.reflect.KClass
-import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
-import org.mockito.internal.stubbing.answers.*
+import org.mockito.internal.stubbing.answers.CallsRealMethods
+import org.mockito.internal.stubbing.answers.DoesNothing
+import org.mockito.internal.stubbing.answers.Returns
+import org.mockito.internal.stubbing.answers.ThrowsException
+import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
 import org.mockito.kotlin.internal.CoroutineAwareAnswer
 import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.kotlin.internal.KAnswer
+import org.mockito.kotlin.internal.safeRunBlocking
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.Stubber
 
@@ -283,7 +287,7 @@ fun <T> Stubber.whenever(mock: T) = `when`(mock)!!
  *   stubbed.
  */
 fun <T> Stubber.whenever(mock: T, methodCall: suspend T.() -> Unit) {
-    whenever(mock).let { runBlocking { it.methodCall() } }
+    whenever(mock).let { safeRunBlocking { it.methodCall() } }
 }
 
 /**

@@ -37,6 +37,7 @@ import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
 import org.mockito.kotlin.internal.CoroutineAwareAnswer
 import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.kotlin.internal.KAnswer
+import org.mockito.kotlin.internal.safeRunBlocking
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
 
@@ -92,8 +93,8 @@ fun <T> whenever(methodCall: T): OngoingStubbing<T> {
  * @return OngoingStubbing object used to stub fluently. ***Do not*** create a reference to this
  *   returned object.
  */
-fun <T> whenever(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T> {
-    return runBlocking { `when`<T>(methodCall())!! }
+fun <T> whenever(methodCall: suspend () -> T): OngoingStubbing<T> {
+    return safeRunBlocking { `when`<T>(methodCall()) }
 }
 
 /**
@@ -108,7 +109,7 @@ fun <T> whenever(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T>
  */
 @Deprecated("Use whenever { mock.methodCall() } instead")
 fun <T> wheneverBlocking(methodCall: suspend CoroutineScope.() -> T): OngoingStubbing<T> {
-    return whenever(methodCall)
+    return runBlocking { `when`(methodCall()) }
 }
 
 /**
