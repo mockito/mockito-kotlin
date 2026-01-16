@@ -9,7 +9,7 @@ plugins {
 }
 
 def test = tasks.register("test") {
-    dependsOn gradle.includedBuild("tests").task(":test")
+    dependsOn gradle.includedBuild("tests").task(":test"), gradle.includedBuild("no-coroutine-tests").task(":test")
 }
 tasks.named("check") {
     dependsOn test
