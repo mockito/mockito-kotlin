@@ -4,11 +4,13 @@ import com.nhaarman.expect.expect
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doCallRealMethod
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
@@ -153,4 +155,30 @@ class StubberTest : TestBase() {
 
             expect(mock.stringResult()).toBe("Test")
         }
+
+    @Test
+    @Ignore("See issue #573")
+    fun `should stub suspendable function call with doSuspendableAnswer returning Result of boolean`() =
+        runTest {
+            val s = mock<SuspendFunctions>()
+            doSuspendableAnswer { Result.success(true) }.whenever(s).kotlinResultOfBooleanResult()
+
+            useResult(s)
+        }
+
+    @Test
+    @Ignore("See issue #573")
+    fun `should stub suspendable function call with doReturn returning Result of boolean`() =
+        runTest {
+            val s = mock<SuspendFunctions>()
+            doReturn(Result.success(123)).whenever(s).kotlinResultOfBooleanResult()
+
+            useResult(s)
+        }
+
+    suspend fun useResult(s: SuspendFunctions): Boolean {
+        // Result<Boolean> is inlined to boolean here
+        val result = s.kotlinResultOfBooleanResult()
+        return result.getOrNull() ?: false
+    }
 }
