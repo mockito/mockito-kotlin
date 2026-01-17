@@ -37,6 +37,7 @@ import org.mockito.internal.stubbing.answers.ThrowsExceptionForClassType
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.internal.CoroutineAwareAnswer
 import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
+import org.mockito.kotlin.internal.safeRunBlocking
 import org.mockito.stubbing.Answer
 
 /** Alias for [BDDMockito.given]. */
@@ -66,7 +67,7 @@ fun <T> then(mock: T): Then<T> {
 /** Alias for [Then.should], with suspending lambda. */
 fun <T, R> Then<T>.shouldBlocking(f: suspend T.() -> R): R {
     val m = should()
-    return runBlocking { m.f() }
+    return safeRunBlocking { m.f() }
 }
 
 /** Alias for [BDDMyOngoingStubbing.will] */

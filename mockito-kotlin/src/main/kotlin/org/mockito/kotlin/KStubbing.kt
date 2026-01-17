@@ -26,7 +26,6 @@
 package org.mockito.kotlin
 
 import kotlin.reflect.KClass
-import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.exceptions.misusing.NotAMockException
@@ -208,7 +207,7 @@ class KStubbing<out T : Any>(val mock: T) {
      */
     @Deprecated("Use on { methodCall } instead")
     fun <T : Any, R> KStubbing<T>.onBlocking(methodCall: suspend T.() -> R): OngoingStubbing<R> {
-        return runBlocking { `when`<R>(mock.methodCall())!! }
+        return safeRunBlocking { `when`<R>(mock.methodCall())!! }
     }
 
     /**
