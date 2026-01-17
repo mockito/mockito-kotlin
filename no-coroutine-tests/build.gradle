@@ -16,9 +16,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_11)
-        targetCompatibility = "11"
-    }
+kotlin {
+    jvmToolchain(11) // This handles Kotlin compilation, Java compilation, and Gradle attributes automatically
 }
