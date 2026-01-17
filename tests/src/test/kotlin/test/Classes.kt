@@ -205,7 +205,7 @@ interface SuspendFunctions {
 
     suspend fun builderMethod(): SuspendFunctions
 
-    suspend fun kotlinResultOfBooleanResult(): Result<Boolean>
+    suspend fun <T> resultResult(): Result<T>
 }
 
 @JvmInline value class ValueClass(val content: String)

@@ -406,4 +406,334 @@ class CoroutinesOngoingStubbingTest {
         /* Then */
         expect(result.content).toBe("Result: Value")
     }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of integer`() =
+        runTest {
+            val successValue = 123
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int>() } doSuspendableAnswer { Result.success(successValue) }
+                }
+
+            val result = mock.resultResult<Int>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of nullable integer`() =
+        runTest {
+            val successValue = 123 as Int?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int?>() } doSuspendableAnswer { Result.success(successValue) }
+                }
+
+            val result = mock.resultResult<Int?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of boolean`() =
+        runTest {
+            val successValue = true
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Boolean>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<Boolean>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of nullable boolean`() =
+        runTest {
+            val successValue = true
+            val mock =
+                mock<SuspendFunctions> {
+                    val nullableResult = Result.success(successValue as Boolean?)
+                    on { resultResult<Boolean?>() } doSuspendableAnswer { nullableResult }
+                }
+
+            val result = mock.resultResult<Boolean?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of value class`() =
+        runTest {
+            val successValue = ValueClass("test")
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<ValueClass>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<ValueClass>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of nullable value class`() =
+        runTest {
+            val successValue = ValueClass("test") as ValueClass?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<ValueClass?>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<ValueClass?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of long value class`() =
+        runTest {
+            val successValue = LongValueClass(123)
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<LongValueClass>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<LongValueClass>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of nullable long value class`() =
+        runTest {
+            val successValue = LongValueClass(123) as LongValueClass?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<LongValueClass?>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<LongValueClass?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of object`() =
+        runTest {
+            val successValue = Open()
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Open>() } doSuspendableAnswer { Result.success(successValue) }
+                }
+
+            val result = mock.resultResult<Open>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result of nullable object`() =
+        runTest {
+            val successValue = Open() as Open?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Open?>() } doSuspendableAnswer
+                        {
+                            Result.success(successValue)
+                        }
+                }
+
+            val result = mock.resultResult<Open?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result with null value`() =
+        runTest {
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int?>() } doSuspendableAnswer
+                          {
+                              Result.success(null as Int?)
+                          }
+                }
+
+            val result = mock.resultResult<Int?>()
+
+            expect(result.getOrNull()).toBeNull()
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of integer`() =
+        runTest {
+            val successValue = 123
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<Int>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of nullable integer`() =
+        runTest {
+            val successValue = 123 as Int?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int?>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<Int?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of boolean`() =
+        runTest {
+            val successValue = true
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Boolean>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<Boolean>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of nullable boolean`() =
+        runTest {
+            val successValue = true
+            val mock =
+                mock<SuspendFunctions> {
+                    val nullableResult = Result.success(successValue as Boolean?)
+                    on { resultResult<Boolean?>() } doReturn nullableResult
+                }
+
+            val result = mock.resultResult<Boolean?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of value class`() =
+        runTest {
+            val successValue = ValueClass("test")
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<ValueClass>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<ValueClass>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of nullable value class`() =
+        runTest {
+            val successValue = ValueClass("test") as ValueClass?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<ValueClass?>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<ValueClass?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of long value class`() =
+        runTest {
+            val successValue = LongValueClass(123)
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<LongValueClass>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<LongValueClass>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of nullable long value class`() =
+        runTest {
+            val successValue = LongValueClass(123) as LongValueClass?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<LongValueClass?>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<LongValueClass?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of object`() =
+        runTest {
+            val successValue = Open()
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Open>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<Open>()
+
+            expect(result.getOrNull()).toBe(successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result of nullable object`() =
+        runTest {
+            val successValue = Open() as Open?
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Open?>() } doReturn Result.success(successValue)
+                }
+
+            val result = mock.resultResult<Open?>()
+
+            assertEquals(result.getOrNull(), successValue)
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result with null value`() =
+        runTest {
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int?>() } doReturn Result.success(null as Int?)
+
+                }
+
+            val result = mock.resultResult<Int?>()
+
+            expect(result.getOrNull()).toBeNull()
+        }
 }
