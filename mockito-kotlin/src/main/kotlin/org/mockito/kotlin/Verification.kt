@@ -25,10 +25,10 @@
 
 package org.mockito.kotlin
 
-import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.kotlin.internal.KInOrderDecorator
 import org.mockito.kotlin.internal.createInstance
+import org.mockito.kotlin.internal.safeRunBlocking
 import org.mockito.verification.VerificationAfterDelay
 import org.mockito.verification.VerificationMode
 import org.mockito.verification.VerificationWithTimeout
@@ -50,7 +50,7 @@ fun <T> verify(mock: T): T {
  */
 fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
     val m = Mockito.verify(mock)
-    runBlocking { m.f() }
+    safeRunBlocking { m.f() }
 }
 
 /**
@@ -61,7 +61,7 @@ fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
  */
 fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit) {
     val m = Mockito.verify(mock, mode)
-    runBlocking { m.f() }
+    safeRunBlocking { m.f() }
 }
 
 /**

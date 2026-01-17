@@ -26,11 +26,11 @@
 package org.mockito.kotlin
 
 import kotlin.reflect.KClass
-import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.exceptions.misusing.NotAMockException
 import org.mockito.kotlin.internal.createInstance
+import org.mockito.kotlin.internal.safeRunBlocking
 import org.mockito.stubbing.OngoingStubbing
 import org.mockito.stubbing.Stubber
 
@@ -143,7 +143,7 @@ class KStubbing<out T : Any>(val mock: T) {
     fun <R : Any> onGeneric(methodCall: suspend T.() -> R?, clazz: KClass<R>): OngoingStubbing<R> {
         val r =
             try {
-                runBlocking { mock.methodCall() }
+                safeRunBlocking { mock.methodCall() }
             } catch (_: NullPointerException) {
                 // An NPE may be thrown by the Kotlin type system when the MockMethodInterceptor
                 // returns a
@@ -207,7 +207,7 @@ class KStubbing<out T : Any>(val mock: T) {
      */
     @Deprecated("Use on { methodCall } instead")
     fun <T : Any, R> KStubbing<T>.onBlocking(methodCall: suspend T.() -> R): OngoingStubbing<R> {
-        return runBlocking { `when`<R>(mock.methodCall())!! }
+        return safeRunBlocking { `when`<R>(mock.methodCall())!! }
     }
 
     /**

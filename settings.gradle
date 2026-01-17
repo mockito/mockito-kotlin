@@ -6,3 +6,4 @@ rootProject.name = 'mockito-kotlin-root'
 
 include 'mockito-kotlin'
 includeBuild 'tests'
+includeBuild 'no-coroutine-tests'

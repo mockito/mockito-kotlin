@@ -1,10 +1,7 @@
 plugins {
     id "org.gradle.java"
-    id "org.jetbrains.kotlin.jvm" version "${testKotlinVersion}"
-    id "mockito-kotlin.library-conventions"
+    id "org.jetbrains.kotlin.jvm" version "2.1.20"
 }
-
-logger.lifecycle "${project} uses Kotlin ${testKotlinVersion}"
 
 repositories {
     mavenCentral()
@@ -12,12 +9,8 @@ repositories {
 
 dependencies {
     implementation "org.mockito.kotlin:mockito-kotlin"
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "com.nhaarman:expect.kt:1.0.1"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2"
 }
 
 kotlin {

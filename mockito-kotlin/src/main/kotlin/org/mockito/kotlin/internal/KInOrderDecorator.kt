@@ -25,7 +25,6 @@
 
 package org.mockito.kotlin.internal
 
-import kotlinx.coroutines.runBlocking
 import org.mockito.InOrder
 import org.mockito.kotlin.KInOrder
 import org.mockito.verification.VerificationMode
@@ -33,11 +32,11 @@ import org.mockito.verification.VerificationMode
 class KInOrderDecorator(private val inOrder: InOrder) : KInOrder, InOrder by inOrder {
     override fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
         val m = verify(mock)
-        runBlocking { m.f() }
+        safeRunBlocking { m.f() }
     }
 
     override fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit) {
         val m = verify(mock, mode)
-        runBlocking { m.f() }
+        safeRunBlocking { m.f() }
     }
 }
