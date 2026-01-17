@@ -28,6 +28,7 @@ package org.mockito.kotlin.internal
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
 import org.mockito.internal.invocation.InterceptedInvocation
@@ -64,20 +65,20 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) return this
 
         val returnType = invokedKotlinFunction.returnType.jvmErasure
-        val actualClass = this::class
 
         if (returnType == Result::class) {
-            if (actualClass == Result::class) {
-                (this as Result<*>).let { result ->
-                    return if (result.isFailure) result else result.getOrNull()
+            if (this !is Result<*>) {
+                if (this::class.isValue) {
+                    // When this is a value class other then a Return instance, e.g. the value class
+                    // is the unboxed value of the Result being handled, then pass it on as-is.
+                    return this
                 }
+            } else {
+                return this.unboxResult()
             }
-
-            // e.g. when value of Return is a value class, do not unbox the Result
-            return this
         }
 
-        if (returnType.isValue && actualClass.isValue) {
+        if (returnType.isValue && this::class.isValue) {
             return this.unboxValueClass().let { unboxed ->
                 val isPrimitiveValue = unboxed is Number || unboxed is Boolean || unboxed is Char
                 if (isPrimitiveValue) this else unboxed
@@ -85,6 +86,16 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         }
 
         return this
+    }
+
+    private fun Result<*>.unboxResult(): Any? {
+        if (isSuccess) return getOrNull()
+
+        // In case of failure, extract the nested Failure instance and pass that on
+        val valueProperty = this::class.memberProperties.single { it.name == "value" }
+        val failure /* : kotlin.Result.Failure */ = valueProperty.call(this)
+
+        return failure
     }
 
     private val InvocationOnMock.invokedKotlinFunction: KFunction<*>?

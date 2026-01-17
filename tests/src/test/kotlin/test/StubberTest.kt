@@ -340,6 +340,24 @@ class StubberTest : TestBase() {
         }
 
     @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result with failure`() =
+        runTest {
+            val exception = RuntimeException("deliberate")
+            val mock =
+                mock<SuspendFunctions> {
+                    doSuspendableAnswer { Result.failure<Int>(exception) } on
+                        {
+                            resultResult<Int>()
+                        }
+                }
+
+            val result = mock.resultResult<Int>()
+
+            val actual = result.exceptionOrNull()
+            expect(actual).toBe(exception)
+        }
+
+    @Test
     fun `should stub suspendable function call with doReturn to return Result of integer`() =
         runTest {
             val successValue = 123
@@ -491,5 +509,20 @@ class StubberTest : TestBase() {
             val result = mock.resultResult<Int?>()
 
             expect(result.getOrNull()).toBeNull()
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result with failure`() =
+        runTest {
+            val exception = RuntimeException("deliberate")
+            val mock =
+                mock<SuspendFunctions> {
+                    doReturn(Result.failure<Int>(exception)) on { resultResult<Int>() }
+                }
+
+            val result = mock.resultResult<Int>()
+
+            val actual = result.exceptionOrNull()
+            expect(actual).toBe(exception)
         }
 }

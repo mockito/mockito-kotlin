@@ -571,15 +571,27 @@ class CoroutinesOngoingStubbingTest {
         runTest {
             val mock =
                 mock<SuspendFunctions> {
-                    on { resultResult<Int?>() } doSuspendableAnswer
-                          {
-                              Result.success(null as Int?)
-                          }
+                    on { resultResult<Int?>() } doSuspendableAnswer { Result.success(null as Int?) }
                 }
 
             val result = mock.resultResult<Int?>()
 
             expect(result.getOrNull()).toBeNull()
+        }
+
+    @Test
+    fun `should stub suspendable function call with doSuspendableAnswer to return Result with failure`() =
+        runTest {
+            val exception = RuntimeException("deliberate")
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int>() } doSuspendableAnswer { Result.failure(exception) }
+                }
+
+            val result = mock.resultResult<Int>()
+
+            val actual = result.exceptionOrNull()
+            expect(actual).toBe(exception)
         }
 
     @Test
@@ -729,11 +741,25 @@ class CoroutinesOngoingStubbingTest {
             val mock =
                 mock<SuspendFunctions> {
                     on { resultResult<Int?>() } doReturn Result.success(null as Int?)
-
                 }
 
             val result = mock.resultResult<Int?>()
 
             expect(result.getOrNull()).toBeNull()
+        }
+
+    @Test
+    fun `should stub suspendable function call with doReturn to return Result with failure`() =
+        runTest {
+            val exception = RuntimeException("deliberate")
+            val mock =
+                mock<SuspendFunctions> {
+                    on { resultResult<Int>() } doReturn Result.failure(exception)
+                }
+
+            val result = mock.resultResult<Int>()
+
+            val actual = result.exceptionOrNull()
+            expect(actual).toBe(exception)
         }
 }
