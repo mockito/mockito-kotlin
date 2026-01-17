@@ -32,11 +32,15 @@ import kotlin.reflect.KClass
 fun <T : Any?> Any?.toKotlinType(clazz: KClass<*>): T {
     if (this == null) return null as T
 
-    return if (clazz.isValue && this::class != clazz) {
-        this.boxAsValueClass(clazz) as T
-    } else {
-        this as T
+    if (clazz == Result::class) {
+        return this as T
     }
+
+    if (clazz.isValue && this::class != clazz) {
+        return this.boxAsValueClass(clazz) as T
+    }
+
+    return this as T
 }
 
 @Suppress("UNCHECKED_CAST")

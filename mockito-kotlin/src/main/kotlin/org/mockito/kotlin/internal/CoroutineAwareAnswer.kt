@@ -53,14 +53,38 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
                 delegate
             } else {
                 (delegate as? SuspendableAnswer)
-                    ?: SuspendableAnswer { invocation ->
-                        val result = delegate.answer(invocation)
-                        val returnType = invokedKotlinFunction.returnType.jvmErasure
-                        result.toKotlinType(returnType)
-                    }
+                    ?: SuspendableAnswer { invocation -> delegate.answer(invocation) }
             }
 
-        return wrappedAnswer.answer(invocation) as T
+        return wrappedAnswer.answer(invocation)?.conditionallyUnboxAnswer(invokedKotlinFunction)
+            as T
+    }
+
+    private fun Any.conditionallyUnboxAnswer(invokedKotlinFunction: KFunction<*>?): Any? {
+        if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) return this
+
+        val returnType = invokedKotlinFunction.returnType.jvmErasure
+        val actualClass = this::class
+
+        if (returnType == Result::class) {
+            if (actualClass == Result::class) {
+                (this as Result<*>).let { result ->
+                    return if (result.isFailure) result else result.getOrNull()
+                }
+            }
+
+            // e.g. when value of Return is a value class, do not unbox the Result
+            return this
+        }
+
+        if (returnType.isValue && actualClass.isValue) {
+            return this.unboxValueClass().let { unboxed ->
+                val isPrimitiveValue = unboxed is Number || unboxed is Boolean || unboxed is Char
+                if (isPrimitiveValue) this else unboxed
+            }
+        }
+
+        return this
     }
 
     private val InvocationOnMock.invokedKotlinFunction: KFunction<*>?
@@ -80,33 +104,15 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
     private class SuspendableAnswer(private val block: suspend (KInvocationOnMock) -> Any?) :
         Answer<Any?> {
         override fun answer(invocation: InvocationOnMock): Any? {
-            val unboxNonPrimitiveValueClasses: suspend (KInvocationOnMock) -> Any? =
-                { invocationOnMock ->
-                    block.invoke(invocationOnMock)?.let { result: Any ->
-                        if (result::class.isValue) {
-                            result.unboxValueClass().let { unboxed ->
-                                if (unboxed.isPrimitiveValue()) result else unboxed
-                            }
-                        } else {
-                            result
-                        }
-                    }
-                }
-
-            // all suspend functions/lambdas has Continuation as the last argument.
-            // InvocationOnMock does not see last argument
-            val receiver = KInvocationOnMock(invocation)
+            // all suspend functions/lambdas have a Continuation as the last argument.
             val rawInvocation = invocation as InterceptedInvocation
             val continuation = rawInvocation.rawArguments.last() as Continuation<Any?>
 
             // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
-            return unboxNonPrimitiveValueClasses.startCoroutineUninterceptedOrReturn(
-                receiver,
+            return block.startCoroutineUninterceptedOrReturn(
+                KInvocationOnMock(invocation),
                 continuation,
             )
         }
-
-        private fun Any.isPrimitiveValue(): Boolean =
-            this is Number || this is Boolean || this is Char
     }
 }
