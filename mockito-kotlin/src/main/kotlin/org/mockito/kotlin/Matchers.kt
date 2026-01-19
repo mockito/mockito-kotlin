@@ -88,9 +88,14 @@ inline fun <reified T> anyValueClass(): T {
 
 /** Matches an argument that is equal to the given Kotlin value class value. */
 inline fun <reified T> eqValueClass(value: T): T {
+    if (value == null) {
+        @Suppress("UNCHECKED_CAST")
+        return ArgumentMatchers.eq<T>(null) as T
+    }
+
     require(value::class.isValue) { "${value::class.qualifiedName} is not a value class." }
 
-    val unboxed = value?.unboxValueClass()
+    val unboxed = value.unboxValueClass()
     val matcher = AdditionalMatchers.or(ArgumentMatchers.eq(value), ArgumentMatchers.eq(unboxed))
 
     return (matcher ?: unboxed).toKotlinType(T::class)

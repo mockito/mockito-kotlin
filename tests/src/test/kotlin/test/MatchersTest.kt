@@ -672,6 +672,22 @@ class MatchersTest : TestBase() {
                 verify(this).nestedValueClass(eq(nestedValueClass))
             }
         }
+
+        @Test
+        fun eqNullableValueClass_nullValue() {
+            mock<SynchronousFunctions>().apply {
+                nullableValueClass(null)
+                verify(this).nullableValueClass(eq(null))
+            }
+        }
+
+        @Test
+        fun eqNullableLongValueClass_nullValue() {
+            mock<SynchronousFunctions>().apply {
+                nullableLongValueClass(null)
+                verify(this).nullableLongValueClass(eq(null))
+            }
+        }
     }
 
     class OtherMatchersTest {
