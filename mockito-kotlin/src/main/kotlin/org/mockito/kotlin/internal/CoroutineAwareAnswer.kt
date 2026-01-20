@@ -62,7 +62,7 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
     }
 
     private fun Any.conditionallyUnboxAnswer(invokedKotlinFunction: KFunction<*>?): Any? {
-        if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) return this
+        if (invokedKotlinFunction == null) return this
 
         val returnType = invokedKotlinFunction.returnType.jvmErasure
 

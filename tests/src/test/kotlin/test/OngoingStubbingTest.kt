@@ -3,6 +3,7 @@ package test
 import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.mockito.Mockito
@@ -452,5 +453,319 @@ class OngoingStubbingTest : TestBase() {
                 /* When */
                 mock<Open> { on { throwsNPE() } doReturn "result" }
             }
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of integer`() {
+        val successValue = 123
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<Int>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of nullable integer`() {
+        val successValue = 123 as Int?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int?>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<Int?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of boolean`() {
+        val successValue = true
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Boolean>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<Boolean>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of nullable boolean`() {
+        val successValue = true
+        val mock =
+            mock<SynchronousFunctions> {
+                val nullableResult = Result.success(successValue as Boolean?)
+                on { resultResult<Boolean?>() } doAnswer { nullableResult }
+            }
+
+        val result = mock.resultResult<Boolean?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of value class`() {
+        val successValue = ValueClass("test")
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<ValueClass>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<ValueClass>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of nullable value class`() {
+        val successValue = ValueClass("test") as ValueClass?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<ValueClass?>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<ValueClass?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of long value class`() {
+        val successValue = LongValueClass(123)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<LongValueClass>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<LongValueClass>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of nullable long value class`() {
+        val successValue = LongValueClass(123) as LongValueClass?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<LongValueClass?>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<LongValueClass?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of object`() {
+        val successValue = Open()
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Open>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<Open>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result of nullable object`() {
+        val successValue = Open() as Open?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Open?>() } doAnswer { Result.success(successValue) }
+            }
+
+        val result = mock.resultResult<Open?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result with null value`() {
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int?>() } doAnswer { Result.success(null as Int?) }
+            }
+
+        val result = mock.resultResult<Int?>()
+
+        expect(result.getOrNull()).toBeNull()
+    }
+
+    @Test
+    fun `should stub function call with doAnswer to return Result with failure`() {
+        val exception = RuntimeException("deliberate")
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int>() } doAnswer { Result.failure(exception) }
+            }
+
+        val result = mock.resultResult<Int>()
+
+        val actual = result.exceptionOrNull()
+        expect(actual).toBe(exception)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of integer`() {
+        val successValue = 123
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<Int>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of nullable integer`() {
+        val successValue = 123 as Int?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int?>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<Int?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of boolean`() {
+        val successValue = true
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Boolean>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<Boolean>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of nullable boolean`() {
+        val successValue = true
+        val mock =
+            mock<SynchronousFunctions> {
+                val nullableResult = Result.success(successValue as Boolean?)
+                on { resultResult<Boolean?>() } doReturn nullableResult
+            }
+
+        val result = mock.resultResult<Boolean?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of value class`() {
+        val successValue = ValueClass("test")
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<ValueClass>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<ValueClass>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of nullable value class`() {
+        val successValue = ValueClass("test") as ValueClass?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<ValueClass?>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<ValueClass?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of long value class`() {
+        val successValue = LongValueClass(123)
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<LongValueClass>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<LongValueClass>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of nullable long value class`() {
+        val successValue = LongValueClass(123) as LongValueClass?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<LongValueClass?>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<LongValueClass?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of object`() {
+        val successValue = Open()
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Open>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<Open>()
+
+        expect(result.getOrNull()).toBe(successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result of nullable object`() {
+        val successValue = Open() as Open?
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Open?>() } doReturn Result.success(successValue)
+            }
+
+        val result = mock.resultResult<Open?>()
+
+        assertEquals(result.getOrNull(), successValue)
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result with null value`() {
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int?>() } doReturn Result.success(null as Int?)
+            }
+
+        val result = mock.resultResult<Int?>()
+
+        expect(result.getOrNull()).toBeNull()
+    }
+
+    @Test
+    fun `should stub function call with doReturn to return Result with failure`() {
+        val exception = RuntimeException("deliberate")
+        val mock =
+            mock<SynchronousFunctions> {
+                on { resultResult<Int>() } doReturn Result.failure(exception)
+            }
+
+        val result = mock.resultResult<Int>()
+
+        val actual = result.exceptionOrNull()
+        expect(actual).toBe(exception)
     }
 }

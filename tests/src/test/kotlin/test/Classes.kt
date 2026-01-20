@@ -161,6 +161,8 @@ interface SynchronousFunctions {
 
     fun nullableCharValueClassResult(): CharValueClass?
 
+    fun <T> resultResult(): Result<T>
+
     fun functionArgument(function: () -> Unit)
 
     fun suspendFunctionArgument(function: suspend () -> Unit)
