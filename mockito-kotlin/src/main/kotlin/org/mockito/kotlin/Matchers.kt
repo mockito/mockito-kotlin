@@ -37,7 +37,7 @@ import org.mockito.kotlin.internal.valueClassInnerClass
 
 /** Matches an argument that is equal to the given value. */
 inline fun <reified T : Any?> eq(value: T): T {
-    if (T::class.isValue) return eqValueClass(value)
+    if (value != null && T::class.isValue) return eqValueClass(value)
 
     return ArgumentMatchers.eq(value) ?: value
 }
@@ -87,10 +87,10 @@ inline fun <reified T> anyValueClass(): T {
 }
 
 /** Matches an argument that is equal to the given Kotlin value class value. */
-inline fun <reified T> eqValueClass(value: T): T {
+inline fun <reified T : Any> eqValueClass(value: T): T {
     require(value::class.isValue) { "${value::class.qualifiedName} is not a value class." }
 
-    val unboxed = value?.unboxValueClass()
+    val unboxed = value.unboxValueClass()
     val matcher = AdditionalMatchers.or(ArgumentMatchers.eq(value), ArgumentMatchers.eq(unboxed))
 
     return (matcher ?: unboxed).toKotlinType(T::class)
