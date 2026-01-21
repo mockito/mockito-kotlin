@@ -163,6 +163,8 @@ interface SynchronousFunctions {
 
     fun <T> resultResult(): Result<T>
 
+    fun <T> resultArgument(r: Result<T>)
+
     fun functionArgument(function: () -> Unit)
 
     fun suspendFunctionArgument(function: suspend () -> Unit)

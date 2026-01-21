@@ -108,4 +108,62 @@ class VerificationTest : TestBase() {
             verify(this, after(10)).int(3)
         }
     }
+
+    @Test
+    fun testResultArgumentUnit() {
+        mock<SynchronousFunctions>().apply {
+            resultArgument(Result.success(Unit))
+
+            verify(this).resultArgument(Result.success(Unit))
+        }
+    }
+
+    @Test
+    fun testResultArgumentUnitWithEq() {
+        mock<SynchronousFunctions>().apply {
+            resultArgument(Result.success(Unit))
+
+            verify(this).resultArgument(eq(Result.success(Unit)))
+        }
+    }
+
+    @Test
+    fun testResultArgumentValueClass() {
+        mock<SynchronousFunctions>().apply {
+            val result = Result.success(ValueClass("test"))
+            resultArgument(result)
+
+            verify(this).resultArgument(result)
+        }
+    }
+
+    @Test
+    fun testResultArgumentValueClassWithEq() {
+        mock<SynchronousFunctions>().apply {
+            val result = Result.success(ValueClass("test"))
+            resultArgument(result)
+
+            verify(this).resultArgument(eq(result))
+        }
+    }
+
+    @Test
+    fun testResultArgumentLongValueClass() {
+        mock<SynchronousFunctions>().apply {
+            val result = Result.success(LongValueClass(123))
+            resultArgument(result)
+
+            verify(this).resultArgument(result)
+        }
+    }
+
+    @Test
+    fun testResultArgumentLongValueClassWithEq() {
+        mock<SynchronousFunctions>().apply {
+            val result = Result.success(LongValueClass(123))
+            resultArgument(result)
+
+            verify(this).resultArgument(eq(result))
+        }
+    }
 }

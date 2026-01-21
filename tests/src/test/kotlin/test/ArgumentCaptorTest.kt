@@ -112,28 +112,28 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_withNullValue_usingNonNullable() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.nullableString(null)
+        mock.nullableString(null)
 
         /* Then */
         val captor = argumentCaptor<String>()
-        verify(m).nullableString(captor.capture())
+        verify(mock).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
     }
 
     @Test
     fun argumentCaptor_withNullValue_usingNullable() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.nullableString(null)
+        mock.nullableString(null)
 
         /* Then */
         val captor = nullableArgumentCaptor<String>()
-        verify(m).nullableString(captor.capture())
+        verify(mock).nullableString(captor.capture())
         expect(captor.lastValue).toBeNull()
     }
 
@@ -184,33 +184,33 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_multipleValuesIncludingNull() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.nullableString("test")
-        m.nullableString(null)
+        mock.nullableString("test")
+        mock.nullableString(null)
 
         /* Then */
         val captor = nullableArgumentCaptor<String>()
-        verify(m, times(2)).nullableString(captor.capture())
+        verify(mock, times(2)).nullableString(captor.capture())
         expect(captor.allValues).toBe(listOf("test", null))
     }
 
     @Test
     fun argumentCaptor_callProperties() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.int(1)
-        m.int(2)
-        m.int(3)
-        m.int(4)
-        m.int(5)
+        mock.int(1)
+        mock.int(2)
+        mock.int(3)
+        mock.int(4)
+        mock.int(5)
 
         /* Then */
         argumentCaptor<Int>().apply {
-            verify(m, times(5)).int(capture())
+            verify(mock, times(5)).int(capture())
 
             expect(firstValue).toBe(1)
             expect(secondValue).toBe(2)
@@ -222,14 +222,14 @@ class ArgumentCaptorTest : TestBase() {
     @Test(expected = IndexOutOfBoundsException::class)
     fun argumentCaptor_callPropertyNotAvailable() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.int(1)
+        mock.int(1)
 
         /* Then */
         argumentCaptor<Int>().apply {
-            verify(m).int(capture())
+            verify(mock).int(capture())
 
             expect(secondValue).toBe(2)
         }
@@ -271,157 +271,157 @@ class ArgumentCaptorTest : TestBase() {
     @Test
     fun argumentCaptor_vararg() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.varargBooleanResult("a", "b", "c")
+        mock.varargBooleanResult("a", "b", "c")
 
         /* Then */
         val captor = argumentCaptor<Array<String>>()
-        verify(m).varargBooleanResult(*captor.capture())
+        verify(mock).varargBooleanResult(*captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
     }
 
     @Test
     fun argumentCaptor_empty_vararg() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.varargBooleanResult()
+        mock.varargBooleanResult()
 
         /* Then */
         val captor = argumentCaptor<Array<String>>()
-        verify(m).varargBooleanResult(*captor.capture())
+        verify(mock).varargBooleanResult(*captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf())
     }
 
     @Test
     fun argumentCaptor_arg_vararg() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.argAndVararg("first", "a", "b", "c")
+        mock.argAndVararg("first", "a", "b", "c")
 
         /* Then */
         val captor = argumentCaptor<Array<String>>()
-        verify(m).argAndVararg(any(), *captor.capture())
+        verify(mock).argAndVararg(any(), *captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
     }
 
     @Test
     fun argumentCaptor_intarray() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.intArray(intArrayOf(1, 2, 3))
+        mock.intArray(intArrayOf(1, 2, 3))
 
         /* Then */
         val captor = argumentCaptor<IntArray>()
-        verify(m).intArray(captor.capture())
+        verify(mock).intArray(captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf(1, 2, 3))
     }
 
     @Test
     fun argumentCaptor_array() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.stringArray(arrayOf("a", "b", "c"))
+        mock.stringArray(arrayOf("a", "b", "c"))
 
         /* Then */
         val captor = argumentCaptor<Array<String>>()
-        verify(m).stringArray(captor.capture())
+        verify(mock).stringArray(captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf("a", "b", "c"))
     }
 
     @Test
     fun argumentCaptor_empty_array() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.stringArray(arrayOf())
+        mock.stringArray(arrayOf())
 
         /* Then */
         val captor = argumentCaptor<Array<String>>()
-        verify(m).stringArray(captor.capture())
+        verify(mock).stringArray(captor.capture())
         expect(captor.firstValue.toList()).toBe(listOf())
     }
 
     @Test
     fun argumentCaptor_value_class() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
         val valueClass = ValueClass("Content")
 
         /* When */
-        m.valueClass(valueClass)
+        mock.valueClass(valueClass)
 
         /* Then */
         val captor = argumentCaptor<ValueClass>()
-        verify(m).valueClass(captor.capture())
+        verify(mock).valueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
     }
 
     @Test
     fun argumentCaptor_value_class_withNullValue_usingNonNullable() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.nullableValueClass(null)
+        mock.nullableValueClass(null)
 
         /* Then */
         val captor = argumentCaptor<ValueClass>()
-        verify(m).nullableValueClass(captor.capture())
+        verify(mock).nullableValueClass(captor.capture())
         expect(captor.firstValue).toBeNull()
     }
 
     @Test
     fun argumentCaptor_value_class_withNullValue_usingNullable() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
 
         /* When */
-        m.nullableValueClass(null)
+        mock.nullableValueClass(null)
 
         /* Then */
         val captor = nullableArgumentCaptor<ValueClass>()
-        verify(m).nullableValueClass(captor.capture())
+        verify(mock).nullableValueClass(captor.capture())
         expect(captor.firstValue).toBeNull()
     }
 
     @Test
     fun argumentCaptor_long_value_class() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
         val valueClass = LongValueClass(123)
 
         /* When */
-        m.longValueClass(valueClass)
+        mock.longValueClass(valueClass)
 
         /* Then */
         val captor = argumentCaptor<LongValueClass>()
-        verify(m).longValueClass(captor.capture())
+        verify(mock).longValueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
     }
 
     @Test
     fun argumentCaptor_nullable_long_value_class() {
         /* Given */
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
         val valueClass = LongValueClass(123)
 
         /* When */
-        m.nullableLongValueClass(valueClass)
+        mock.nullableLongValueClass(valueClass)
 
         /* Then */
         val captor = argumentCaptor<LongValueClass?>()
-        verify(m).nullableLongValueClass(captor.capture())
+        verify(mock).nullableLongValueClass(captor.capture())
         expect(captor.firstValue).toBe(valueClass)
     }
 
@@ -429,15 +429,15 @@ class ArgumentCaptorTest : TestBase() {
     fun argumentCaptor_function() {
         /* Given */
         var counter = 0
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
         val function: () -> Unit = { counter++ }
 
         /* When */
-        m.functionArgument(function)
+        mock.functionArgument(function)
 
         /* Then */
         val captor = argumentCaptor<() -> Unit>()
-        verify(m).functionArgument(captor.capture())
+        verify(mock).functionArgument(captor.capture())
         captor.firstValue.invoke()
         expect(counter).toBe(1)
     }
@@ -446,16 +446,61 @@ class ArgumentCaptorTest : TestBase() {
     fun argumentCaptor_suspend_function() {
         /* Given */
         var counter = 0
-        val m: SynchronousFunctions = mock()
+        val mock: SynchronousFunctions = mock()
         val function: suspend () -> Unit = suspend { counter++ }
 
         /* When */
-        m.suspendFunctionArgument(function)
+        mock.suspendFunctionArgument(function)
 
         /* Then */
         val captor = suspendFunctionArgumentCaptor<suspend () -> Unit>()
-        verify(m).suspendFunctionArgument(captor.capture())
+        verify(mock).suspendFunctionArgument(captor.capture())
         runBlocking { captor.firstValue.invoke() }
         expect(counter).toBe(1)
+    }
+
+    @Test
+    fun argumentCaptor_Result_Unit() {
+        /* Given */
+        val mock: SynchronousFunctions = mock()
+        val result = Result.success(Unit)
+
+        /* When */
+        mock.resultArgument(result)
+
+        /* Then */
+        val captor = argumentCaptor<Result<Unit>>()
+        verify(mock).resultArgument(captor.capture())
+        expect(captor.firstValue).toBe(result)
+    }
+
+    @Test
+    fun argumentCaptor_Result_ValueClass() {
+        /* Given */
+        val mock: SynchronousFunctions = mock()
+        val result = Result.success(ValueClass("test"))
+
+        /* When */
+        mock.resultArgument(result)
+
+        /* Then */
+        val captor = argumentCaptor<Result<ValueClass>>()
+        verify(mock).resultArgument(captor.capture())
+        expect(captor.firstValue).toBe(result)
+    }
+
+    @Test
+    fun argumentCaptor_Result_LongValueClass() {
+        /* Given */
+        val mock: SynchronousFunctions = mock()
+        val result = Result.success(LongValueClass(123))
+
+        /* When */
+        mock.resultArgument(result)
+
+        /* Then */
+        val captor = argumentCaptor<Result<LongValueClass>>()
+        verify(mock).resultArgument(captor.capture())
+        expect(captor.firstValue).toBe(result)
     }
 }
