@@ -4,6 +4,7 @@ import com.nhaarman.expect.expect
 import com.nhaarman.expect.expectErrorWithMessage
 import java.util.*
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.kotlin.any
@@ -457,5 +458,20 @@ class ArgumentCaptorTest : TestBase() {
         verify(m).suspendFunctionArgument(captor.capture())
         runBlocking { captor.firstValue.invoke() }
         expect(counter).toBe(1)
+    }
+
+    @Test
+    @Ignore("Expected: Success(kotlin.Unit) but was: kotlin.Unit")
+    fun argumentCaptor_Result() {
+        /* Given */
+        val m: SynchronousFunctions = mock()
+
+        /* When */
+        m.resultArgument(Result.success(Unit))
+
+        /* Then */
+        val captor = argumentCaptor<Result<Unit>>()
+        verify(m).resultArgument(captor.capture())
+        expect(captor.firstValue).toBe(Result.success(Unit))
     }
 }

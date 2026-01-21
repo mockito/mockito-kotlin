@@ -1,6 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.kotlin.*
@@ -106,6 +107,25 @@ class VerificationTest : TestBase() {
         mock<SynchronousFunctions>().apply {
             int(3)
             verify(this, after(10)).int(3)
+        }
+    }
+
+    @Test
+    fun testResultArgument() {
+        mock<SynchronousFunctions>().apply {
+            resultArgument(Result.success(Unit))
+
+            verify(this).resultArgument(Result.success(Unit))
+        }
+    }
+
+    @Test
+    @Ignore("class kotlin.Unit cannot be cast to class kotlin.Result")
+    fun testResultArgumentWithEq() {
+        mock<SynchronousFunctions>().apply {
+            resultArgument(Result.success(Unit))
+
+            verify(this).resultArgument(eq(Result.success(Unit)))
         }
     }
 }
