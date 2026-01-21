@@ -28,6 +28,7 @@ package org.mockito.kotlin.internal
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 import kotlin.reflect.KFunction
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
 import org.mockito.internal.invocation.InterceptedInvocation
@@ -53,14 +54,48 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
                 delegate
             } else {
                 (delegate as? SuspendableAnswer)
-                    ?: SuspendableAnswer { invocation ->
-                        val result = delegate.answer(invocation)
-                        val returnType = invokedKotlinFunction.returnType.jvmErasure
-                        result.toKotlinType(returnType)
-                    }
+                    ?: SuspendableAnswer { invocation -> delegate.answer(invocation) }
             }
 
-        return wrappedAnswer.answer(invocation) as T
+        return wrappedAnswer.answer(invocation)?.conditionallyUnboxAnswer(invokedKotlinFunction)
+            as T
+    }
+
+    private fun Any.conditionallyUnboxAnswer(invokedKotlinFunction: KFunction<*>?): Any? {
+        if (invokedKotlinFunction == null) return this
+
+        val returnType = invokedKotlinFunction.returnType.jvmErasure
+
+        if (returnType == Result::class) {
+            if (this !is Result<*>) {
+                if (this::class.isValue) {
+                    // When this is a value class other then a Return instance, e.g. the value class
+                    // is the unboxed value of the Result being handled, then pass it on as-is.
+                    return this
+                }
+            } else {
+                return this.unboxResult()
+            }
+        }
+
+        if (returnType.isValue && this::class.isValue) {
+            return this.unboxValueClass().let { unboxed ->
+                val isPrimitiveValue = unboxed is Number || unboxed is Boolean || unboxed is Char
+                if (isPrimitiveValue) this else unboxed
+            }
+        }
+
+        return this
+    }
+
+    private fun Result<*>.unboxResult(): Any? {
+        if (isSuccess) return getOrNull()
+
+        // In case of failure, extract the nested Failure instance and pass that on
+        val valueProperty = this::class.memberProperties.single { it.name == "value" }
+        val failure /* : kotlin.Result.Failure */ = valueProperty.call(this)
+
+        return failure
     }
 
     private val InvocationOnMock.invokedKotlinFunction: KFunction<*>?
@@ -80,33 +115,15 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
     private class SuspendableAnswer(private val block: suspend (KInvocationOnMock) -> Any?) :
         Answer<Any?> {
         override fun answer(invocation: InvocationOnMock): Any? {
-            val unboxNonPrimitiveValueClasses: suspend (KInvocationOnMock) -> Any? =
-                { invocationOnMock ->
-                    block.invoke(invocationOnMock)?.let { result: Any ->
-                        if (result::class.isValue) {
-                            result.unboxValueClass().let { unboxed ->
-                                if (unboxed.isPrimitiveValue()) result else unboxed
-                            }
-                        } else {
-                            result
-                        }
-                    }
-                }
-
-            // all suspend functions/lambdas has Continuation as the last argument.
-            // InvocationOnMock does not see last argument
-            val receiver = KInvocationOnMock(invocation)
+            // all suspend functions/lambdas have a Continuation as the last argument.
             val rawInvocation = invocation as InterceptedInvocation
             val continuation = rawInvocation.rawArguments.last() as Continuation<Any?>
 
             // https://youtrack.jetbrains.com/issue/KT-33766#focus=Comments-27-3707299.0-0
-            return unboxNonPrimitiveValueClasses.startCoroutineUninterceptedOrReturn(
-                receiver,
+            return block.startCoroutineUninterceptedOrReturn(
+                KInvocationOnMock(invocation),
                 continuation,
             )
         }
-
-        private fun Any.isPrimitiveValue(): Boolean =
-            this is Number || this is Boolean || this is Char
     }
 }

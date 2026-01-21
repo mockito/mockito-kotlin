@@ -161,6 +161,8 @@ interface SynchronousFunctions {
 
     fun nullableCharValueClassResult(): CharValueClass?
 
+    fun <T> resultResult(): Result<T>
+
     fun functionArgument(function: () -> Unit)
 
     fun suspendFunctionArgument(function: suspend () -> Unit)
@@ -204,6 +206,8 @@ interface SuspendFunctions {
     suspend fun nullableCharValueClassResult(): CharValueClass?
 
     suspend fun builderMethod(): SuspendFunctions
+
+    suspend fun <T> resultResult(): Result<T>
 }
 
 @JvmInline value class ValueClass(val content: String)
