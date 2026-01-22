@@ -28,7 +28,6 @@ package org.mockito.kotlin.internal
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
 import org.mockito.internal.invocation.InterceptedInvocation
@@ -88,15 +87,13 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         return this
     }
 
-    private fun Result<*>.unboxResult(): Any? {
-        if (isSuccess) return getOrNull()
-
-        // In case of failure, extract the nested Failure instance and pass that on
-        val valueProperty = this::class.memberProperties.single { it.name == "value" }
-        val failure /* : kotlin.Result.Failure */ = valueProperty.call(this)
-
-        return failure
-    }
+    private fun Result<*>.unboxResult(): Any? =
+        if (isSuccess) {
+            getOrNull()
+        } else {
+            // In case of failure, unbox the nested Failure instance and pass that on
+            this.unboxValueClass()
+        }
 
     private val InvocationOnMock.invokedKotlinFunction: KFunction<*>?
         get() =

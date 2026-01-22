@@ -32,10 +32,6 @@ import kotlin.reflect.KClass
 fun <T : Any?> Any?.toKotlinType(clazz: KClass<*>): T {
     if (this == null) return null as T
 
-    if (clazz == Result::class) {
-        return this as T
-    }
-
     if (clazz.isValue && this::class != clazz) {
         return this.boxAsValueClass(clazz) as T
     }
