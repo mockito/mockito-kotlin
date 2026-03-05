@@ -28,6 +28,9 @@ package org.mockito.kotlin
 import java.lang.reflect.Modifier
 import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.extensionReceiverParameter
+import kotlin.reflect.jvm.javaMethod
 import org.mockito.MockSettings
 import org.mockito.MockedConstruction
 import org.mockito.MockedStatic
@@ -305,6 +308,51 @@ inline fun <reified T> mockConstruction(
     mockInitializer: MockedConstruction.MockInitializer<T>
 ): MockedConstruction<T> {
     return Mockito.mockConstruction(T::class.java, mockInitializer)
+}
+
+/**
+ * Creates a thread-local mock for the static methods of the class that contains this top-level
+ * extension function.
+ *
+ * Top-level Kotlin extension functions compile to static methods in a `*Kt` class. This helper
+ * simplifies creating a [MockedStatic] for them.
+ *
+ * Usage:
+ * ```
+ * fun String.isHello(): Boolean = this == "Hello"
+ *
+ * mockExtensionFun(String::isHello).use {
+ *     whenever("test".isHello()).thenReturn(true)
+ * }
+ * ```
+ *
+ * For overloaded extension functions, specify the type to disambiguate:
+ * ```
+ * fun String.isHello(): Boolean = this == "Hello"
+ * fun String.isHello(mood: String): Boolean = this == "Hello" && mood == "happy"
+ *
+ * val ref: KFunction2<String, String, Boolean> = String::isHello
+ * mockExtensionFun(ref).use {
+ *     whenever("test".isHello("sad")).thenReturn(true)
+ * }
+ * ```
+ *
+ * Note: member extension functions (extension functions declared inside a class) do not need this
+ * helper. They can be mocked by creating a regular [mock] of the containing class.
+ *
+ * @param function a reference to the top-level extension function to mock.
+ * @see Mockito.mockStatic
+ */
+fun mockExtensionFun(function: KFunction<*>): MockedStatic<*> {
+    requireNotNull(function.extensionReceiverParameter) {
+        "Expected an extension function reference, but $function has no extension receiver."
+    }
+    val declaringClass =
+        requireNotNull(function.javaMethod?.declaringClass) {
+            "Could not determine declaring class for function $function. " +
+                "Ensure this is a top-level extension function reference."
+        }
+    return Mockito.mockStatic(declaringClass)
 }
 
 class UseConstructor private constructor(val args: Array<Any>) {
