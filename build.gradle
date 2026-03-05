@@ -15,6 +15,10 @@ tasks.named("check") {
     dependsOn test
 }
 
+tasks.register("spotlessApply") {
+    dependsOn gradle.includedBuild("tests").task(":spotlessApply")
+}
+
 def isSnapshot = version.endsWith("-SNAPSHOT")
 def githubTokenProvider = providers.environmentVariable("GITHUB_TOKEN").orElse("")
 def githubShaProvider = providers.environmentVariable("GITHUB_SHA").orElse("")
