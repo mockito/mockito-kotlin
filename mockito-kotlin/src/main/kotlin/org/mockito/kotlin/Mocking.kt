@@ -323,17 +323,17 @@ inline fun <reified T> mockConstruction(
  *
  * mockExtensionFun(String::isHello).use {
  *     whenever("test".isHello()).thenReturn(true)
+ *     println("test".isHello()) // "true"
  * }
  * ```
  *
- * For overloaded extension functions, specify the type to disambiguate:
+ * When using matchers, all arguments including the receiver must use matchers:
  * ```
- * fun String.isHello(): Boolean = this == "Hello"
- * fun String.isHello(mood: String): Boolean = this == "Hello" && mood == "happy"
+ * fun String.hasPrefix(prefix: String): Boolean = this.startsWith(prefix)
  *
- * val ref: KFunction2<String, String, Boolean> = String::isHello
- * mockExtensionFun(ref).use {
- *     whenever("test".isHello("sad")).thenReturn(true)
+ * mockExtensionFun(String::hasPrefix).use {
+ *     whenever(any<String>().hasPrefix(eq("foo"))).thenReturn(true)
+ *     println("bar".hasPrefix("foo")) // "true"
  * }
  * ```
  *

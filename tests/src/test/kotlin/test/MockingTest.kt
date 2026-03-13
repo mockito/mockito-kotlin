@@ -17,6 +17,7 @@ import org.mockito.kotlin.UseConstructor.Companion.withArguments
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockConstruction
 import org.mockito.kotlin.mockExtensionFun
@@ -558,6 +559,16 @@ class MockingTest : TestBase() {
             whenever("a".isEqualTo("b")).thenReturn(true)
 
             expect("a".isEqualTo("b")).toBe(true)
+        }
+    }
+
+    @Test
+    fun mockExtensionFun_withMatchers_returnsMockedValue() {
+        mockExtensionFun(String::isEqualTo).use {
+            whenever(any<String>().isEqualTo(eq("b"))).thenReturn(true)
+
+            expect("a".isEqualTo("b")).toBe(true)
+            expect("a".isEqualTo("c")).toBe(false)
         }
     }
 
