@@ -487,12 +487,29 @@ class MockingTest : TestBase() {
     }
 
     @Test
-    fun mockStatic_Object_With_JvmStatic_method() {
-        mockStatic<MyObject>().use { mock ->
-            mock.whenever { MyObject.helloStatic() }.thenReturn("stubbed")
+    fun mockObject_JvmStatic_method() {
+        mockObject(MyObject).use {
+            whenever(MyObject.helloStatic()).thenReturn("stubbed_via_mockObject")
 
-            expect(MyObject.helloStatic()).toBe("stubbed")
+            expect(MyObject.helloStatic()).toBe("stubbed_via_mockObject")
         }
+    }
+
+    @Test
+    fun mockObject_mixed_regular_and_JvmStatic_methods() {
+        mockObject(MyObject).use {
+            whenever(MyObject.hello()).thenReturn("regular_stubbed")
+            whenever(MyObject.helloStatic()).thenReturn("static_stubbed")
+
+            expect(MyObject.hello()).toBe("regular_stubbed")
+            expect(MyObject.helloStatic()).toBe("static_stubbed")
+            expect(it.isMockingStatic).toBe(true)
+        }
+    }
+
+    @Test
+    fun mockObject_without_JvmStatic_does_not_use_mockStatic() {
+        mockObject(MyObjectNoStatic).use { expect(it.isMockingStatic).toBe(false) }
     }
 
     @Test
@@ -533,11 +550,13 @@ class MockingTest : TestBase() {
             }
     }
 
+    object MyObjectNoStatic {
+        fun hello(): String = "no_static"
+    }
+
     object MyObject {
         fun hello(): String = "unstubbed"
 
-        // This will compile to a static method callable by both Java and Kotlin.
-        // It must be mocked and stubbed with mockStatic!
         @JvmStatic fun helloStatic(): String = "static_unstubbed"
     }
 
