@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id "org.jetbrains.kotlin.jvm"
     id "org.jetbrains.dokka"
@@ -41,10 +38,6 @@ dokkaHtml.configure {
             remoteLineSuffix.set("#L")
         }
     }
-}
-
-kotlin {
-    jvmToolchain(11) // This handles Kotlin compilation, Java compilation, and Gradle attributes automatically
 }
 
 javadoc.dependsOn dokkaHtml

@@ -19,7 +19,3 @@ dependencies {
     testImplementation "com.nhaarman:expect.kt:1.0.1"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2"
 }
-
-kotlin {
-    jvmToolchain(11) // This handles Kotlin compilation, Java compilation, and Gradle attributes automatically
-}

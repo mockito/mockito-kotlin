@@ -12,7 +12,3 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     testImplementation 'junit:junit:4.13.2'
 }
-
-kotlin {
-    jvmToolchain(11) // This handles Kotlin compilation, Java compilation, and Gradle attributes automatically
-}
