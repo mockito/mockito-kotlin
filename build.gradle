@@ -10,7 +10,7 @@ plugins {
     id "org.jetbrains.dokka" version "1.9.10" apply false
 }
 
-allprojects {
+subprojects {
     plugins.withType(JavaPlugin).configureEach {
         java {
             toolchain.languageVersion.set(JavaLanguageVersion.of(11))
