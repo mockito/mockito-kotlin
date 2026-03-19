@@ -6,6 +6,7 @@ import com.nhaarman.expect.fail
 import java.io.PrintStream
 import java.io.Serializable
 import java.util.*
+import kotlin.reflect.KFunction2
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.Mockito
@@ -16,8 +17,10 @@ import org.mockito.kotlin.UseConstructor.Companion.withArguments
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockConstruction
+import org.mockito.kotlin.mockExtensionFun
 import org.mockito.kotlin.mockObject
 import org.mockito.kotlin.mockStatic
 import org.mockito.kotlin.verify
@@ -548,6 +551,52 @@ class MockingTest : TestBase() {
                 val m = MyClass()
                 mockObject(m)
             }
+    }
+
+    @Test
+    fun mockExtensionFun_returnsMockedValue() {
+        mockExtensionFun(String::isEqualTo).use {
+            whenever("a".isEqualTo("b")).thenReturn(true)
+
+            expect("a".isEqualTo("b")).toBe(true)
+        }
+    }
+
+    @Test
+    fun mockExtensionFun_withMatchers_returnsMockedValue() {
+        mockExtensionFun(String::isEqualTo).use {
+            whenever(any<String>().isEqualTo(eq("b"))).thenReturn(true)
+
+            expect("a".isEqualTo("b")).toBe(true)
+            expect("a".isEqualTo("c")).toBe(false)
+        }
+    }
+
+    @Test
+    fun mockExtensionFun_overloaded_returnsMockedValue() {
+        val ref: KFunction2<String, String, Boolean> = String::isHello
+        mockExtensionFun(ref).use {
+            whenever("test".isHello("sad")).thenReturn(true)
+
+            expect("test".isHello("sad")).toBe(true)
+        }
+    }
+
+    @Test
+    fun mockExtensionFun_nonExtensionFunction_throwsIllegalArgument() {
+        expectErrorWithMessage("has no extension receiver") on
+            {
+                mockExtensionFun(Open::stringResult)
+            }
+    }
+
+    @Test
+    fun memberExtensionFunction_mockedByCreatingMockHost() {
+        val foo = mock<Foo>()
+        val bar = Bar()
+        whenever(with(foo) { bar.foobar() }).thenReturn("mocked")
+
+        expect(with(foo) { bar.foobar() }).toBe("mocked")
     }
 
     object MyObjectNoStatic {

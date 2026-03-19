@@ -262,3 +262,18 @@ object SomeObject {
 
     @JvmStatic fun aStaticMethodReturningString(): String = "Some Value"
 }
+
+// Top-level extension functions for testing mockExtensionFun
+
+fun String.isEqualTo(compare: String): Boolean = this == compare
+
+fun String.isHello(): Boolean = this == "Hello"
+
+fun String.isHello(mood: String): Boolean = this == "Hello" && mood == "happy"
+
+// Classes for member extension function test
+class Foo {
+    fun Bar.foobar(): String = this@Foo.toString() + this.toString()
+}
+
+class Bar
