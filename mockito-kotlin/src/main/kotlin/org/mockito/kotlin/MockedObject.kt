@@ -25,5 +25,36 @@
 
 package org.mockito.kotlin
 
-class MockitoKotlinException(message: String?, cause: Throwable? = null) :
-    RuntimeException(message, cause)
+import org.mockito.MockedSingleton
+import org.mockito.MockedStatic
+import org.mockito.ScopedMock
+
+/**
+ * Wraps a [MockedSingleton] and an optional [MockedStatic] to provide combined mocking of both
+ * instance and static methods on Kotlin `object` declarations.
+ *
+ * When a Kotlin `object` has `@JvmStatic` methods, Kotlin compiles them as real JVM static methods.
+ * Calls from Kotlin bytecode use `invokestatic`, bypassing the singleton instance mock. This class
+ * transparently combines both mocking mechanisms so that `@JvmStatic` methods are also intercepted.
+ */
+class MockedObject<T>(
+    private val singleton: MockedSingleton<T>,
+    private val static: MockedStatic<T>?,
+) : ScopedMock {
+
+    /** Returns `true` if static method mocking is active for this object. */
+    val isMockingStatic: Boolean
+        get() = static != null
+
+    override fun isClosed(): Boolean = singleton.isClosed
+
+    override fun close() {
+        static?.close()
+        singleton.close()
+    }
+
+    override fun closeOnDemand() {
+        static?.closeOnDemand()
+        singleton.closeOnDemand()
+    }
+}

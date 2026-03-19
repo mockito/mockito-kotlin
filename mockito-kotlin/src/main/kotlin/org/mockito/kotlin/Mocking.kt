@@ -25,6 +25,7 @@
 
 package org.mockito.kotlin
 
+import java.lang.reflect.Modifier
 import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 import org.mockito.MockSettings
@@ -216,6 +217,82 @@ inline fun <reified T> mockStatic(defaultAnswer: Answer<Any>? = null): MockedSta
  */
 inline fun <reified T> mockConstruction(): MockedConstruction<T> {
     return Mockito.mockConstruction(T::class.java)
+}
+
+/**
+ * Creates a thread-local mock for an `object` or `companion object` singleton.
+ *
+ * NOTE: This returns a [MockedObject] which must be closed after test execution to prevent mocking
+ * state from leaking to other test cases. You can do this with a `.use {}` block or by calling
+ * [MockedObject.close] manually.
+ *
+ * Example usage:
+ * ```
+ * mockObject(MyObject).use {
+ *     whenever(MyObject.foo()).thenReturn("hello")
+ * }
+ * ```
+ *
+ * or with a `companion object` with method `bar()`:
+ * ```
+ * mockObject(MyClass.Companion).use {
+ *     whenever(MyClass.bar()).thenReturn("hello")
+ * }
+ * ```
+ */
+fun <T : Any> mockObject(instance: T): MockedObject<T> {
+    if (instance::class.objectInstance == null && !instance::class.isCompanion) {
+        throw MockitoKotlinException("$instance is not an object or companion object")
+    }
+    val singleton = Mockito.mockSingleton(instance)
+    val static = createMockedStaticIfNeeded(instance)
+    return MockedObject(singleton, static)
+}
+
+/**
+ * Creates a thread-local mock for an `object` or `companion object` singleton, allowing for
+ * immediate stubbing.
+ *
+ * NOTE: This returns a [MockedObject] which must be closed after test execution to prevent mocking
+ * state from leaking to other test cases. You can do this with a `.use {}` block or by calling
+ * [MockedObject.close] manually.
+ *
+ * Example usage:
+ * ```
+ * mockObject(MyObject) {
+ *     on { foo() } doReturn "hello"
+ * }.use { ... }
+ * ```
+ *
+ * or with a `companion object` with method `bar()`:
+ * ```
+ * mockObject(MyClass.Companion) {
+ *     on { bar() } doReturn "hello"
+ * }.use { ... }
+ * ```
+ */
+fun <T : Any> mockObject(instance: T, stubbing: KStubbing<T>.(T) -> Unit): MockedObject<T> {
+    return mockObject(instance).apply { KStubbing(instance).stubbing(instance) }
+}
+
+/**
+ * If [instance] is a top-level `object` (not a companion) with `@JvmStatic` methods, creates a
+ * [MockedStatic] for its class. Returns `null` otherwise.
+ */
+private fun <T : Any> createMockedStaticIfNeeded(instance: T): MockedStatic<T>? {
+    // Companion objects don't need mockStatic — calling Kotlin code always invokes the underlying
+    // instance method even for @JvmStatic methods so mockSingleton is sufficient.
+    if (instance::class.isCompanion) return null
+
+    val javaClass = instance::class.java
+    val hasStaticMethods =
+        javaClass.declaredMethods.any { method ->
+            Modifier.isStatic(method.modifiers) && !method.isSynthetic
+        }
+
+    if (!hasStaticMethods) return null
+
+    return Mockito.mockStatic(javaClass) as MockedStatic<T>
 }
 
 /**

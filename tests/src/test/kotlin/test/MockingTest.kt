@@ -18,6 +18,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.mockConstruction
+import org.mockito.kotlin.mockObject
 import org.mockito.kotlin.mockStatic
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -468,6 +469,105 @@ class MockingTest : TestBase() {
 
                 expect(open.stringResult()).toBe("Hello")
             }
+    }
+
+    @Test
+    fun mockObject_basic() {
+        mockObject(MyObject).use {
+            whenever(MyObject.hello()).thenReturn("stubbed")
+
+            expect(MyObject.hello()).toBe("stubbed")
+        }
+    }
+
+    @Test
+    fun mockObject_KStubbing() {
+        mockObject(MyObject) { on { hello() } doReturn "stubbed" }
+            .use { expect(MyObject.hello()).toBe("stubbed") }
+    }
+
+    @Test
+    fun mockObject_JvmStatic_method() {
+        mockObject(MyObject).use {
+            whenever(MyObject.helloStatic()).thenReturn("stubbed_via_mockObject")
+
+            expect(MyObject.helloStatic()).toBe("stubbed_via_mockObject")
+        }
+    }
+
+    @Test
+    fun mockObject_mixed_regular_and_JvmStatic_methods() {
+        mockObject(MyObject).use {
+            whenever(MyObject.hello()).thenReturn("regular_stubbed")
+            whenever(MyObject.helloStatic()).thenReturn("static_stubbed")
+
+            expect(MyObject.hello()).toBe("regular_stubbed")
+            expect(MyObject.helloStatic()).toBe("static_stubbed")
+            expect(it.isMockingStatic).toBe(true)
+        }
+    }
+
+    @Test
+    fun mockObject_without_JvmStatic_does_not_use_mockStatic() {
+        mockObject(MyObjectNoStatic).use { expect(it.isMockingStatic).toBe(false) }
+    }
+
+    @Test
+    fun mockCompanionObject_basic() {
+        mockObject(MyClassWithCompanion.Companion).use {
+            val myClassWithCompanionMock = mock<MyClassWithCompanion>()
+            whenever(MyClassWithCompanion.create()).thenReturn(myClassWithCompanionMock)
+
+            expect(MyClassWithCompanion.create()).toBeTheSameAs(myClassWithCompanionMock)
+        }
+    }
+
+    @Test
+    fun mockCompanionObject_KStubbing() {
+        val myClassWithCompanionMock = mock<MyClassWithCompanion>()
+        mockObject(MyClassWithCompanion.Companion) {
+                on { create() } doReturn myClassWithCompanionMock
+            }
+            .use { expect(MyClassWithCompanion.create()).toBeTheSameAs(myClassWithCompanionMock) }
+    }
+
+    @Test
+    fun mockCompanionObject_JvmStatic_method() {
+        mockObject(MyClassWithCompanion.Companion).use {
+            val myClassWithCompanionMock = mock<MyClassWithCompanion>()
+            whenever(MyClassWithCompanion.createStatic()).thenReturn(myClassWithCompanionMock)
+
+            expect(MyClassWithCompanion.createStatic()).toBeTheSameAs(myClassWithCompanionMock)
+        }
+    }
+
+    @Test
+    fun mockObject_nonObjectArgument() {
+        expectErrorWithMessage("is not an object or companion object") on
+            {
+                val m = MyClass()
+                mockObject(m)
+            }
+    }
+
+    object MyObjectNoStatic {
+        fun hello(): String = "no_static"
+    }
+
+    object MyObject {
+        fun hello(): String = "unstubbed"
+
+        @JvmStatic fun helloStatic(): String = "static_unstubbed"
+    }
+
+    class MyClassWithCompanion {
+        companion object {
+            fun create(): MyClassWithCompanion = MyClassWithCompanion()
+
+            // This will generate a static method, but it is *only* accessible to Java.
+            // Calling Kotlin code still calls the instance method on the Companion class instance.
+            @JvmStatic fun createStatic(): MyClassWithCompanion = MyClassWithCompanion()
+        }
     }
 
     private interface MyInterface
