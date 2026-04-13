@@ -14,7 +14,7 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         javaLibrary(MavenPublication) {
-            artifactId 'mockito-kotlin'
+            artifactId = 'mockito-kotlin'
 
             from components.java
 
