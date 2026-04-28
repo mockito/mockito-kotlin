@@ -1,17 +1,22 @@
 # Mockito-Kotlin
 
-[ ![Download](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin/badge.svg) ](https://maven-badges.herokuapp.com/maven-central/org.mockito.kotlin/mockito-kotlin)
-[![Nexus Snapshot](https://img.shields.io/nexus/s/org.mockito.kotlin/mockito-kotlin?server=https%3A%2F%2Fs01.oss.sonatype.org%2F)](https://s01.oss.sonatype.org/content/repositories/snapshots/org/mockito/kotlin/mockito-kotlin/)
+[![Maven Central Version](https://img.shields.io/maven-central/v/org.mockito.kotlin/mockito-kotlin)](https://central.sonatype.com/artifact/org.mockito.kotlin/mockito-kotlin)
 
 A small library that provides helper functions to work with [Mockito](https://github.com/mockito/mockito) in Kotlin.
 
 ## Install
 
 Mockito-Kotlin is available on Maven Central.
-For Gradle users, add the following to your `build.gradle`, replacing `x.x.x` with the latest version:
+For Gradle users, add the following to your build file, replacing `x.x.x` with the latest version:
 
+`build.gradle`:
 ```groovy
 testImplementation "org.mockito.kotlin:mockito-kotlin:x.x.x"
+```
+
+`build.gradle.kts`:
+```kotlin
+testImplementation("org.mockito.kotlin:mockito-kotlin:x.x.x")
 ```
 
 ## Example
@@ -36,6 +41,10 @@ fun doAction_doesSomething(){
 ```
 
 For more info and samples, see the [Wiki](https://github.com/mockito/mockito-kotlin/wiki).
+
+## Android Support
+
+See the [Android Support wiki](https://github.com/mockito/mockito-kotlin/wiki/Android-Support).
 
 ## Building
 
