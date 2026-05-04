@@ -1,0 +1,32 @@
+plugins {
+    id "org.gradle.java"
+    id "org.jetbrains.kotlin.jvm" version "2.1.20"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation "org.mockito.kotlin:mockito-kotlin"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib"
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.14.9'
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+test {
+    forkEvery = 1
+    testLogging {
+        showStandardStreams = true
+    }
+    jvmArgs = [
+        // MockK requires these flags to spy ArrayList on Java 17
+        // See https://mockk.io/doc/md/jdk16-access-exceptions.html
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+    ]
+}
