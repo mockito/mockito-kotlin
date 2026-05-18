@@ -26,10 +26,29 @@
 package org.mockito.kotlin.internal
 
 import org.mockito.InOrder
+import org.mockito.MockedStatic
 import org.mockito.kotlin.KInOrder
 import org.mockito.verification.VerificationMode
 
 class KInOrderDecorator(private val inOrder: InOrder) : KInOrder, InOrder by inOrder {
+    /**
+     * Verifies static interaction in order, with exactly one number of invocations.
+     *
+     * Forwarded explicitly because Kotlin class delegation (`InOrder by inOrder`) does not generate
+     * forwarders for Java default methods.
+     */
+    override fun verify(mock: MockedStatic<*>, verification: MockedStatic.Verification) {
+        inOrder.verify(mock, verification)
+    }
+
+    override fun <T> verify(
+        mock: MockedStatic<T>,
+        mode: VerificationMode,
+        verification: MockedStatic.Verification,
+    ) {
+        inOrder.verify(mock, verification, mode)
+    }
+
     override fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
         val m = verify(mock)
         safeRunBlocking { m.f() }
