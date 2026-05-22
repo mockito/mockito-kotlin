@@ -243,12 +243,12 @@ inline fun <reified T> mockConstruction(): MockedConstruction<T> {
  * }
  * ```
  */
-fun <T : Any> mockObject(instance: T): MockedObject<T> {
+fun <T : Any> mockObject(instance: T, settings: MockSettings = withSettings()): MockedObject<T> {
     if (instance::class.objectInstance == null && !instance::class.isCompanion) {
         throw MockitoKotlinException("$instance is not an object or companion object")
     }
-    val singleton = Mockito.mockSingleton(instance)
-    val static = createMockedStaticIfNeeded(instance)
+    val singleton = Mockito.mockSingleton(instance, settings)
+    val static = createMockedStaticIfNeeded(instance, settings)
     return MockedObject(singleton, static)
 }
 
@@ -279,10 +279,58 @@ fun <T : Any> mockObject(instance: T, stubbing: KStubbing<T>.(T) -> Unit): Mocke
 }
 
 /**
+ * Creates a thread-local spy for an `object` or `companion object` singleton.
+ *
+ * Unlike [mockObject], which replaces all methods with stubs, `spyObject` delegates to the real
+ * implementation by default. Only explicitly stubbed methods are overridden.
+ *
+ * NOTE: This returns a [MockedObject] which must be closed after test execution to prevent mocking
+ * state from leaking to other test cases. You can do this with a `.use {}` block or by calling
+ * [MockedObject.close] manually.
+ *
+ * Example usage:
+ * ```
+ * spyObject(MyObject).use {
+ *     whenever(MyObject.foo()).thenReturn("hello")
+ *     // unstubbed methods call through to real implementations
+ * }
+ * ```
+ */
+fun <T : Any> spyObject(instance: T): MockedObject<T> {
+    val settings = Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS)
+    return mockObject(instance, settings)
+}
+
+/**
+ * Creates a thread-local spy for an `object` or `companion object` singleton, allowing for
+ * immediate stubbing.
+ *
+ * Unlike [mockObject], which replaces all methods with stubs, `spyObject` delegates to the real
+ * implementation by default. Only explicitly stubbed methods are overridden.
+ *
+ * NOTE: This returns a [MockedObject] which must be closed after test execution to prevent mocking
+ * state from leaking to other test cases. You can do this with a `.use {}` block or by calling
+ * [MockedObject.close] manually.
+ *
+ * Example usage:
+ * ```
+ * spyObject(MyObject) {
+ *     on { foo() } doReturn "hello"
+ * }.use { ... }
+ * ```
+ */
+fun <T : Any> spyObject(instance: T, stubbing: KStubbing<T>.(T) -> Unit): MockedObject<T> {
+    return spyObject(instance).apply { KStubbing(instance).stubbing(instance) }
+}
+
+/**
  * If [instance] is a top-level `object` (not a companion) with `@JvmStatic` methods, creates a
  * [MockedStatic] for its class. Returns `null` otherwise.
  */
-private fun <T : Any> createMockedStaticIfNeeded(instance: T): MockedStatic<T>? {
+private fun <T : Any> createMockedStaticIfNeeded(
+    instance: T,
+    settings: MockSettings,
+): MockedStatic<T>? {
     // Companion objects don't need mockStatic — calling Kotlin code always invokes the underlying
     // instance method even for @JvmStatic methods so mockSingleton is sufficient.
     if (instance::class.isCompanion) return null
@@ -295,7 +343,7 @@ private fun <T : Any> createMockedStaticIfNeeded(instance: T): MockedStatic<T>? 
 
     if (!hasStaticMethods) return null
 
-    return Mockito.mockStatic(javaClass) as MockedStatic<T>
+    return Mockito.mockStatic(javaClass, settings) as MockedStatic<T>
 }
 
 /**

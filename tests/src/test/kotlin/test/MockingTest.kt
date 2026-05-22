@@ -23,6 +23,7 @@ import org.mockito.kotlin.mockConstruction
 import org.mockito.kotlin.mockExtensionFun
 import org.mockito.kotlin.mockObject
 import org.mockito.kotlin.mockStatic
+import org.mockito.kotlin.spyObject
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.mockito.listeners.InvocationListener
@@ -551,6 +552,66 @@ class MockingTest : TestBase() {
                 val m = MyClass()
                 mockObject(m)
             }
+    }
+
+    @Test
+    fun spyObject_callsRealMethodByDefault() {
+        spyObject(MyObject).use { expect(MyObject.hello()).toBe("unstubbed") }
+    }
+
+    @Test
+    fun spyObject_stubbedMethodReturnsStub() {
+        spyObject(MyObject).use {
+            whenever(MyObject.hello()).thenReturn("stubbed")
+
+            expect(MyObject.hello()).toBe("stubbed")
+        }
+    }
+
+    @Test
+    fun spyObject_KStubbing() {
+        spyObject(MyObject) { on { hello() } doReturn "stubbed" }
+            .use { expect(MyObject.hello()).toBe("stubbed") }
+    }
+
+    @Test
+    fun spyObject_JvmStatic_callsRealMethodByDefault() {
+        spyObject(MyObject).use { expect(MyObject.helloStatic()).toBe("static_unstubbed") }
+    }
+
+    @Test
+    fun spyObject_JvmStatic_stubbedMethodReturnsStub() {
+        spyObject(MyObject).use {
+            whenever(MyObject.helloStatic()).thenReturn("static_stubbed")
+
+            expect(MyObject.helloStatic()).toBe("static_stubbed")
+        }
+    }
+
+    @Test
+    fun spyObject_mixed_stubbed_and_real_methods() {
+        spyObject(MyObject).use {
+            whenever(MyObject.hello()).thenReturn("stubbed")
+
+            expect(MyObject.hello()).toBe("stubbed")
+            expect(MyObject.helloStatic()).toBe("static_unstubbed")
+        }
+    }
+
+    @Test
+    fun spyObject_nonObjectArgument() {
+        expectErrorWithMessage("is not an object or companion object") on
+            {
+                val m = MyClass()
+                spyObject(m)
+            }
+    }
+
+    @Test
+    fun spyCompanionObject_callsRealMethodByDefault() {
+        spyObject(MyClassWithCompanion.Companion).use {
+            expect(MyClassWithCompanion.create()).toNotBeNull()
+        }
     }
 
     @Test
