@@ -1,9 +1,9 @@
 package test
 
 import org.junit.Test
-import org.mockito.Mockito.mockStatic
 import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.mockStatic
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
@@ -11,7 +11,7 @@ class MockedStaticTest : TestBase() {
 
     @Test
     fun testVerifyExtensionFun() {
-        mockStatic(SomeObject::class.java).use { mocked ->
+        mockStatic<SomeObject>().use { mocked ->
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethod()
 
@@ -21,7 +21,7 @@ class MockedStaticTest : TestBase() {
 
     @Test
     fun testInOrderVerifyStatic() {
-        mockStatic(SomeObject::class.java).use { mocked ->
+        mockStatic<SomeObject>().use { mocked ->
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethodReturningString()
 
@@ -33,7 +33,7 @@ class MockedStaticTest : TestBase() {
 
     @Test
     fun testInOrderVerifyStaticWithMode() {
-        mockStatic(SomeObject::class.java).use { mocked ->
+        mockStatic<SomeObject>().use { mocked ->
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethodReturningString()
@@ -46,7 +46,7 @@ class MockedStaticTest : TestBase() {
 
     @Test(expected = MockitoAssertionError::class)
     fun testInOrderVerifyStaticOutOfOrderFails() {
-        mockStatic(SomeObject::class.java).use { mocked ->
+        mockStatic<SomeObject>().use { mocked ->
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethodReturningString()
 
@@ -58,7 +58,7 @@ class MockedStaticTest : TestBase() {
 
     @Test(expected = MockitoAssertionError::class)
     fun testInOrderVerifyStaticDefaultIsExactlyOnce() {
-        mockStatic(SomeObject::class.java).use { mocked ->
+        mockStatic<SomeObject>().use { mocked ->
             SomeObject.aStaticMethod()
             SomeObject.aStaticMethod()
 
