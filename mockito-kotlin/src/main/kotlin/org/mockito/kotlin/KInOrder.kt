@@ -26,9 +26,26 @@
 package org.mockito.kotlin
 
 import org.mockito.InOrder
+import org.mockito.MockedStatic
 import org.mockito.verification.VerificationMode
 
 interface KInOrder : InOrder {
+    /**
+     * Verifies certain static behavior happened at least once / exact number of times / never in
+     * order.
+     *
+     * Reorders the arguments of the inherited [verify] so the verification can be passed as a
+     * trailing lambda:
+     * ```
+     * inOrder.verify(mockedStatic, times(2)) { Foo.doSomething() }
+     * ```
+     */
+    fun <T> verify(
+        mock: MockedStatic<T>,
+        mode: VerificationMode,
+        verification: MockedStatic.Verification,
+    )
+
     /**
      * Verifies certain suspending behavior <b>happened once</b> in order.
      *
