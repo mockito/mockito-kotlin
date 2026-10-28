@@ -35,6 +35,7 @@ import org.mockito.MockSettings
 import org.mockito.MockedConstruction
 import org.mockito.MockedStatic
 import org.mockito.Mockito
+import org.mockito.kotlin.internal.CoroutineAwareAnswer.Companion.wrapAsCoroutineAwareAnswer
 import org.mockito.listeners.InvocationListener
 import org.mockito.mock.SerializableMode
 import org.mockito.quality.Strictness
@@ -192,7 +193,10 @@ fun withSettings(
         extraInterfaces?.let { extraInterfaces(*it.map { it.java }.toTypedArray()) }
         name?.let { name(it) }
         spiedInstance?.let { spiedInstance(it) }
-        defaultAnswer?.let { defaultAnswer(it) }
+        defaultAnswer?.let {
+            // RETURNS_SELF needs the Kotlin return type to recognise suspend builder methods
+            defaultAnswer(if (it == Mockito.RETURNS_SELF) it.wrapAsCoroutineAwareAnswer() else it)
+        }
         if (serializable) serializable()
         serializableMode?.let { serializable(it) }
         if (verboseLogging) verboseLogging()

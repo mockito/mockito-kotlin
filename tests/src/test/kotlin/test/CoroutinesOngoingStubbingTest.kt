@@ -1,10 +1,11 @@
 package test
 
 import com.nhaarman.expect.expect
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.*
@@ -62,9 +63,6 @@ class CoroutinesOngoingStubbingTest {
         expect(result).toBe(listOf("A", "B", "C"))
     }
 
-    @Ignore(
-        "Default answers do not yet work for coroutines, see https://github.com/mockito/mockito-kotlin/issues/550"
-    )
     @Test
     fun `should stub builder method returning mock itself via defaultAnswer`() {
         /* Given */
@@ -77,9 +75,15 @@ class CoroutinesOngoingStubbingTest {
         expect(result).toBeTheSameAs(mock)
     }
 
-    @Ignore(
-        "Default answers do not yet work for coroutines, see https://github.com/mockito/mockito-kotlin/issues/550"
-    )
+    @Test
+    fun `should keep serializable mock with RETURNS_SELF defaultAnswer serializable`() {
+        /* Given */
+        val mock = mock<SuspendFunctions>(defaultAnswer = Mockito.RETURNS_SELF, serializable = true)
+
+        /* When, Then */
+        ObjectOutputStream(ByteArrayOutputStream()).writeObject(mock)
+    }
+
     @Test
     fun `should stub builder method returning mock itself via answer`() {
         /* Given */

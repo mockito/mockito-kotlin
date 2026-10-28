@@ -25,18 +25,20 @@
 
 package org.mockito.kotlin.internal
 
+import java.io.Serializable
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.kotlinFunction
+import org.mockito.Mockito
 import org.mockito.internal.invocation.InterceptedInvocation
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.kotlin.KInvocationOnMock
 import org.mockito.stubbing.Answer
 
 internal class CoroutineAwareAnswer<T> private constructor(private val delegate: Answer<*>) :
-    Answer<T> {
+    Answer<T>, Serializable {
     constructor(block: suspend (KInvocationOnMock) -> T?) : this(SuspendableAnswer(block))
 
     companion object {
@@ -51,6 +53,8 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         val wrappedAnswer =
             if (invokedKotlinFunction == null || !invokedKotlinFunction.isSuspend) {
                 delegate
+            } else if (delegate == Mockito.RETURNS_SELF) {
+                Answer { it.returnSelfOrDefault(invokedKotlinFunction) }
             } else {
                 (delegate as? SuspendableAnswer)
                     ?: SuspendableAnswer { invocation -> delegate.answer(invocation) }
@@ -85,6 +89,22 @@ internal class CoroutineAwareAnswer<T> private constructor(private val delegate:
         }
 
         return this
+    }
+
+    /**
+     * Mockito's RETURNS_SELF compares the JVM return type with the mock type, but the JVM return
+     * type of a suspend function is always Object, so it never returns the mock. Compare against
+     * the Kotlin return type instead.
+     */
+    private fun InvocationOnMock.returnSelfOrDefault(invokedKotlinFunction: KFunction<*>): Any? {
+        val returnType = invokedKotlinFunction.returnType.jvmErasure.java
+        val mockType = Mockito.mockingDetails(mock).mockCreationSettings.typeToMock
+
+        return if (returnType != Any::class.java && returnType.isAssignableFrom(mockType)) {
+            mock
+        } else {
+            delegate.answer(this)
+        }
     }
 
     private fun Result<*>.unboxResult(): Any? =
