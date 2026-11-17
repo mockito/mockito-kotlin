@@ -211,7 +211,7 @@ inline fun inOrder(vararg mocks: Any, evaluation: KInOrder.() -> Unit) {
  *
  * mock.inOrder { verify().foo() verifyBlocking { bar() } }
  */
-inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Any) {
+inline fun <T> T.inOrder(block: InOrderOnType<T>.() -> Unit) {
     block.invoke(InOrderOnType(this))
 }
 

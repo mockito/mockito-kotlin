@@ -1,6 +1,7 @@
 package test
 
 import com.nhaarman.expect.expect
+import java.util.concurrent.Callable
 import org.junit.Test
 import org.mockito.exceptions.base.MockitoAssertionError
 import org.mockito.kotlin.*
@@ -80,6 +81,28 @@ class VerificationTest : TestBase() {
             verify().int(any())
             verifyNoMoreInteractions()
         }
+    }
+
+    @Test
+    fun testInOrderWithReceiverNullableReturnType() {
+        val mock = mock<SynchronousFunctions>()
+
+        mock.string("")
+        mock.nullableStringResult()
+
+        mock.inOrder {
+            verify().string(any())
+            verify().nullableStringResult()
+        }
+    }
+
+    @Test
+    fun testInOrderWithReceiverPlatformReturnType() {
+        val mock = mock<Callable<String>>()
+
+        mock.call()
+
+        mock.inOrder { verify().call() }
     }
 
     @Test
