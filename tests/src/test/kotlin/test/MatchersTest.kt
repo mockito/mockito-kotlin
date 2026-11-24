@@ -278,6 +278,62 @@ class MatchersTest : TestBase() {
                 verify(this).nestedValueClass(anyValueClass())
             }
         }
+
+        /** https://github.com/mockito/mockito-kotlin/issues/533 */
+        @Test
+        fun anyValueClass_matchesBoxedUShortInGenericConsumer() {
+            class Consumer<T>(val fn: (T) -> Unit)
+
+            class Mocked {
+                fun <T> callConsumer(consumer: Consumer<T>, value: T) {
+                    consumer.fn(value)
+                }
+            }
+
+            val mocked = mock<Mocked>()
+            var functionCalled = false
+            val aConsumer = Consumer<UShort> {}
+            whenever(mocked.callConsumer(same(aConsumer), any())).then { functionCalled = true }
+
+            mocked.callConsumer(aConsumer, 42u)
+            expect(functionCalled).toBe(true)
+        }
+
+        /** https://github.com/mockito/mockito-kotlin/issues/533 */
+        @Test
+        fun anyValueClass_matchesExplicitUShortInGenericConsumer() {
+            class Consumer<T>(val fn: (T) -> Unit)
+
+            class Mocked {
+                fun <T> callConsumer(consumer: Consumer<T>, value: T) {
+                    consumer.fn(value)
+                }
+            }
+
+            val mocked = mock<Mocked>()
+            var functionCalled = false
+            val aConsumer = Consumer<UShort> {}
+            whenever(mocked.callConsumer(same(aConsumer), any<UShort>())).then {
+                functionCalled = true
+            }
+
+            mocked.callConsumer(aConsumer, 42u)
+            expect(functionCalled).toBe(true)
+        }
+
+        @Test
+        fun anyValueClass_matchesDirectUShortParameter() {
+            class Mocked {
+                fun myFunction(argument: UShort) {}
+            }
+
+            val mocked = mock<Mocked>()
+            var functionCalled = false
+            whenever(mocked.myFunction(any())).then { functionCalled = true }
+
+            mocked.myFunction(42u)
+            expect(functionCalled).toBe(true)
+        }
     }
 
     class AnyOrNullMatchersTest {

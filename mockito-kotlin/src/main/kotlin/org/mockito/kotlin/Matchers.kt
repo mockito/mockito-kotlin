@@ -80,10 +80,17 @@ inline fun <reified T : Any?> anyArray(): Array<T> {
     return ArgumentMatchers.any(Array<T>::class.java) ?: arrayOf()
 }
 
-/** Matches any Kotlin value class with the same boxed type by taking its boxed type. */
+/** Matches any Kotlin value class, boxed or as its underlying carrier. */
 inline fun <reified T> anyValueClass(): T {
     val clazz = T::class
-    return ArgumentMatchers.any(clazz.valueClassInnerClass().java).boxAsValueClass(clazz)
+    val carrier = clazz.valueClassInnerClass()
+    val matcher =
+        AdditionalMatchers.or(ArgumentMatchers.any(clazz.java), ArgumentMatchers.any(carrier.java))
+    // or() returns null. Primitive carriers need a real default so box-impl can unbox it.
+    // Reference carriers stay null and are boxed by box-impl, as ArgumentMatchers.any(Class) did.
+    val fallback: Any? = if (carrier.java.isPrimitive) createInstance(carrier) else null
+
+    return (matcher ?: fallback).boxAsValueClass(clazz)
 }
 
 /** Matches an argument that is equal to the given Kotlin value class value. */
