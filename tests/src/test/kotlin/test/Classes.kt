@@ -250,6 +250,10 @@ abstract class NonThrowingConstructorWithArgument {
 interface GenericMethods<T> {
     fun genericMethod(): T
 
+    fun genericArg(arg: T): T
+
+    fun <S : T> genericSubclassArg(arg: S): S
+
     fun nullableReturnType(): T?
 
     suspend fun suspendableGenericMethod(): T
