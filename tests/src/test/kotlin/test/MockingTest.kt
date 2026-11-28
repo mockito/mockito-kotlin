@@ -517,6 +517,11 @@ class MockingTest : TestBase() {
     }
 
     @Test
+    fun mockObject_withPrivateStaticMethod_doesNotUseMockStatic() {
+        mockObject(MyObjectWithDelegate).use { expect(it.isMockingStatic).toBe(false) }
+    }
+
+    @Test
     fun mockCompanionObject_basic() {
         mockObject(MyClassWithCompanion.Companion).use {
             val myClassWithCompanionMock = mock<MyClassWithCompanion>()
@@ -661,6 +666,12 @@ class MockingTest : TestBase() {
     }
 
     object MyObjectNoStatic {
+        fun hello(): String = "no_static"
+    }
+
+    object MyObjectWithDelegate {
+        val instance: String by lazy { "delegated" }
+
         fun hello(): String = "no_static"
     }
 

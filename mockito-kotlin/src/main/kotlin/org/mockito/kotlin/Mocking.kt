@@ -338,7 +338,9 @@ private fun <T : Any> createMockedStaticIfNeeded(
     val javaClass = instance::class.java
     val hasStaticMethods =
         javaClass.declaredMethods.any { method ->
-            Modifier.isStatic(method.modifiers) && !method.isSynthetic
+            Modifier.isStatic(method.modifiers) &&
+                Modifier.isPublic(method.modifiers) &&
+                !method.isSynthetic
         }
 
     if (!hasStaticMethods) return null
